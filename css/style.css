@@ -45,10 +45,58 @@ a{
  padding-bottom: 20px;
 }
 
+@media (max-width: 992px) {
+  .col-sm-12 {
+    text-align: center;
+  }
+}
+
 .btn.btn-fab.btn-download {
  background-color: #455A64;
  color: #ffffff;
  position: fixed;
  bottom: 18%;
  right: 6%;
+}
+.btn.btn-square,
+.input-group-btn .btn.btn-square {
+  padding: 12px 15px;
+}
+
+.btn.btn-twitter {
+	background-color: #00aced;
+	color: #ffffff;
+}
+.btn.btn-facebook {
+	background-color: #3b5998;
+	color: #ffffff;
+}
+.btn.btn-instagram {
+	background-color: #517fa4;
+	color: #ffffff;
+}
+.btn.btn-linkedin {
+	background-color: #007bb6;
+	color: #ffffff;
+}
+.btn.btn-github {
+	background-color: #333333;
+	color: #ffffff;
+}
+.btn.btn-medium {
+	background-color: #02b875;
+	color: #ffffff;
+}
+.btn.btn-spotify {
+	background-color: #23CF5F;
+	color: #ffffff;
+}
+.btn.btn-behance {
+	background-color: #1769ff;
+	color: #ffffff;
+	padding: 12px 14px;
+}
+.btn.btn-dribbble {
+	background-color: #ea4c89;
+	color: #ffffff;
 }
