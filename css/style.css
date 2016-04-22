@@ -7,15 +7,35 @@
 }
 
 a:active,
-a:hover {
+a:hover,
+a:focus {
  outline: 0;
+ color: #455A64;
+ text-decoration: none;
 }
-p a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a{
+
+a{
  color: #727272;
  text-decoration: none;
 }
 
-p a:hover {
- color: #9E9E9E;
- text-decoration: none;
+.left-align {
+ text-align: left;
+}
+
+.right-align {
+ text-align: right;
+}
+
+.center,
+.center-align {
+ text-align: center;
+}
+
+.left {
+ float: left !important;
+}
+
+.right {
+ float: right !important;
 }
