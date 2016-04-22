@@ -39,3 +39,15 @@ a{
 .right {
  float: right !important;
 }
+
+.entry {
+ padding-bottom: 20px;
+}
+
+.btn.btn-fab.btn-download {
+ background-color: #455A64;
+ color: #ffffff;
+ position: fixed;
+ bottom: 18%;
+ right: 6%;
+}
