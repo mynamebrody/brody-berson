@@ -1,8 +1,8 @@
-<!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<!-- Google tag (gtag.js) -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-29575C0GNT"></script>
+	<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-29575C0GNT"></script>
 	<script>
 	window.dataLayer = window.dataLayer || [];
 	function gtag(){dataLayer.push(arguments);}
@@ -11,11 +11,11 @@
 	gtag('config', 'G-29575C0GNT');
 	</script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brody Berson</title>
-	<meta name="description" content="Brody Berson's personal résumé website." />
-    <meta name="keywords" content="web design, web development, software development, application development, app development, grand valley state university, gvsu" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brody Berson</title>
+  <meta name="description" content="Brody Berson's personal résumé website.">
+  <meta name="keywords" content="web design, web development, software development, application development, app development, grand valley state university, gvsu">
 
 	<link rel="apple-touch-icon" sizes="180x180" href="ico/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="ico/favicon-32x32.png">
@@ -23,211 +23,103 @@
 	<link rel="manifest" href="/site.webmanifest">
 
 	<!-- Facebook OG -->
-	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://www.brodyberson.com/" />
-	<meta property="og:title" content="Brody Berson" />
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://www.brodyberson.com/">
+	<meta property="og:title" content="Brody Berson">
 	<meta property="og:site_name" content="BrodyBerson.com">
-	<meta property="og:description" content="Brody Berson's Personal Website." />
-	<meta property="og:image" content="https://www.brodyberson.com/open-graph.png" />
+	<meta property="og:description" content="Brody Berson's Personal Website.">
+	<meta property="og:image" content="https://www.brodyberson.com/open-graph.png">
 	<meta name="author" content="Brody Berson">
-    <style>
-        :root {
-            --base03: #002b36;
-            --base02: #073642;
-            --base01: #586e75;
-            --base00: #657b83;
-            --base0: #839496;
-            --base1: #93a1a1;
-            --base2: #eee8d5;
-            --base3: #fdf6e3;
-            --yellow: #b58900;
-            --orange: #cb4b16;
-            --red: #dc322f;
-            --magenta: #d33682;
-            --violet: #6c71c4;
-            --blue: #268bd2;
-            --cyan: #2aa198;
-            --green: #859900;
-        }
-        body {
-            font-family: 'Courier New', monospace;
-            transition: background-color 0.3s, color 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        body.light-mode {
-            background-color: var(--base3);
-            color: var(--base00);
-        }
-        body.dark-mode {
-            background-color: var(--base03);
-            color: var(--base0);
-        }
-        .container {
-            max-width: 800px;
-            width: 100%;
-        }
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            color: var(--blue);
-        }
-        .subtitle {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            color: var(--base01);
-        }
-        .terminal {
-            background-color: var(--base02);
-            color: var(--base1);
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .command {
-            margin-bottom: 10px;
-            color: var(--green);
-        }
-        .response {
-            margin-left: 20px;
-            margin-bottom: 15px;
-            color: var(--cyan);
-        }
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 20px;
-            background-color: var(--base1);
-            animation: blink 0.7s infinite;
-        }
-        @keyframes blink {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-        #theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            transition: transform 0.3s;
-            z-index: 1000;
-        }
-        #theme-toggle:hover {
-            transform: scale(1.1);
-        }
-        a {
-            color: inherit;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        a:hover {
-            color: var(--blue);
-        }
-        #user-input {
-            background: none;
-            border: none;
-            color: inherit;
-            font-family: inherit;
-            font-size: inherit;
-            outline: none;
-            width: calc(100% - 20px);
-            margin-left: 5px;
-        }
-        .input-line {
-            display: flex;
-            align-items: center;
-        }
-        @keyframes wiggle {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-            100% { transform: translateX(0); }
-        }
-        .wiggle {
-            animation: wiggle 0.3s ease-in-out;
-        }
-    </style>
+
+  <link rel="stylesheet" href="./fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="./index.css">
 </head>
-<body class="light-mode">
-    <button id="theme-toggle">☀️</button>
-    <div class="container">
-        <h1>> Brody Berson<span class="cursor"></span></h1>
-        <p class="subtitle">I am an AI Solutions Engineer at <a href="https://zapier.com/jobs" target="_blank">Zapier</a>.</p>
-        
-        <div class="terminal">
-            <div class="command">> Brody.currentLocation</div>
-            <div class="response">"Grand Rapids, MI"</div>
 
-            <div class="command">> Brody.contactInfo</div>
-            <div class="response">"<a href="mailto:hello@brodyberson.com">hello@brodyberson.com</a>"</div>
+<body>
+  <div id="dappled-light">
 
-            <div class="command">> Brody.socialLinks</div>
-            <div class="response">["<a href="https://github.com/mynamebrody" target="_blank">GitHub</a>", "<a href="https://www.linkedin.com/in/mynamebrody/" target="_blank">LinkedIn</a>", "<a href="https://instagram.com/mynamebrody" target="_blank">Instagram</a>", "<a href="https://letterboxd.com/mynamebrody/" target="_blank">Letterboxd</a>"]</div>
-
-            <div class="command">> Brody.resume</div>
-            <div class="response">"<a href="/brody-berson-resume.pdf" target="_blank">brody_berson_resume.pdf</a>"</div>
-
-            <div class="command">> Brody.projects</div>
-            <div class="response">["<a href="https://github.com/mynamebrody/pizzadash" target="_blank">Pizza Dash</a>", "<a href="https://github.com/mynamebrody/DrizlyDash" target="_blank">Drizly Dash</a>", "<a href="https://airtable.com/shrKVR8Nnpw5BK0EK" target="_blank">Cocktail Database</a>", "<a href="https://www.splitreels.com/" target="_blank">Split Reels</a>"]</div>
-
-            <div class="command">> Brody.interests</div>
-            <div class="response">["traveling", "food", "cocktails", "film"]</div>
-
-            <div class="command">> Brody.education</div>
-            <div class="response">"B.S. Computer Science - Grand Valley State University"</div>
-
-            <div class="command">> Brody.skills</div>
-            <div class="response">["Node", "JavaScript", "Swift", "AI Solutions"]</div>
-
-            <div class="command input-line">> <input type="text" id="user-input" autofocus></div>
+    <div id="glow"></div>
+    <div id="glow-bounce"></div>
+    <div class="perspective">
+      <div id="leaves">
+        <svg style="width: 0; height: 0; position: absolute;">
+          <defs>
+            <filter id="wind" x="-20%" y="-20%" width="140%" height="140%">
+              <feTurbulence type="fractalNoise" numOctaves="2" seed="1">
+                <animate attributeName="baseFrequency" dur="16s" keyTimes="0;0.33;0.66;1"
+                  values="0.005 0.003;0.01 0.009;0.008 0.004;0.005 0.003" repeatCount="indefinite" />
+              </feTurbulence>
+              <feDisplacementMap in="SourceGraphic">
+                <animate attributeName="scale" dur="20s" keyTimes="0;0.25;0.5;0.75;1" values="45;55;75;55;45"
+                  repeatCount="indefinite" />
+              </feDisplacementMap>
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <div id="blinds">
+        <div class="shutters">
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
+          <div class="shutter"></div>
         </div>
+        <div class="vertical">
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
     </div>
+    <div id="progressive-blur">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
 
-    <script>
-        const body = document.body;
-        const themeToggle = document.getElementById('theme-toggle');
-        const userInput = document.getElementById('user-input');
-        const terminal = document.querySelector('.terminal');
+  <article>
+    <h1>brody berson</h1>
+    <p>east grand rapids, mi</p>
+    <pre><a href="mailto:hello@brodyberson.com">hello@brodyberson.com</a></pre>
+  </article>
 
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('light-mode');
-            body.classList.toggle('dark-mode');
-            themeToggle.textContent = body.classList.contains('light-mode') ? '☀️' : '🌙';
-        });
+  <!-- Theme Toggle Button -->
+  <button id="theme-toggle" class="theme-toggle">
+    <i class="fas fa-sun"></i>
+  </button>
 
-        // Focus the input when the page loads
-        window.addEventListener('load', () => {
-            userInput.focus();
-        });
-
-        // Keep focus on the input when clicking anywhere in the terminal
-        terminal.addEventListener('click', () => {
-            userInput.focus();
-        });
-
-        // Prevent the default behavior of the up and down arrow keys
-        userInput.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                e.preventDefault();
-            }
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                terminal.classList.add('wiggle');
-                setTimeout(() => {
-                    terminal.classList.remove('wiggle');
-                }, 300);
-                userInput.value = '';
-            }
-        });
-    </script>
+  <!-- Social Media Icons -->
+  <div class="social-icons">
+    <a href="https://github.com/mynamebrody" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+    <a href="https://www.linkedin.com/in/mynamebrody/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+    <a href="https://instagram.com/mynamebrody" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+    <a href="https://letterboxd.com/mynamebrody/" target="_blank" aria-label="Letterboxd"><i class="fab fa-letterboxd"></i></a>
+    <a href="https://www.threads.net/@mynamebrody" target="_blank" aria-label="Threads"><i class="fab fa-threads"></i></a>
+    <a href="https://bsky.app/profile/brody.bsky.social" target="_blank" aria-label="Bluesky"><i class="fab fa-bluesky"></i></a>
+    <a href="https://twitter.com/mynamebrody_" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+  </div>
 </body>
+
+<script src="./index.js"></script>
+
 </html>
