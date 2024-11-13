@@ -1,10 +1,26 @@
 article {
   margin: 0 auto;
   max-width: 800px;
-  padding: 40vh 0;
-
+  padding: 20vh 20px; /* Changed from 40vh 0 to add horizontal padding and reduce vertical on mobile */
   color: var(--dark);
   isolation: isolate;
+}
+
+/* Add responsive font sizes */
+article h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 1rem;
+}
+
+article p {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  margin-bottom: 1rem;
+}
+
+article pre {
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  white-space: pre-wrap; /* Allow wrapping for email text */
+  word-break: break-word;
 }
 
 article a {
@@ -266,4 +282,66 @@ body.dark {
   100% {
     transform: perspective(400px) rotateX(0deg) rotateY(0deg) scale(1);
   }
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: clamp(1.2rem, 4vw, 1.5rem); /* Responsive font size */
+  color: var(--night);
+  z-index: 1000;
+  transition: color 0.3s;
+  padding: 10px; /* Larger touch target */
+  touch-action: manipulation; /* Better touch handling */
+}
+
+.theme-toggle:hover {
+  color: var(--dusk);
+}
+
+.dark .theme-toggle {
+  color: var(--day);
+}
+
+.dark .theme-toggle:hover {
+  color: var(--morning);
+}
+
+/* Social Media Icons */
+.social-icons {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  justify-content: center;
+  gap: 15px;
+  z-index: 1000;
+  padding: 0 20px; /* Add padding on sides */
+  width: 100%;
+  max-width: 500px; /* Limit width on larger screens */
+}
+
+.social-icons a {
+  color: var(--night);
+  font-size: clamp(1rem, 4vw, 1.2rem); /* Responsive font size */
+  transition: color 0.3s;
+}
+
+.social-icons a:hover {
+  color: var(--dusk);
+}
+
+
+.dark .social-icons a {
+  color: var(--day);
+}
+
+.dark .social-icons a:hover {
+  color: var(--morning);
 }
