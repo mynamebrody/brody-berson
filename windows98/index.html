@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name - Windows 98 Experience</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/windows98.css">
+</head>
+<body>
+    <div class="desktop">
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <div class="icon" data-window="about">
+                <img src="img/mycomputer.svg" alt="My Computer">
+                <span>About Me</span>
+            </div>
+            <div class="icon" data-window="projects">
+                <img src="img/folder.svg" alt="Projects">
+                <span>Projects</span>
+            </div>
+            <div class="icon" data-window="contact">
+                <img src="img/notepad.svg" alt="Contact">
+                <span>Contact</span>
+            </div>
+            <div class="icon" data-window="resume">
+                <img src="img/wordpad.svg" alt="Resume">
+                <span>Resume</span>
+            </div>
+        </div>
+
+        <!-- Windows -->
+        <div class="windows">
+            <!-- About Window -->
+            <div id="about-window" class="window" data-window="about">
+                <div class="window-title">
+                    <div class="window-title-text">About Me</div>
+                    <div class="window-buttons">
+                        <button class="minimize">_</button>
+                        <button class="maximize">□</button>
+                        <button class="close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="my-computer-layout">
+                        <div class="my-computer-icon">
+                            <img src="img/mycomputer.svg" alt="My Computer">
+                        </div>
+                        <div class="my-computer-content">
+                            <h2>Hello, I'm Brody Berson</h2>
+                            <p>Welcome to my Windows 98-style personal website!</p>
+                            
+                            <div class="about-section">
+                                <h3>About Me</h3>
+                                <p>I'm a software engineer based in San Francisco with a passion for building innovative web applications and user experiences.</p>
+                                <p>When I'm not coding, you can find me hiking in the Bay Area, experimenting with new cooking recipes, or playing board games with friends.</p>
+                            </div>
+                            
+                            <div class="about-section">
+                                <h3>Technical Skills</h3>
+                                <ul>
+                                    <li>Frontend: JavaScript, React, TypeScript, HTML/CSS</li>
+                                    <li>Backend: Node.js, Python, Go</li>
+                                    <li>Cloud: AWS, GCP, CI/CD pipelines</li>
+                                    <li>Other: Docker, Kubernetes, GraphQL</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="about-section">
+                                <h3>Interests</h3>
+                                <ul>
+                                    <li>UI/UX Design</li>
+                                    <li>Open Source Software</li>
+                                    <li>Retro Computing</li>
+                                    <li>Artificial Intelligence</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="window-statusbar">
+                    <div class="status-text">My Computer</div>
+                </div>
+            </div>
+
+            <!-- Projects Window -->
+            <div id="projects-window" class="window" data-window="projects">
+                <div class="window-title">
+                    <div class="window-title-text">Projects</div>
+                    <div class="window-buttons">
+                        <button class="minimize">_</button>
+                        <button class="maximize">□</button>
+                        <button class="close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="folder-view">
+                        <div class="folder-header">
+                            <div class="folder-nav">
+                                <button class="folder-back disabled">&nbsp;&nbsp;&nbsp;Back</button>
+                                <button class="folder-up">&nbsp;&nbsp;&nbsp;Up</button>
+                            </div>
+                            <div class="folder-path">C:\Projects\</div>
+                        </div>
+                        
+                        <div class="folder-contents">
+                            <div class="folder-item project-folder" data-folder="webdev">
+                                <img src="img/folder.svg" alt="Folder">
+                                <span>Web Development</span>
+                            </div>
+                            <div class="folder-item project-folder" data-folder="mobile">
+                                <img src="img/folder.svg" alt="Folder">
+                                <span>Mobile Apps</span>
+                            </div>
+                            <div class="folder-item project-folder" data-folder="backend">
+                                <img src="img/folder.svg" alt="Folder">
+                                <span>Backend Services</span>
+                            </div>
+                            <div class="folder-item project-folder" data-folder="experiments">
+                                <img src="img/folder.svg" alt="Folder">
+                                <span>Experiments</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="window-statusbar">
+                    <div class="status-text">4 items</div>
+                </div>
+            </div>
+            
+            <!-- Web Development Projects Folder -->
+            <div id="webdev-projects-window" class="window project-subwindow" data-window="webdev-projects">
+                <div class="window-title">
+                    <div class="window-title-text">Web Development</div>
+                    <div class="window-buttons">
+                        <button class="minimize">_</button>
+                        <button class="maximize">□</button>
+                        <button class="close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="folder-view">
+                        <div class="folder-header">
+                            <div class="folder-nav">
+                                <button class="folder-back">&nbsp;&nbsp;&nbsp;Back</button>
+                                <button class="folder-up">&nbsp;&nbsp;&nbsp;Up</button>
+                            </div>
+                            <div class="folder-path">C:\Projects\Web Development\</div>
+                        </div>
+                        
+                        <div class="folder-contents">
+                            <div class="folder-item project-file">
+                                <img src="img/notepad.svg" alt="File">
+                                <span>Personal Portfolio</span>
+                            </div>
+                            <div class="folder-item project-file">
+                                <img src="img/notepad.svg" alt="File">
+                                <span>E-commerce Platform</span>
+                            </div>
+                            <div class="folder-item project-file">
+                                <img src="img/notepad.svg" alt="File">
+                                <span>Weather Dashboard</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="window-statusbar">
+                    <div class="status-text">3 items</div>
+                </div>
+            </div>
+            
+            <!-- Mobile Apps Projects Folder -->
+            <div id="mobile-projects-window" class="window project-subwindow" data-window="mobile-projects">
+                <div class="window-title">
+                    <div class="window-title-text">Mobile Apps</div>
+                    <div class="window-buttons">
+                        <button class="minimize">_</button>
+                        <button class="maximize">□</button>
+                        <button class="close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="folder-view">
+                        <div class="folder-header">
+                            <div class="folder-nav">
+                                <button class="folder-back">&nbsp;&nbsp;&nbsp;Back</button>
+                                <button class="folder-up">&nbsp;&nbsp;&nbsp;Up</button>
+                            </div>
+                            <div class="folder-path">C:\Projects\Mobile Apps\</div>
+                        </div>
+                        
+                        <div class="folder-contents">
+                            <div class="folder-item project-file">
+                                <img src="img/notepad.svg" alt="File">
+                                <span>Fitness Tracker</span>
+                            </div>
+                            <div class="folder-item project-file">
+                                <img src="img/notepad.svg" alt="File">
+                                <span>Recipe Finder</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="window-statusbar">
+                    <div class="status-text">2 items</div>
+                </div>
+            </div>
+            
+            <!-- Backend Projects Folder -->
+            <div id="backend-projects-window" class="window project-subwindow" data-window="backend-projects">
+                <div class="window-title">
+                    <div class="window-title-text">Backend Services</div>
+                    <div class="window-buttons">
+                        <button class="minimize">_</button>
+                        <button class="maximize">□</button>
+                        <button class="close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="folder-view">
+                        <div class="folder-header">
+                            <div class="folder-nav">
+                                <button class="folder-back">&nbsp;&nbsp;&nbsp;Back</button>
+                                <button class="folder-up">&nbsp;&nbsp;&nbsp;Up</button>
+                            </div>
+                            <div class="folder-path">C:\Projects\Backend Services\</div>
+                        </div>
+                        
+                        <div class="folder-contents">
+                            <div class="folder-item project-file">
+                                <img src="img/notepad.svg" alt="File">
+                                <span>API Gateway</span>
+                            </div>
+                            <div class="folder-item project-file">
+                                <img src="img/notepad.svg" alt="File">
+                                <span>Authentication Service</span>
+                            </div>
+                            <div class="folder-item project-file">
+                                <img src="img/notepad.svg" alt="File">
+                                <span>Database Connector</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="window-statusbar">
+                    <div class="status-text">3 items</div>
+                </div>
+            </div>
+            
+            <!-- Experiments Projects Folder -->
+            <div id="experiments-projects-window" class="window project-subwindow" data-window="experiments-projects">
+                <div class="window-title">
+                    <div class="window-title-text">Experiments</div>
+                    <div class="window-buttons">
+                        <button class="minimize">_</button>
+                        <button class="maximize">□</button>
+                        <button class="close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="folder-view">
+                        <div class="folder-header">
+                            <div class="folder-nav">
+                                <button class="folder-back">&nbsp;&nbsp;&nbsp;Back</button>
+                                <button class="folder-up">&nbsp;&nbsp;&nbsp;Up</button>
+                            </div>
+                            <div class="folder-path">C:\Projects\Experiments\</div>
+                        </div>
+                        
+                        <div class="folder-contents">
+                            <div class="folder-item project-file">
+                                <img src="img/notepad.svg" alt="File">
+                                <span>Machine Learning Demo</span>
+                            </div>
+                            <div class="folder-item project-file">
+                                <img src="img/notepad.svg" alt="File">
+                                <span>WebGL Animations</span>
+                            </div>
+                            <div class="folder-item project-file">
+                                <img src="img/notepad.svg" alt="File">
+                                <span>Voice Recognition</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="window-statusbar">
+                    <div class="status-text">3 items</div>
+                </div>
+            </div>
+
+            <!-- Contact Window (Outlook Express Style) -->
+            <div id="contact-window" class="window" data-window="contact">
+                <div class="window-title">
+                    <div class="window-title-text">New Message</div>
+                    <div class="window-buttons">
+                        <button class="minimize">_</button>
+                        <button class="maximize">□</button>
+                        <button class="close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="email-toolbar">
+                        <button class="email-button" id="email-send">Send</button>
+                        <button class="email-button" id="email-cut">Cut</button>
+                        <button class="email-button" id="email-copy">Copy</button>
+                        <button class="email-button" id="email-paste">Paste</button>
+                        <button class="email-button" id="email-undo">Undo</button>
+                        <button class="email-button" id="email-redo">Redo</button>
+                    </div>
+                    
+                    <div class="email-form">
+                        <div class="email-field">
+                            <label for="email-to">To:</label>
+                            <input type="text" id="email-to" value="hi@brodyberson.com" readonly>
+                        </div>
+                        
+                        <div class="email-field">
+                            <label for="email-subject">Subject:</label>
+                            <input type="text" id="email-subject" placeholder="Enter a subject">
+                        </div>
+                        
+                        <div class="email-body">
+                            <textarea id="email-message" placeholder="Type your message here..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="window-statusbar">
+                    <div class="status-text">Outlook Express</div>
+                </div>
+            </div>
+
+            <!-- Resume Window -->
+            <div id="resume-window" class="window" data-window="resume">
+                <div class="window-title">
+                    <div class="window-title-text">Resume</div>
+                    <div class="window-buttons">
+                        <button class="minimize">_</button>
+                        <button class="maximize">□</button>
+                        <button class="close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <h2>Resume</h2>
+                    <h3>Experience</h3>
+                    <div class="resume-item">
+                        <h4>Job Title, Company</h4>
+                        <p>Date - Date</p>
+                        <p>Description of your role and achievements.</p>
+                    </div>
+                    <h3>Education</h3>
+                    <div class="resume-item">
+                        <h4>Degree, Institution</h4>
+                        <p>Date - Date</p>
+                    </div>
+                    <h3>Skills</h3>
+                    <ul>
+                        <li>Skill 1</li>
+                        <li>Skill 2</li>
+                        <li>Skill 3</li>
+                    </ul>
+                </div>
+                <div class="window-statusbar">
+                    <div class="status-text">Ready</div>
+                </div>
+            </div>
+
+            <!-- Settings Window -->
+            <div id="settings-window" class="window" data-window="settings">
+                <div class="window-title">
+                    <div class="window-title-text">Settings</div>
+                    <div class="window-buttons">
+                        <button class="minimize">_</button>
+                        <button class="maximize">□</button>
+                        <button class="close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <h2>Display Settings</h2>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="sound-toggle"> Enable sound effects
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="dark-mode-toggle"> Dark mode
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label for="wallpaper-select">Wallpaper:</label>
+                        <select id="wallpaper-select">
+                            <option value="default">Default</option>
+                            <option value="clouds">Clouds</option>
+                            <option value="hills">Hills</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="window-statusbar">
+                    <div class="status-text">Ready</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Taskbar -->
+        <div class="taskbar">
+            <div class="start-button" id="start-button">
+                <img src="img/windows-logo.svg" alt="Start">
+                <span>Start</span>
+            </div>
+            <div class="taskbar-items">
+                <!-- Active windows will be shown here -->
+            </div>
+            <div class="system-tray">
+                <div class="tray-icon" id="regroup-windows" title="Regroup Windows">
+                    <img src="img/mycomputer.svg" alt="Regroup">
+                </div>
+                <div class="clock" id="clock">12:00 AM</div>
+            </div>
+        </div>
+
+        <!-- Start Menu -->
+        <div class="start-menu" id="start-menu">
+            <div class="start-header">
+                <div class="start-header-text">Windows 98</div>
+                <div class="start-header-vertical">Windows 98</div>
+            </div>
+            <div class="start-items">
+                <div class="start-item" data-window="about">
+                    <img src="img/mycomputer.svg" alt="About Me">
+                    <span>About Me</span>
+                </div>
+                <div class="start-item" data-window="projects">
+                    <img src="img/folder.svg" alt="Projects">
+                    <span>Projects</span>
+                </div>
+                <div class="start-item" data-window="contact">
+                    <img src="img/notepad.svg" alt="Contact">
+                    <span>Contact</span>
+                </div>
+                <div class="start-item" data-window="resume">
+                    <img src="img/wordpad.svg" alt="Resume">
+                    <span>Resume</span>
+                </div>
+                <div class="divider"></div>
+                <div class="start-item" data-window="settings">
+                    <img src="img/settings.svg" alt="Settings">
+                    <span>Settings</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html> 

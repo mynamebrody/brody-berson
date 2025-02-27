@@ -1,0 +1,193 @@
+/* Windows 98 Specific Styles */
+
+/* MS Sans Serif font (or fallback) */
+@font-face {
+    font-family: 'MS Sans Serif';
+    src: local('MS Sans Serif'), local('Microsoft Sans Serif'),
+         url('https://unpkg.com/98.css@0.1.17/dist/ms_sans_serif.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MS Sans Serif';
+    src: local('MS Sans Serif Bold'), local('Microsoft Sans Serif Bold'),
+         url('https://unpkg.com/98.css@0.1.17/dist/ms_sans_serif_bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+}
+
+/* Win98 Window Specific Styles */
+.window {
+    /* Classic raised border effect */
+    border-width: 3px;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px white;
+    border-radius: 0;
+}
+
+.window-title {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    height: 18px;
+    padding: 1px 2px;
+}
+
+.window-title-text {
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 0px;
+}
+
+/* 3D Button Effects */
+button, .start-button, .taskbar-item {
+    /* Classic raised buttons effect */
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+    text-align: center;
+    border-radius: 0;
+}
+
+button:active, .start-button:active, .taskbar-item.active {
+    /* Classic pressed effect */
+    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px grey;
+}
+
+/* Pixelated Images */
+img {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+/* Classic Desktop Background Pattern */
+.desktop {
+    background-image: url('../img/bg-pattern.svg');
+    background-repeat: repeat;
+}
+
+/* Windows 98 Start Menu */
+.start-menu {
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px white;
+}
+
+.start-header {
+    background: linear-gradient(90deg, #000080, #1084d0);
+}
+
+.start-header-text {
+    transform: rotate(-90deg);
+    transform-origin: bottom left;
+    position: absolute;
+    bottom: 40px;
+    left: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Classic Windows Scrollbar */
+::-webkit-scrollbar {
+    width: 16px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #c0c0c0;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #dfdfdf;
+    border: 1px solid #868a8e;
+    box-shadow: inset 1px 1px white, inset -1px -1px #0a0a0a;
+}
+
+::-webkit-scrollbar-button:vertical:start:increment,
+::-webkit-scrollbar-button:vertical:end:decrement {
+    display: none;
+}
+
+::-webkit-scrollbar-button {
+    background-color: #c0c0c0;
+    box-shadow: inset 1px 1px white, inset -1px -1px #0a0a0a;
+    display: block;
+    height: 16px;
+}
+
+::-webkit-scrollbar-button:vertical:decrement {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='16' height='16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M8 6l4 4H4l4-4z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+::-webkit-scrollbar-button:vertical:increment {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='16' height='16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M8 10l-4-4h8l-4 4z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+/* Classic form elements */
+input, select, textarea {
+    border-width: 2px;
+    border-style: solid;
+    border-color: #868a8e white white #868a8e;
+    background-color: white;
+    box-shadow: inset -1px -1px white, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px grey;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    background-color: white;
+    border: 2px solid;
+    border-color: #868a8e white white #868a8e;
+    width: 13px;
+    height: 13px;
+    position: relative;
+}
+
+input[type="checkbox"]:checked:after {
+    content: '\2713';
+    position: absolute;
+    top: -3px;
+    left: 0;
+    font-size: 11px;
+}
+
+/* Windows 98 Cursor Styles */
+.desktop {
+    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH5AcQFBUz9HwhWAAAAT9JREFUOMulkz1OAzEQhT91FEWUKeEIERGJhERLwRW4RcQVOAIFQomSLgWHgDtEorJlsUJCKcJ4KPaH7GYRDZb8N37z/OZpDf+Qdd3crtvrTAjhOAzD8f9iGs9nAUgp5d77PKWUATzQGGOFzk4OIQSI4KZSS0ppiTFWBcz9Y5Q/PrtWAHvXd4Jnjx3BFnANbIAfo9QN8GhQcZQvZsVq9WJk1iMMkK5Bts+Nd6s9UQ7UAVYyBNK56Nk5jQD3Nh5Xtk2CUo9xKC2TqCxBVCRkGpSRVALSCJXtyQeomE1YJQRpDJpX0mTEalddZEAMoAU8pZSyc+7DOfcO/BTSt4ErYA50wDuQGeQo7/1e13UG4yiG2DQh9MBcQhzHsVq5juMYpQkhhF7MpgKIcvnVO2Aay+qHOLcAzHT+BtE7IEh3QfX3AAAAAElFTkSuQmCC'), auto;
+}
+
+.window-title {
+    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH5AcQFBk1QJ8LwAAAADtJREFUOMtjYBjygBHKZ2BgYGD4//8/A5JYIIoAAwOEQdcMAsQYQrIrmDBZzsjAQD5gwhCh0DWMDsMKAADRgw27hJzUtgAAAABJRU5ErkJggg=='), move;
+}
+
+/* Windows 98 Selection style */
+::selection {
+    background-color: #000080;
+    color: white;
+}
+
+/* Error and Dialog Boxes */
+.error-box {
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    background-color: #c0c0c0;
+    padding: 10px;
+    max-width: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    text-align: center;
+}
+
+.error-box-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.error-box-buttons {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.error-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #ff0000;
+} 

@@ -1,0 +1,783 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    overflow: hidden;
+    height: 100vh;
+    background-color: #008080; /* Classic Windows 98 teal background */
+    font-size: 13px;
+    cursor: default; /* Ensures cursor is always visible */
+}
+
+.desktop {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Desktop Icons */
+.desktop-icons {
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 80px);
+    grid-gap: 20px;
+    grid-auto-rows: 90px;
+}
+
+.icon {
+    width: 80px;
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px;
+    text-align: center;
+    transition: box-shadow 0.05s ease-in-out;
+    z-index: 1;
+}
+
+.icon:hover {
+    background-color: rgba(0, 0, 128, 0.2);
+}
+
+.icon.selected {
+    background-color: rgba(0, 0, 128, 0.4);
+}
+
+.icon:active {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+}
+
+.icon img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+}
+
+.icon span {
+    color: white;
+    text-shadow: 1px 1px 1px black; /* Helps with readability on background */
+    font-size: 12px;
+}
+
+/* Windows */
+.window {
+    position: absolute;
+    background-color: #c0c0c0;
+    border: 3px solid; /* Slightly thicker border for Windows 98 look */
+    border-color: #ffffff #808080 #808080 #ffffff;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+    min-width: 300px;
+    min-height: 200px;
+    display: none; /* Hidden by default */
+    z-index: 10;
+    overflow: visible; /* Ensure borders are fully visible */
+    resize: none; /* Disable default browser resize */
+}
+
+.window.active {
+    z-index: 20;
+    display: flex !important;
+    flex-direction: column;
+}
+
+/* Inactive windows still show but with different title bar */
+.window:not(.active) {
+    border-color: #dfdfdf #808080 #808080 #dfdfdf; /* Lighter border for inactive */
+    
+    /* Ensure overall layout and structure remain identical */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Resize handles */
+.resize-handle {
+    position: absolute;
+    background-color: transparent;
+}
+
+.resize-handle-n {
+    top: -5px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    cursor: n-resize !important;
+}
+
+.resize-handle-e {
+    top: 0;
+    right: -5px;
+    width: 10px;
+    height: 100%;
+    cursor: e-resize !important;
+}
+
+.resize-handle-s {
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    cursor: s-resize !important;
+}
+
+.resize-handle-w {
+    top: 0;
+    left: -5px;
+    width: 10px;
+    height: 100%;
+    cursor: w-resize !important;
+}
+
+.resize-handle-ne {
+    top: -5px;
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    cursor: ne-resize !important;
+}
+
+.resize-handle-se {
+    bottom: -5px;
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    cursor: se-resize !important;
+}
+
+.resize-handle-sw {
+    bottom: -5px;
+    left: -5px;
+    width: 10px;
+    height: 10px;
+    cursor: sw-resize !important;
+}
+
+.resize-handle-nw {
+    top: -5px;
+    left: -5px;
+    width: 10px;
+    height: 10px;
+    cursor: nw-resize !important;
+}
+
+.window-title {
+    background-color: #000080; /* Navy blue - active color */
+    color: white;
+    padding: 3px 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    cursor: move !important; /* Force cursor to be visible */
+    height: 22px; /* Fixed height for consistency */
+}
+
+/* Inactive window title bar - ONLY change colors */
+.window:not(.active) .window-title {
+    background-color: #808080; /* Gray for inactive */
+    color: #c0c0c0; /* Light gray text for inactive */
+}
+
+.window-buttons {
+    display: flex;
+}
+
+.window-buttons button {
+    width: 16px;
+    height: 14px;
+    margin-left: 2px;
+    background-color: #c0c0c0;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    font-size: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    padding: 0;
+    line-height: 10px;
+}
+
+.window-buttons button:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding-top: 1px;
+    padding-left: 1px;
+}
+
+/* Preserve window buttons even on inactive windows */
+.window:not(.active) .window-buttons button {
+    background-color: #c0c0c0;
+    border-color: #dfdfdf #808080 #808080 #dfdfdf;
+}
+
+.window-content {
+    padding: 10px;
+    flex-grow: 1;
+    overflow: auto;
+    background-color: #c0c0c0;
+    border-left: 1px solid #ffffff;
+    border-top: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+}
+
+/* Windows 98 scrollbar styles */
+.window-content::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+.window-content::-webkit-scrollbar-track {
+    background: #c0c0c0;
+}
+
+.window-content::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.window-content::-webkit-scrollbar-button:vertical:start:increment,
+.window-content::-webkit-scrollbar-button:vertical:end:decrement {
+    display: none;
+}
+
+.window-content::-webkit-scrollbar-button {
+    display: block;
+    height: 16px;
+    width: 16px;
+    background-color: #c0c0c0;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.window-statusbar {
+    border-top: 1px solid #808080;
+    border-bottom: 1px solid #ffffff;
+    padding: 3px 5px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #c0c0c0;
+    height: 20px; /* Fixed height for consistency */
+}
+
+/* Taskbar */
+.taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background-color: #c0c0c0;
+    border-top: 2px solid #ffffff;
+    display: flex;
+    z-index: 100;
+}
+
+.start-button {
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    margin: 2px;
+    background-color: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.start-button:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.start-button img {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.taskbar-items {
+    flex-grow: 1;
+    display: flex;
+    padding: 3px;
+}
+
+.taskbar-item {
+    padding: 0 10px;
+    margin-right: 3px;
+    background-color: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    display: flex;
+    align-items: center;
+    min-width: 120px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.taskbar-item.active {
+    border-color: #808080 #ffffff #ffffff #808080;
+    background-color: #d3d3d3;
+}
+
+.taskbar-item img {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+.system-tray {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border-left: 1px solid #808080;
+    gap: 10px;
+}
+
+.clock {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.tray-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 2px;
+    border: 1px solid transparent;
+}
+
+.tray-icon:hover {
+    background-color: #d3d3d3;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.tray-icon:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding-top: 3px;
+    padding-left: 3px;
+}
+
+.tray-icon img {
+    width: 16px;
+    height: 16px;
+}
+
+/* Start Menu */
+.start-menu {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    width: 250px;
+    background-color: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    display: none;
+    z-index: 1000; /* Increased to ensure it's above all windows */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.start-menu.active {
+    display: block;
+}
+
+.start-header {
+    background-color: #000080; /* Navy blue */
+    color: white;
+    padding: 5px;
+    font-weight: bold;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    height: 30px; /* Fixed height for header */
+    box-sizing: border-box;
+    position: relative; /* For vertical text positioning */
+    width: 100%; /* Ensure full width */
+    overflow: hidden; /* Prevent text overflow */
+}
+
+.start-header-text {
+    margin-left: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.start-header-vertical {
+    position: absolute;
+    right: 3px;
+    bottom: 30px; /* Position at the bottom of the header and extend upward */
+    color: rgba(255, 255, 255, 0.2); /* Very subtle */
+    font-size: 70px;
+    font-weight: bold;
+    transform: rotate(-90deg);
+    transform-origin: bottom right;
+    white-space: nowrap;
+    opacity: 0.3;
+    letter-spacing: 1px;
+}
+
+.start-items {
+    padding: 5px 0;
+}
+
+.start-item {
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.start-item:hover {
+    background-color: #000080;
+    color: white;
+}
+
+.start-item img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.divider {
+    height: 1px;
+    background-color: #808080;
+    margin: 5px 0;
+}
+
+/* Window specific content styles */
+h2 {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+h3 {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+h4 {
+    margin-bottom: 2px;
+    font-size: 13px;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+ul {
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+.project-item, .resume-item {
+    margin-bottom: 15px;
+    padding: 5px;
+    border: 1px solid #808080;
+    background-color: #f0f0f0;
+}
+
+.setting-item {
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+/* About Window Styles */
+.my-computer-layout {
+    display: flex;
+    padding: 10px;
+}
+
+.my-computer-icon {
+    margin-right: 20px;
+}
+
+.my-computer-icon img {
+    width: 60px;
+    height: 60px;
+}
+
+.my-computer-content {
+    flex: 1;
+}
+
+.about-section {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #808080;
+    background-color: #f0f0f0;
+}
+
+/* Projects Folder Styles */
+.folder-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.folder-header {
+    display: flex;
+    padding: 5px;
+    border-bottom: 1px solid #808080;
+    margin-bottom: 10px;
+}
+
+.folder-nav {
+    display: flex;
+    margin-right: 10px;
+}
+
+.folder-nav button {
+    background-color: #c0c0c0;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 2px 8px;
+    margin-right: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    position: relative;
+}
+
+.folder-nav button::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 6px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+}
+
+.folder-back::before {
+    border-width: 4px 6px 4px 0;
+    border-color: transparent #000 transparent transparent;
+}
+
+.folder-up::before {
+    border-width: 0 4px 6px 4px;
+    border-color: transparent transparent #000 transparent;
+}
+
+.folder-nav button:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.folder-nav button.disabled {
+    color: #808080;
+    cursor: default;
+}
+
+.folder-path {
+    flex: 1;
+    background-color: white;
+    border: 1px solid #808080;
+    padding: 2px 5px;
+    font-size: 12px;
+}
+
+.folder-contents {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-gap: 15px;
+    padding: 10px;
+    overflow: auto;
+    flex: 1;
+}
+
+.folder-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    padding: 5px;
+    width: 100px;
+}
+
+.folder-item:hover {
+    background-color: rgba(0, 0, 128, 0.1);
+}
+
+.folder-item img {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 5px;
+}
+
+.folder-item span {
+    font-size: 12px;
+    word-break: break-word;
+}
+
+.project-subwindow {
+    display: none;  /* Hidden by default */
+}
+
+/* Email/Contact Form Styles */
+.email-toolbar {
+    display: flex;
+    padding: 5px;
+    border-bottom: 1px solid #808080;
+    margin-bottom: 10px;
+    overflow-x: auto;
+}
+
+.email-button {
+    background-color: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 2px 8px;
+    margin-right: 5px;
+    font-size: 12px;
+    cursor: pointer !important;
+    white-space: nowrap;
+    min-width: 60px;
+    text-align: center;
+    position: relative;
+}
+
+.email-button:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding-top: 3px;
+    padding-left: 9px;
+}
+
+.email-button:focus {
+    outline: 1px dotted #000;
+    outline-offset: -4px;
+}
+
+.email-form {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 35px);  /* Subtract toolbar height */
+}
+
+.email-field {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.email-field label {
+    width: 80px;
+    font-weight: bold;
+}
+
+.email-field input {
+    flex: 1;
+    padding: 3px;
+    border: 1px solid #808080;
+    background-color: white;
+}
+
+.email-field input[readonly] {
+    background-color: #f0f0f0;
+}
+
+.email-body {
+    flex: 1;
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.email-body textarea {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #808080;
+    resize: none;
+    font-family: 'MS Sans Serif', sans-serif;
+    font-size: 12px;
+}
+
+/* For Input Elements - Matching Win98 Style */
+input[type="checkbox"] {
+    appearance: none;
+    width: 13px;
+    height: 13px;
+    background-color: white;
+    border: 1px solid #808080;
+    position: relative;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked:after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 1px;
+    font-size: 12px;
+}
+
+select {
+    background-color: white;
+    border: 1px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding: 2px;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #000080;
+}
+
+.dark-mode .window {
+    background-color: #404040;
+    color: #e0e0e0;
+}
+
+.dark-mode .window-title {
+    background-color: #303030;
+}
+
+.dark-mode .window-content {
+    background-color: #505050;
+}
+
+/* General cursor styles to ensure visibility */
+.window, .window *, .taskbar, .taskbar *, .start-menu, .start-menu * {
+    cursor: default;
+}
+
+.window-title {
+    cursor: move !important;
+}
+
+.window-buttons button, .folder-nav button, .email-button, .taskbar-item {
+    cursor: pointer !important;
+}
+
+.icon, .folder-item, .start-item {
+    cursor: pointer !important;
+}
+
+input[type="text"], input[type="checkbox"], select, textarea {
+    cursor: text !important;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .desktop-icons {
+        grid-template-columns: repeat(auto-fill, 70px);
+    }
+    
+    .icon {
+        width: 70px;
+    }
+    
+    .window {
+        min-width: 250px;
+    }
+} 
