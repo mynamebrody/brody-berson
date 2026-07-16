@@ -4,10 +4,6 @@ import { McpCard } from "@/components/mcp-card";
 import { resume } from "@/content/resume";
 import { site, socialLinks } from "@/content/site";
 
-function dateRange(start: string, end: string) {
-  return end ? `${start} – ${end}` : `${start} →`;
-}
-
 export default function Home() {
   return (
     <>
@@ -26,18 +22,6 @@ export default function Home() {
             <Link href="/resume" className="text-ink-soft transition-colors hover:text-blue-ink">
               Resume
             </Link>
-            <a
-              href="https://github.com/mynamebrody"
-              className="text-ink-soft transition-colors hover:text-blue-ink"
-            >
-              GitHub
-            </a>
-            <a
-              href="https://www.linkedin.com/in/mynamebrody/"
-              className="text-ink-soft transition-colors hover:text-blue-ink"
-            >
-              LinkedIn
-            </a>
           </nav>
         </div>
       </header>
@@ -62,9 +46,8 @@ export default function Home() {
               Forward Deployed Engineer at{" "}
               <a href="https://ravenna.ai" className="marker font-medium text-ink">
                 Ravenna
-              </a>{" "}
-              <span className="whitespace-nowrap text-ink-faint">(starting August 2026)</span>.
-              Previously embedded on{" "}
+              </a>
+              . Previously embedded on{" "}
               <a href="https://zapier.com/mcp" className="marker font-medium text-ink">
                 Zapier&rsquo;s MCP team
               </a>{" "}
@@ -75,15 +58,14 @@ export default function Home() {
               className="fade-up mt-4 max-w-xl leading-relaxed text-ink-soft"
               style={{ animationDelay: "180ms" }}
             >
-              Off the clock I made{" "}
+              Off the clock it&rsquo;s home-server tinkering,{" "}
               <a
-                href="https://cinamini.app"
+                href="https://letterboxd.com/mynamebrody/"
                 className="font-medium text-blue-ink underline decoration-blue/40 underline-offset-4 hover:decoration-blue"
               >
-                cinamini
-              </a>
-              , a daily movie puzzle. The rest goes to home-server tinkering, Letterboxd logging,
-              and chasing down a good cocktail recipe.
+                Letterboxd
+              </a>{" "}
+              logging, and chasing down a good cocktail recipe.
             </p>
             <div className="fade-up mt-8 flex flex-wrap items-center gap-3" style={{ animationDelay: "240ms" }}>
               <Link
@@ -147,40 +129,16 @@ export default function Home() {
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
             A decade of APIs, integrations, and partners.
           </h2>
-          <ul className="mt-8">
-            {resume.work.map((job) => (
-              <li
-                key={`${job.company}-${job.startDate}`}
-                className="grid gap-1 border-b border-line py-4 sm:grid-cols-[1fr_auto] sm:items-baseline"
-              >
-                <div>
-                  <span className="font-medium">
-                    {job.url ? (
-                      <a href={job.url} className="transition-colors hover:text-blue-ink">
-                        {job.company}
-                      </a>
-                    ) : (
-                      job.company
-                    )}
-                  </span>
-                  <span className="text-ink-soft"> — {job.position}</span>
-                  {job.note ? (
-                    <span className="ml-2 rounded-full bg-butter-soft px-2 py-0.5 text-xs text-ink-soft">
-                      {job.note}
-                    </span>
-                  ) : null}
-                </div>
-                <span className="font-mono text-xs text-ink-faint">
-                  {dateRange(job.startDate, job.endDate)}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <p className="mt-4 max-w-2xl leading-relaxed text-ink-soft">
+            Three stints at Zapier, a cofounded startup that got acquired, enterprise solutions
+            engineering, and now forward-deployed at Ravenna. The full story — every role, every
+            bullet — lives on the resume.
+          </p>
           <Link
             href="/resume"
-            className="mt-6 inline-block font-medium text-blue-ink underline decoration-blue/40 underline-offset-4 hover:decoration-blue"
+            className="mt-6 inline-block rounded-lg bg-blue-deep px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-ink"
           >
-            Full resume →
+            View the full resume →
           </Link>
         </section>
 
@@ -197,7 +155,14 @@ export default function Home() {
                 className="flex flex-col rounded-xl border border-line bg-white/50 p-6 transition-colors hover:border-blue/50"
               >
                 <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="font-display text-xl font-semibold">{project.name}</h3>
+                  <h3 className="flex flex-wrap items-baseline gap-2 font-display text-xl font-semibold">
+                    {project.name}
+                    {project.tag ? (
+                      <span className="rounded-full bg-butter-soft px-2.5 py-0.5 font-sans text-xs font-normal text-ink-soft">
+                        {project.tag}
+                      </span>
+                    ) : null}
+                  </h3>
                   {project.year ? (
                     <span className="font-mono text-xs text-ink-faint">{project.year}</span>
                   ) : null}

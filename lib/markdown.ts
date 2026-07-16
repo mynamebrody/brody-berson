@@ -34,16 +34,16 @@ export function resumeMarkdown(): string {
   lines.push("## Projects", "");
   for (const project of resume.projects) {
     const year = project.year ? ` (${project.year})` : "";
+    const tag = project.tag ? ` — ${project.tag}` : "";
     const links = project.links.map((l) => `[${l.label}](${l.url})`).join(" · ");
-    lines.push(`### ${project.name}${year}`, "", project.description, "");
+    lines.push(`### ${project.name}${year}${tag}`, "", project.description, "");
     if (links) lines.push(links, "");
   }
 
   lines.push("## Education", "");
   for (const edu of resume.education) {
-    lines.push(
-      `- **${edu.institution}** — ${edu.studyType}, ${edu.area} (${edu.startDate} – ${edu.endDate})`
-    );
+    const name = edu.url ? `[${edu.institution}](${edu.url})` : edu.institution;
+    lines.push(`- **${name}** — ${edu.studyType}, ${edu.area} (${edu.startDate} – ${edu.endDate})`);
   }
 
   lines.push("", "## Skills", "", ...resume.skills.map((s) => `- ${s}`), "");
@@ -62,7 +62,7 @@ export function homeMarkdown(): string {
   return [
     `# ${site.name}`,
     "",
-    `${site.headline} (${site.headlineNote}) · ${site.location}`,
+    `${site.headline} · ${site.location}`,
     "",
     ...site.bio.flatMap((p) => [p, ""]),
     "## MCP server",
@@ -88,7 +88,7 @@ export function agentsMarkdown(): string {
   return [
     `# Agent guide — ${site.domain}`,
     "",
-    `You've reached the personal site of ${site.name} (${site.headline}, ${site.headlineNote}).`,
+    `You've reached the personal site of ${site.name} (${site.headline}).`,
     "This document is written for AI agents visiting the site — human-readable, structured for machine consumption.",
     "",
     "## MCP server",
@@ -140,7 +140,7 @@ export function llmsTxt(): string {
   return [
     `# ${site.name}`,
     "",
-    `> ${site.headline} (${site.headlineNote}). Previously embedded on Zapier's MCP team from its infancy, working with AI partners like OpenAI, Anthropic, Google, and Meta.`,
+    `> ${site.headline}. Previously embedded on Zapier's MCP team from its infancy, working with AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.`,
     "",
     "## Site",
     "",

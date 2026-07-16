@@ -15,11 +15,14 @@ export type EducationEntry = {
   studyType: string;
   startDate: string;
   endDate: string;
+  url?: string;
 };
 
 export type ProjectEntry = {
   name: string;
   year?: string;
+  /** Custom status badge, e.g. "Unmaintained", "Deprecated" */
+  tag?: string;
   description: string;
   links: { label: string; url: string }[];
 };
@@ -27,37 +30,35 @@ export type ProjectEntry = {
 export const resume = {
   basics: {
     name: "Brody Berson",
-    label: "Forward Deployed Engineer at Ravenna (starting August 2026)",
+    label: "Forward Deployed Engineer at Ravenna",
     tagline: "Product-focused hacker and leader.",
     email: "hello@brodyberson.com",
     url: "https://brodyberson.com",
     location: "East Grand Rapids, Michigan",
     summary:
-      "Solutions engineer working at the intersection of APIs, AI agents, and partnerships. Most recently embedded on Zapier's MCP team from its infancy, driving adoption with AI partners like OpenAI, Anthropic, Google, and Meta. Joining Ravenna as a Forward Deployed Engineer in August 2026.",
+      "Forward Deployed Engineer working at the intersection of APIs, AI agents, rapid prototyping, hands-on customer engineering, and partnerships — most recently at Ravenna, the agentic service desk for IT, HR, and Operations. Previously embedded on Zapier's MCP team from its infancy, driving adoption with AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.",
   },
   work: [
     {
       company: "Ravenna",
       position: "Forward Deployed Engineer",
       startDate: "Aug 2026",
-      endDate: "",
-      location: "Remote",
+      endDate: "Present",
       url: "https://ravenna.ai",
-      note: "Starting August 2026",
       highlights: [
-        "Joining Ravenna — the agentic service desk for IT, HR, and Operations that lives in Slack — to work hands-on with customers as a Forward Deployed Engineer.",
+        "Working hands-on with customers at Ravenna — the agentic service desk for IT, HR, and Operations that lives in Slack.",
       ],
     },
     {
       company: "Zapier",
       position: "Sr. Partner Solution Engineer, AI",
       startDate: "Feb 2024",
-      endDate: "Present",
-      location: "Remote — East Grand Rapids, MI",
+      endDate: "Jul 2026",
       url: "https://zapier.com",
       highlights: [
         "Embedded on Zapier's MCP team from its infancy, helping the product grow from early prototype to a core part of Zapier's AI platform.",
-        "Worked directly with AI partners — OpenAI, Anthropic, Google, Meta, and others — as their technical point of contact at Zapier.",
+        "Worked directly with AI partners — OpenAI, Anthropic, Google, Microsoft, Meta, and xAI — as their technical point of contact at Zapier.",
+        "Onboarded partners onto Zapier MCP and rapidly prototyped partner use cases with both MCP and the Zapier SDK.",
         "Drove two-way MCP ecosystem adoption: introduced partners to Zapier MCP, got Zapier's MCP server listed in partner marketplaces, and brought partners' MCP clients into Zapier's side.",
       ],
     },
@@ -66,12 +67,11 @@ export const resume = {
       position: "Lead Solutions Engineer",
       startDate: "May 2023",
       endDate: "Dec 2023",
-      location: "Remote",
+      url: "https://magic.link",
       highlights: [
         "Helped medium to large enterprise customers, mostly C-suite contacts, understand what is technically possible with Magic's products.",
-        "Understood user and partner technical requirements and communicated how Magic could solve their onboarding and checkout flow needs.",
-        "Maintained a deep understanding of the Magic SDK and how to integrate it into different languages and frameworks, such as React.js and Next.js.",
-        "Contributed technical content, proof of concepts, and demos showing customers how to implement specific use cases and best practices.",
+        "Translated user and partner technical requirements into solutions for their onboarding and checkout flow needs.",
+        "Maintained a deep understanding of the Magic SDK across languages and frameworks like React.js and Next.js, contributing technical content, proofs of concept, and demos.",
         "Worked closely with customer success to ensure customers onboarded, launched, and renewed successfully.",
       ],
     },
@@ -80,11 +80,11 @@ export const resume = {
       position: "Head of Product",
       startDate: "Dec 2022",
       endDate: "May 2023",
+      url: "https://www.businesswire.com/news/home/20230103005447/en/Tokens.coms-Metaverse-Subsidiary-Acquires-CocoNFT",
       highlights: [
         "Along with the CTO from cocoNFT, built out an entire Engineering and Product organization internally, working cross-functionally with Sales.",
         "Constructed a knowledge base of best practices, playbooks, and guides to keep the entire organization organized.",
         "Turned a consulting company into a technical product team with a multi-year roadmap in the Metaverse space and started executing on that strategy.",
-        "Trained 6 existing team members on product management tools like Linear, folding those practices into their day-to-day as they spun client projects up and down.",
       ],
     },
     {
@@ -92,13 +92,13 @@ export const resume = {
       position: "Cofounder & Chief Product Officer",
       startDate: "Mar 2021",
       endDate: "Dec 2022",
+      url: "http://coconft.com",
       note: "Acquired by Metaverse Group",
       highlights: [
         "Spearheaded the launch of cocoNFT, a web3 B2C product enabling millions of non-crypto users to create NFT digital collectibles from Instagram posts — propelling the company to an acquisition by Metaverse Group.",
         "Managed day-to-day operations and raised two rounds of pre-seed funding; interviewed for Y Combinator twice.",
         "Built and led a team of 12 employees, including a direct team of 4 engineers, fostering Agile methodologies to streamline operations.",
         "Conducted comprehensive user research with our Principal Designer, identifying market gaps and barriers for non-crypto users.",
-        "Helped negotiate the acquisition of cocoNFT by Metaverse Group.",
       ],
     },
     {
@@ -110,7 +110,7 @@ export const resume = {
       highlights: [
         "Worked directly with API partners and developers, helping them build in-depth Zapier integrations using the Developer Platform and Partner APIs.",
         "Created documentation, guides, and a developer-centric YouTube playlist detailing all of Zapier's embeddable options and complex integrations.",
-        "Implemented a streamlined process for the Partnerships team to field inbound leads, prioritizing where Solution Engineers could best fit in.",
+        "Hired as Zapier's first Partner Solutions Engineer and built out the function — including the process the Partnerships team used to field inbound leads and prioritize where Solution Engineers could best plug in.",
         "Worked cross-functionally with Engineering, Product, Partnerships, and the newly budding Sales organization to influence the product roadmap based on partner needs.",
       ],
     },
@@ -119,6 +119,7 @@ export const resume = {
       position: "Senior Technical Support Engineer",
       startDate: "Jun 2020",
       endDate: "Oct 2020",
+      url: "https://www.squarespace.com",
       highlights: [
         "Worked with developers and partners integrating with the growing number of Squarespace APIs, setting them up for success.",
         "Partnered with the API Development team to prioritize new endpoints based on what key stakeholders were requesting.",
@@ -144,6 +145,7 @@ export const resume = {
       startDate: "Jun 2015",
       endDate: "Nov 2016",
       location: "Boulder, CO",
+      url: "https://www.invoca.com",
       highlights: [
         "Led QA efforts at Invoca's Boulder office, regularly collaborating with remote co-workers around the world.",
         "Sole SQA engineer for the development team: wrote all automated end-to-end Capybara tests plus manual test plans across continuous development sprint cycles.",
@@ -155,6 +157,8 @@ export const resume = {
       position: "Software Quality Assurance Engineer",
       startDate: "Jul 2014",
       endDate: "May 2015",
+      location: "Chicago, IL",
+      url: "https://yello.co",
       note: "Formerly RECSOLU",
       highlights: [
         "Provided first-line application support to users and clients of Yello.",
@@ -171,11 +175,14 @@ export const resume = {
       studyType: "Bachelor of Science",
       startDate: "2010",
       endDate: "2014",
+      url: "https://www.gvsu.edu/",
     },
   ] satisfies EducationEntry[],
   projects: [
     {
       name: "cinamini",
+      year: "2026",
+      tag: "Unmaintained",
       description:
         "A daily movie puzzle site — guess the film from progressively easier clues, then come back tomorrow.",
       links: [{ label: "cinamini.app", url: "https://cinamini.app" }],
@@ -183,16 +190,28 @@ export const resume = {
     {
       name: "Doop Doop Bot",
       year: "2023",
+      tag: "Deprecated",
       description:
         "A TypeScript app wiring together Twitter, Discord, and Alchemy APIs to track Doodles 'dooplications' happening on the Ethereum blockchain in real time.",
-      links: [],
+      links: [
+        {
+          label: "GitHub",
+          url: "https://github.com/mynamebrody/doodles-ethereum-nft-sales-bot",
+        },
+      ],
     },
     {
       name: "Cocktail Database",
       year: "2022",
+      tag: "New version coming soon",
       description:
-        "After numerous attempts at Google Docs and Sheets, an Airtable that catalogs favorite recipes and an entire cocktail book collection.",
-      links: [],
+        "After numerous attempts at Google Docs and Sheets, an Airtable that catalogs favorite recipes and an entire cocktail book collection — with a new version in the works beyond Airtable.",
+      links: [
+        {
+          label: "Airtable",
+          url: "https://airtable.com/appf6w4DuaHnumI3U/shrTsXskos0QmZvT2",
+        },
+      ],
     },
     {
       name: "Pizza Dash",

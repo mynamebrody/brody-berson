@@ -25,7 +25,7 @@ const handler = createMcpHandler(
           [
             `This is the personal MCP server for ${site.name} (${site.url}).`,
             "",
-            `${site.headline} (${site.headlineNote}). ${site.bio[0]}`,
+            site.bio[0],
             "",
             "Available tools:",
             ...mcpTools.map((t) => `- ${t.name}: ${t.description}`),

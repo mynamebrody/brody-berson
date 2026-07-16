@@ -28,4 +28,4 @@ npm run pdf          # regenerate public/brody-berson-resume.pdf (needs a runnin
 
 After editing `content/resume.ts`, rerun `npm run pdf` (requires `npx playwright install chromium` once) and commit the regenerated PDF.
 
-Built with the help of [Cursor](https://cursor.com).
+Built with the help of [Claude](https://claude.ai).

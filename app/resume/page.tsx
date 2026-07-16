@@ -62,7 +62,16 @@ export default function ResumePage() {
                   <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
                     <h3 className="font-medium">
                       {job.position} <span className="text-ink-faint">·</span>{" "}
-                      {job.url ? <a href={job.url}>{job.company}</a> : job.company}
+                      {job.url ? (
+                        <a
+                          href={job.url}
+                          className="underline decoration-blue/30 underline-offset-4 transition-colors hover:text-blue-ink hover:decoration-blue print:no-underline"
+                        >
+                          {job.company}
+                        </a>
+                      ) : (
+                        job.company
+                      )}
                       {job.note ? (
                         <span className="ml-2 rounded-full bg-butter-soft px-2 py-0.5 align-middle text-xs font-normal text-ink-soft print:border print:border-line">
                           {job.note}
@@ -98,10 +107,15 @@ export default function ResumePage() {
             <div className="mt-4 space-y-4 print:space-y-2.5">
               {resume.projects.map((project) => (
                 <div key={project.name}>
-                  <div className="flex flex-wrap items-baseline gap-x-3">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                     <h3 className="font-medium">{project.name}</h3>
                     {project.year ? (
                       <span className="font-mono text-xs text-ink-faint">{project.year}</span>
+                    ) : null}
+                    {project.tag ? (
+                      <span className="rounded-full bg-butter-soft px-2 py-0.5 text-xs text-ink-soft print:border print:border-line">
+                        {project.tag}
+                      </span>
                     ) : null}
                     {project.links.map((link) => (
                       <a
@@ -127,7 +141,18 @@ export default function ResumePage() {
               </h2>
               {resume.education.map((edu) => (
                 <div key={edu.institution} className="mt-4">
-                  <h3 className="font-medium">{edu.institution}</h3>
+                  <h3 className="font-medium">
+                    {edu.url ? (
+                      <a
+                        href={edu.url}
+                        className="underline decoration-blue/30 underline-offset-4 transition-colors hover:text-blue-ink hover:decoration-blue print:no-underline"
+                      >
+                        {edu.institution}
+                      </a>
+                    ) : (
+                      edu.institution
+                    )}
+                  </h3>
                   <p className="mt-0.5 text-sm text-ink-soft">
                     {edu.studyType}, {edu.area}
                   </p>

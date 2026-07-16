@@ -8,12 +8,11 @@ export const site = {
   email: "hello@brodyberson.com",
   location: "East Grand Rapids, MI",
   headline: "Forward Deployed Engineer at Ravenna",
-  headlineNote: "starting August 2026",
   description:
     "Brody Berson — Forward Deployed Engineer at Ravenna. Previously embedded on Zapier's MCP team, working with AI partners like OpenAI, Anthropic, Google, and Meta. This site ships its own MCP server.",
   bio: [
-    "I'm a solutions engineer who lives where APIs, AI agents, and partnerships meet. I spent the last two-plus years at Zapier embedded on the MCP team from its infancy — watching the product grow up and introducing it to AI partners like OpenAI, Anthropic, Google, and Meta.",
-    "In August 2026 I'm joining Ravenna, the agentic service desk for IT, HR, and Ops teams that lives in Slack, as a Forward Deployed Engineer.",
+    "I'm a Forward Deployed Engineer at Ravenna — the agentic service desk for IT, HR, and Operations that lives in Slack — working where APIs, AI agents, rapid prototyping, and partnerships meet.",
+    "Previously I spent two-plus years at Zapier embedded on the MCP team from its infancy — watching the product grow up and introducing it to AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.",
     "Off the clock: I made cinamini, a daily movie puzzle. I tinker with home servers and smart homes, log everything on Letterboxd, and chase down good cocktail recipes.",
   ],
 } as const;
