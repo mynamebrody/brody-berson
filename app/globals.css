@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+:root {
+  /* Palette: warm paper, deep blue-slate ink, blue grey primary, morning butter accent */
+  --paper: #faf6ec;
+  --cream: #f4eedd;
+  --ink: #26344a;
+  --ink-soft: #4e5e77;
+  --ink-faint: #7e8ba0;
+  --blue: #7298c7;
+  --blue-deep: #45689c;
+  --blue-ink: #334f7c;
+  --butter: #f3d98f;
+  --butter-soft: #f9ecc8;
+  --line: #e7dfc8;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-blue: var(--blue);
+  --color-blue-deep: var(--blue-deep);
+  --color-blue-ink: var(--blue-ink);
+  --color-butter: var(--butter);
+  --color-butter-soft: var(--butter-soft);
+  --color-line: var(--line);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+::selection {
+  background: var(--butter);
+  color: var(--ink);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+/* Thin accent bar across the very top of the viewport */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--butter));
+  z-index: 50;
+  pointer-events: none;
+}
+
+/* Highlighter stroke behind the lower part of a word */
+.marker {
+  background-image: linear-gradient(
+    to top,
+    var(--butter) 0%,
+    var(--butter) 42%,
+    transparent 42%
+  );
+  padding: 0 0.12em;
+  margin: 0 -0.06em;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.21, 0.47, 0.32, 0.98) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+a,
+button {
+  outline-color: var(--blue-deep);
+}
+
+@page {
+  size: letter;
+  margin: 0.5in 0.55in;
+}
+
+@media print {
+  html {
+    font-size: 13px;
+  }
+  body {
+    background: #ffffff;
+    color: #1a2333;
+  }
+  body::before {
+    display: none;
+  }
+}

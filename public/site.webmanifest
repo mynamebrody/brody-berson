@@ -1,0 +1,11 @@
+{
+  "name": "Brody Berson",
+  "short_name": "Brody",
+  "icons": [
+    { "src": "/ico/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/ico/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#faf6ec",
+  "background_color": "#faf6ec",
+  "display": "standalone"
+}
