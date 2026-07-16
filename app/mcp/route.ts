@@ -103,7 +103,7 @@ const handler = createMcpHandler(
       version: "1.0.0",
     },
     capabilities: {},
-    instructions: `Personal MCP server for ${site.name} — query his resume, projects, and contact info. Call the "about" tool first for an overview.`,
+    instructions: `Personal MCP server for ${site.name}: query his resume, projects, and contact info. Call the "about" tool first for an overview.`,
   },
   {
     basePath: "",

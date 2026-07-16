@@ -36,7 +36,7 @@ export const resume = {
     url: "https://brodyberson.com",
     location: "East Grand Rapids, Michigan",
     summary:
-      "Forward Deployed Engineer working at the intersection of APIs, AI agents, rapid prototyping, hands-on customer engineering, and partnerships — currently at Ravenna, the agentic service desk for IT, HR, and Operations. Previously embedded on Zapier's MCP team from its infancy, driving adoption with AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.",
+      "Forward Deployed Engineer working across APIs, AI agents, rapid prototyping, hands-on customer engineering, and partnerships. Currently at Ravenna, the agentic service desk for IT, HR, and Ops. Previously embedded on Zapier's MCP team from its infancy, driving adoption with AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.",
   },
   work: [
     {
@@ -47,7 +47,7 @@ export const resume = {
       location: "Remote",
       url: "https://ravenna.ai",
       highlights: [
-        "Working hands-on with customers at Ravenna — the agentic service desk for IT, HR, and Operations that lives in Slack.",
+        "Working hands-on with customers at Ravenna (the agentic service desk for IT, HR, and Operations that lives in Slack).",
       ],
     },
     {
@@ -73,7 +73,7 @@ export const resume = {
       url: "https://magic.link",
       highlights: [
         "Helped medium to large enterprise customers, mostly C-suite contacts, understand what is technically possible with Magic's products.",
-        "Translated user and partner technical requirements into solutions for their onboarding and checkout flow needs.",
+        "Turned partner and user technical requirements into real solutions for their onboarding and checkout flows.",
         "Maintained a deep understanding of the Magic SDK across languages and frameworks like React.js and Next.js, contributing technical content, proofs of concept, and demos.",
         "Worked closely with customer success to ensure customers onboarded, launched, and renewed successfully.",
       ],
@@ -87,7 +87,7 @@ export const resume = {
       url: "https://www.businesswire.com/news/home/20230103005447/en/Tokens.coms-Metaverse-Subsidiary-Acquires-CocoNFT",
       highlights: [
         "Along with the CTO from cocoNFT, built out an entire Engineering and Product organization internally, working cross-functionally with Sales.",
-        "Constructed a knowledge base of best practices, playbooks, and guides to keep the entire organization organized.",
+        "Built a knowledge base of best practices, playbooks, and guides to keep the whole org organized.",
         "Turned a consulting company into a technical product team with a multi-year roadmap in the Metaverse space and started executing on that strategy.",
       ],
     },
@@ -100,10 +100,10 @@ export const resume = {
       url: "http://coconft.com",
       note: "Acquired by Metaverse Group",
       highlights: [
-        "Spearheaded the launch of cocoNFT, a web3 B2C product enabling millions of non-crypto users to create NFT digital collectibles from Instagram posts — propelling the company to an acquisition by Metaverse Group.",
+        "Led the launch of cocoNFT, a web3 B2C product that let millions of non-crypto users turn their Instagram posts into NFT digital collectibles, traction that led Metaverse Group to acquire the company.",
         "Managed day-to-day operations and raised two rounds of pre-seed funding; interviewed for Y Combinator twice.",
-        "Built and led a team of 12 employees, including a direct team of 4 engineers, fostering Agile methodologies to streamline operations.",
-        "Conducted comprehensive user research with our Principal Designer, identifying market gaps and barriers for non-crypto users.",
+        "Built and led a team of 12 employees, including a direct team of 4 engineers, running two-week sprints to keep the org moving.",
+        "Ran user research with our Principal Designer to find the gaps and barriers keeping non-crypto users from joining in.",
       ],
     },
     {
@@ -116,7 +116,7 @@ export const resume = {
       highlights: [
         "Worked directly with API partners and developers, helping them build in-depth Zapier integrations using the Developer Platform and Partner APIs.",
         "Created documentation, guides, and a developer-centric YouTube playlist detailing all of Zapier's embeddable options and complex integrations.",
-        "Hired as Zapier's first Partner Solutions Engineer and built out the function — including the process the Partnerships team used to field inbound leads and prioritize where Solution Engineers could best plug in.",
+        "Hired as Zapier's first Partner Solutions Engineer and built out the function, including the process the Partnerships team used to field inbound leads and prioritize where Solution Engineers could best plug in.",
         "Worked cross-functionally with Engineering, Product, Partnerships, and the newly budding Sales organization to influence the product roadmap based on partner needs.",
       ],
     },
@@ -141,7 +141,7 @@ export const resume = {
       location: "Remote",
       url: "https://zapier.com",
       highlights: [
-        "Joined as a very early employee as Zapier surpassed 2,000+ connected APIs, working with third-party developers to build and review new integrations.",
+        "Joined as a very early employee right as Zapier crossed 2,000+ connected APIs, working with third-party developers to build and review new integrations.",
         "Provided developers first-line support and actively reviewed and QA'd all new integrations submitted to go public on the platform.",
         "Grew into the Strategic Apps team, working with Partnerships to build brand-new Node.js integrations strategic to the platform.",
         "Maintained and deployed bug fixes for legacy integrations developed in Python.",
@@ -192,7 +192,7 @@ export const resume = {
       year: "2026",
       tag: "Unmaintained",
       description:
-        "A daily movie puzzle site — guess the film from progressively easier clues, then come back tomorrow.",
+        "A daily movie puzzle site: guess the film from progressively easier clues, then come back tomorrow.",
       links: [{ label: "cinamini.app", url: "https://cinamini.app" }],
     },
     {
@@ -213,7 +213,7 @@ export const resume = {
       year: "2022",
       tag: "New version coming soon",
       description:
-        "After numerous attempts at Google Docs and Sheets, an Airtable that catalogs favorite recipes and an entire cocktail book collection — with a new version in the works beyond Airtable.",
+        "After numerous attempts at Google Docs and Sheets, an Airtable that catalogs favorite recipes and an entire cocktail book collection, with a new version in the works beyond Airtable.",
       links: [
         {
           label: "Airtable",

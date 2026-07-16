@@ -108,7 +108,7 @@ export default function Home() {
           </h2>
           <p className="mt-4 max-w-2xl leading-relaxed text-ink-soft">
             My personal site ships its own Model Context Protocol server. Add it to Claude
-            Desktop, Cursor, or any MCP client — your AI can query my resume, projects, and
+            Desktop, Cursor, or any MCP client, and your AI can query my resume, projects, and
             contact info directly. No API keys, no auth, just the URL.
           </p>
           <div className="mt-8">
@@ -127,12 +127,12 @@ export default function Home() {
             Where I&rsquo;ve been
           </p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-            A decade of APIs, integrations, and partners.
+            A decade of <span className="marker">APIs</span>, integrations, and partners.
           </h2>
           <p className="mt-4 max-w-2xl leading-relaxed text-ink-soft">
             Three stints at Zapier, a cofounded startup that got acquired, enterprise solutions
-            engineering, and now forward-deployed at Ravenna. The full story — every role, every
-            bullet — lives on the resume.
+            engineering, and now forward-deployed at Ravenna. The full story (every role, every
+            bullet) lives on the resume.
           </p>
           <Link
             href="/resume"
@@ -146,7 +146,7 @@ export default function Home() {
         <section className="border-t border-line pt-16 pb-24">
           <p className="font-mono text-xs tracking-widest text-ink-faint uppercase">Side quests</p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-            Things built for the fun of it.
+            Things built for the <span className="marker">fun</span> of it.
           </h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {resume.projects.map((project) => (

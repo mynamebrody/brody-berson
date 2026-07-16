@@ -1,4 +1,4 @@
-# AGENTS.md — contributing to brodyberson.com
+# AGENTS.md: contributing to brodyberson.com
 
 This repo is the personal site for Brody Berson ([brodyberson.com](https://brodyberson.com)). It is also a native [Model Context Protocol](https://modelcontextprotocol.io) server: clients can connect to `/mcp` (no auth) and query resume, projects, and contact info.
 
@@ -73,7 +73,7 @@ One-time for PDF generation: `npx playwright install chromium`.
 ### MCP tools
 
 - Register tools in `app/mcp/route.ts`.
-- Keep `mcpTools` in `content/site.ts` in sync — it feeds the homepage, public AGENTS.md, and the server card. Comments in `site.ts` call this out explicitly.
+- Keep `mcpTools` in `content/site.ts` in sync. It feeds the homepage, public AGENTS.md, and the server card. Comments in `site.ts` call this out explicitly.
 - Prefer returning structured JSON from tools (or short plain text for `about`). Reuse `resume`, `site`, `socialLinks`, and `resumeMarkdown()` rather than duplicating data.
 - After MCP changes, run `npm run smoke` against a local server.
 
@@ -85,11 +85,11 @@ One-time for PDF generation: `npx playwright install chromium`.
 
 ### Discovery / agent surfaces
 
-When adding a new public surface for agents or crawlers, wire it through `content/` + `lib/markdown.ts` (or the well-known route) so humans, MCP, and markdown stay aligned. Update `llmsTxt()` / `agentsMarkdown()` / `mcpTools` as needed.
+When adding a new public surface for agents or crawlers, wire it through `content/` + `lib/markdown.ts` (or the well-known route) so humans, MCP, and markdown all match. Update `llmsTxt()` / `agentsMarkdown()` / `mcpTools` as needed.
 
 ### What not to do
 
-- Do not put secrets or auth on the MCP endpoint — it is intentionally public and read-only.
+- Do not put secrets or auth on the MCP endpoint. It's intentionally public and read-only.
 - Do not edit generated visitor docs as static files under `app/`; they are route handlers that call builders in `lib/markdown.ts`.
 - Do not skip regenerating the PDF after resume content changes.
 

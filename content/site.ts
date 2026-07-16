@@ -9,11 +9,11 @@ export const site = {
   location: "East Grand Rapids, MI",
   headline: "Forward Deployed Engineer at Ravenna",
   description:
-    "Brody Berson — Forward Deployed Engineer at Ravenna. Previously embedded on Zapier's MCP team, working with AI partners like OpenAI, Anthropic, Google, and Meta. This site ships its own MCP server.",
+    "Brody Berson: Forward Deployed Engineer at Ravenna. Previously embedded on Zapier's MCP team, working with AI partners like OpenAI, Anthropic, Google, and Meta. This site ships its own MCP server.",
   bio: [
-    "I'm a Forward Deployed Engineer at Ravenna — the agentic service desk for IT, HR, and Operations that lives in Slack — working where APIs, AI agents, rapid prototyping, and partnerships meet.",
-    "Previously I spent two-plus years at Zapier embedded on the MCP team from its infancy — watching the product grow up and introducing it to AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.",
-    "Off the clock: I made cinamini, a daily movie puzzle. I tinker with home servers and smart homes, log everything on Letterboxd, and chase down good cocktail recipes.",
+    "I'm a Forward Deployed Engineer at Ravenna (the agentic service desk for IT, HR, and Operations that lives in Slack). My day-to-day is APIs, AI agents, rapid prototyping, and partnerships.",
+    "Previously I spent two-plus years at Zapier embedded on the MCP team from its infancy, watching the product grow up and introducing it to AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.",
+    "Off the clock: I made cinamini, a daily movie puzzle. I tinker with home servers and home automation, log everything on Letterboxd, and chase down good cocktail recipes.",
   ],
 } as const;
 
@@ -37,13 +37,11 @@ export const linkHub = {
     "Forward Deployed Engineer at Ravenna.",
     "AI agents, home servers, movies, and cocktails.",
   ],
-  socialLabels: ["Twitter", "Instagram", "YouTube", "TikTok"],
+  socialLabels: ["Threads", "Instagram", "Letterboxd", "LinkedIn", "Twitter"],
   primaryLinks: [
     { label: "Visit brodyberson.com", url: site.url },
-    { label: "View my résumé", url: "/resume" },
-    { label: "Play cinamini", url: "https://cinamini.app" },
+    { label: "Listen to Split Reels", url: "https://www.splitreels.com/" },
     { label: "Explore my GitHub", url: "https://github.com/mynamebrody" },
-    { label: "See my Letterboxd", url: "https://letterboxd.com/mynamebrody/" },
   ],
 } as const;
 

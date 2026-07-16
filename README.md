@@ -1,6 +1,6 @@
 # brodyberson.com
 
-Personal site for [Brody Berson](https://brodyberson.com) — and a native [Model Context Protocol](https://modelcontextprotocol.io) server.
+Personal site for [Brody Berson](https://brodyberson.com), and a native [Model Context Protocol](https://modelcontextprotocol.io) server.
 
 Add `https://brodyberson.com/mcp` to Claude Desktop, Cursor, or any MCP client and your AI can query my resume, projects, and contact info directly. No auth, just the URL.
 
@@ -8,14 +8,14 @@ Add `https://brodyberson.com/mcp` to Claude Desktop, Cursor, or any MCP client a
 
 - [Next.js](https://nextjs.org) (App Router) + TypeScript + Tailwind CSS v4, deployed on Vercel
 - MCP server via [`mcp-handler`](https://github.com/vercel/mcp-handler) (streamable HTTP) at [`app/mcp/route.ts`](app/mcp/route.ts)
-- All content — pages, MCP tools, discovery files — renders from one source: [`content/resume.ts`](content/resume.ts) and [`content/site.ts`](content/site.ts)
+- All content (pages, MCP tools, discovery files) renders from one source: [`content/resume.ts`](content/resume.ts) and [`content/site.ts`](content/site.ts)
 
 ## For agents
 
-- [`/AGENTS.md`](https://brodyberson.com/AGENTS.md) — agent guide
-- [`/llms.txt`](https://brodyberson.com/llms.txt) — language-model index
-- [`/.well-known/mcp.json`](https://brodyberson.com/.well-known/mcp.json) — MCP server card
-- [`/index.md`](https://brodyberson.com/index.md) + [`/resume.md`](https://brodyberson.com/resume.md) — markdown mirrors
+- [`/AGENTS.md`](https://brodyberson.com/AGENTS.md): agent guide
+- [`/llms.txt`](https://brodyberson.com/llms.txt): language-model index
+- [`/.well-known/mcp.json`](https://brodyberson.com/.well-known/mcp.json): MCP server card
+- [`/index.md`](https://brodyberson.com/index.md) + [`/resume.md`](https://brodyberson.com/resume.md): markdown mirrors
 
 ## Development
 

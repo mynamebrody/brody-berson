@@ -7,7 +7,7 @@ function dateRange(start: string, end: string) {
 
 export function resumeMarkdown(): string {
   const lines: string[] = [
-    `# ${resume.basics.name} — Resume`,
+    `# ${resume.basics.name}: Resume`,
     "",
     `${resume.basics.label}`,
     "",
@@ -34,7 +34,7 @@ export function resumeMarkdown(): string {
   lines.push("## Projects", "");
   for (const project of resume.projects) {
     const year = project.year ? ` (${project.year})` : "";
-    const tag = project.tag ? ` — ${project.tag}` : "";
+    const tag = project.tag ? `, ${project.tag}` : "";
     const links = project.links.map((l) => `[${l.label}](${l.url})`).join(" · ");
     lines.push(`### ${project.name}${year}${tag}`, "", project.description, "");
     if (links) lines.push(links, "");
@@ -43,7 +43,7 @@ export function resumeMarkdown(): string {
   lines.push("## Education", "");
   for (const edu of resume.education) {
     const name = edu.url ? `[${edu.institution}](${edu.url})` : edu.institution;
-    lines.push(`- **${name}** — ${edu.studyType}, ${edu.area} (${edu.startDate} – ${edu.endDate})`);
+    lines.push(`- **${name}**: ${edu.studyType}, ${edu.area} (${edu.startDate} – ${edu.endDate})`);
   }
 
   lines.push("", "## Skills", "", ...resume.skills.map((s) => `- ${s}`), "");
@@ -69,7 +69,7 @@ export function homeMarkdown(): string {
     "",
     `This site ships a Model Context Protocol server over streamable HTTP: ${site.mcpUrl}`,
     "",
-    ...mcpTools.map((t) => `- \`${t.name}\` — ${t.description}`),
+    ...mcpTools.map((t) => `- \`${t.name}\`: ${t.description}`),
     "",
     "## Pages",
     "",
@@ -86,10 +86,10 @@ export function homeMarkdown(): string {
 
 export function agentsMarkdown(): string {
   return [
-    `# Agent guide — ${site.domain}`,
+    `# Agent guide: ${site.domain}`,
     "",
     `You've reached the personal site of ${site.name} (${site.headline}).`,
-    "This document is written for AI agents visiting the site — human-readable, structured for machine consumption.",
+    "This page is for AI agents visiting the site: plain markdown a human could read too, but built so a model can parse it fast.",
     "",
     "## MCP server",
     "",
@@ -97,7 +97,7 @@ export function agentsMarkdown(): string {
     "",
     "No authentication required. Available tools:",
     "",
-    ...mcpTools.map((t) => `- \`${t.name}\` — ${t.description}`),
+    ...mcpTools.map((t) => `- \`${t.name}\`: ${t.description}`),
     "",
     `Server card: ${site.url}/.well-known/mcp.json`,
     "",
@@ -115,16 +115,16 @@ export function agentsMarkdown(): string {
     "",
     "Key pages and their machine-readable mirrors:",
     "",
-    `- ${site.url}/index.md — home`,
-    `- ${site.url}/resume.md — resume`,
-    `- ${site.url}/links — link hub (HTML, excluded from search indexing)`,
+    `- ${site.url}/index.md: home`,
+    `- ${site.url}/resume.md: resume`,
+    `- ${site.url}/links: link hub (HTML, excluded from search indexing)`,
     "",
     "## Discovery files",
     "",
-    `- ${site.url}/llms.txt — index for language models`,
-    `- ${site.url}/sitemap.xml — sitemap`,
-    `- ${site.url}/robots.txt — crawler directives`,
-    `- ${site.url}/.well-known/mcp.json — MCP server card`,
+    `- ${site.url}/llms.txt: index for language models`,
+    `- ${site.url}/sitemap.xml: sitemap`,
+    `- ${site.url}/robots.txt: crawler directives`,
+    `- ${site.url}/.well-known/mcp.json: MCP server card`,
     "",
     "## About Brody",
     "",
@@ -151,10 +151,10 @@ export function llmsTxt(): string {
     "",
     "## Machine-readable",
     "",
-    `- ${site.mcpUrl} — MCP server (streamable HTTP, no auth). Tools: ${mcpTools.map((t) => t.name).join(", ")}.`,
-    `- ${site.url}/.well-known/mcp.json — MCP server card`,
-    `- ${site.url}/AGENTS.md — agent-facing guide`,
-    `- ${site.url}/sitemap.xml — sitemap`,
+    `- ${site.mcpUrl}: MCP server (streamable HTTP, no auth). Tools: ${mcpTools.map((t) => t.name).join(", ")}.`,
+    `- ${site.url}/.well-known/mcp.json: MCP server card`,
+    `- ${site.url}/AGENTS.md: agent-facing guide`,
+    `- ${site.url}/sitemap.xml: sitemap`,
     "",
     "## Contact",
     "",

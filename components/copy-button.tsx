@@ -25,7 +25,7 @@ export function CopyButton({
       if (timeout.current) clearTimeout(timeout.current);
       timeout.current = setTimeout(() => setCopied(false), 1600);
     } catch {
-      // Clipboard unavailable (e.g. insecure context) — nothing to do
+      // Clipboard unavailable (e.g. insecure context), nothing to do
     }
   }
 

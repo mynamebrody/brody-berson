@@ -5,7 +5,7 @@ import { resume } from "@/content/resume";
 export const metadata: Metadata = {
   title: "Resume",
   description:
-    "Resume of Brody Berson — Forward Deployed Engineer at Ravenna, previously Sr. Partner Solution Engineer (AI) on Zapier's MCP team.",
+    "Resume of Brody Berson: Forward Deployed Engineer at Ravenna, previously Sr. Partner Solution Engineer (AI) on Zapier's MCP team.",
 };
 
 function dateRange(start: string, end: string) {
