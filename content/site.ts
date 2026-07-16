@@ -32,6 +32,21 @@ export const socialLinks: SocialLink[] = [
   { label: "Twitter", url: "https://twitter.com/mynamebrody_" },
 ];
 
+export const linkHub = {
+  bio: [
+    "Forward Deployed Engineer at Ravenna.",
+    "AI agents, home servers, movies, and cocktails.",
+  ],
+  socialLabels: ["Twitter", "Instagram", "YouTube", "TikTok"],
+  primaryLinks: [
+    { label: "Visit brodyberson.com", url: site.url },
+    { label: "View my résumé", url: "/resume" },
+    { label: "Play cinamini", url: "https://cinamini.app" },
+    { label: "Explore my GitHub", url: "https://github.com/mynamebrody" },
+    { label: "See my Letterboxd", url: "https://letterboxd.com/mynamebrody/" },
+  ],
+} as const;
+
 export type McpToolInfo = {
   name: string;
   description: string;
