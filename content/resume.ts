@@ -36,7 +36,7 @@ export const resume = {
     url: "https://brodyberson.com",
     location: "East Grand Rapids, Michigan",
     summary:
-      "Forward Deployed Engineer working at the intersection of APIs, AI agents, rapid prototyping, hands-on customer engineering, and partnerships — most recently at Ravenna, the agentic service desk for IT, HR, and Operations. Previously embedded on Zapier's MCP team from its infancy, driving adoption with AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.",
+      "Forward Deployed Engineer working at the intersection of APIs, AI agents, rapid prototyping, hands-on customer engineering, and partnerships — currently at Ravenna, the agentic service desk for IT, HR, and Operations. Previously embedded on Zapier's MCP team from its infancy, driving adoption with AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.",
   },
   work: [
     {
@@ -44,6 +44,7 @@ export const resume = {
       position: "Forward Deployed Engineer",
       startDate: "Aug 2026",
       endDate: "Present",
+      location: "Remote",
       url: "https://ravenna.ai",
       highlights: [
         "Working hands-on with customers at Ravenna — the agentic service desk for IT, HR, and Operations that lives in Slack.",
@@ -54,10 +55,11 @@ export const resume = {
       position: "Sr. Partner Solution Engineer, AI",
       startDate: "Feb 2024",
       endDate: "Jul 2026",
+      location: "Remote",
       url: "https://zapier.com",
       highlights: [
         "Embedded on Zapier's MCP team from its infancy, helping the product grow from early prototype to a core part of Zapier's AI platform.",
-        "Worked directly with AI partners — OpenAI, Anthropic, Google, Microsoft, Meta, and xAI — as their technical point of contact at Zapier.",
+        "Worked directly with AI partners such as OpenAI, Anthropic, Google, Microsoft, Meta, xAI, among others, as their technical point of contact at Zapier.",
         "Onboarded partners onto Zapier MCP and rapidly prototyped partner use cases with both MCP and the Zapier SDK.",
         "Drove two-way MCP ecosystem adoption: introduced partners to Zapier MCP, got Zapier's MCP server listed in partner marketplaces, and brought partners' MCP clients into Zapier's side.",
       ],
@@ -67,6 +69,7 @@ export const resume = {
       position: "Lead Solutions Engineer",
       startDate: "May 2023",
       endDate: "Dec 2023",
+      location: "Remote",
       url: "https://magic.link",
       highlights: [
         "Helped medium to large enterprise customers, mostly C-suite contacts, understand what is technically possible with Magic's products.",
@@ -80,6 +83,7 @@ export const resume = {
       position: "Head of Product",
       startDate: "Dec 2022",
       endDate: "May 2023",
+      location: "Remote",
       url: "https://www.businesswire.com/news/home/20230103005447/en/Tokens.coms-Metaverse-Subsidiary-Acquires-CocoNFT",
       highlights: [
         "Along with the CTO from cocoNFT, built out an entire Engineering and Product organization internally, working cross-functionally with Sales.",
@@ -92,6 +96,7 @@ export const resume = {
       position: "Cofounder & Chief Product Officer",
       startDate: "Mar 2021",
       endDate: "Dec 2022",
+      location: "Remote",
       url: "http://coconft.com",
       note: "Acquired by Metaverse Group",
       highlights: [
@@ -106,6 +111,7 @@ export const resume = {
       position: "Lead Solutions Engineer",
       startDate: "Oct 2020",
       endDate: "Feb 2022",
+      location: "Remote",
       url: "https://zapier.com",
       highlights: [
         "Worked directly with API partners and developers, helping them build in-depth Zapier integrations using the Developer Platform and Partner APIs.",
@@ -119,6 +125,7 @@ export const resume = {
       position: "Senior Technical Support Engineer",
       startDate: "Jun 2020",
       endDate: "Oct 2020",
+      location: "Remote",
       url: "https://www.squarespace.com",
       highlights: [
         "Worked with developers and partners integrating with the growing number of Squarespace APIs, setting them up for success.",
@@ -131,6 +138,7 @@ export const resume = {
       position: "Engineer, App Integrations",
       startDate: "Nov 2016",
       endDate: "Jun 2020",
+      location: "Remote",
       url: "https://zapier.com",
       highlights: [
         "Joined as a very early employee as Zapier surpassed 2,000+ connected APIs, working with third-party developers to build and review new integrations.",
