@@ -13,6 +13,7 @@
   --hub-focus: #334f7c;
   --hub-primary-text: #ffffff;
 
+  position: relative;
   display: grid;
   min-height: 100svh;
   width: 100%;
@@ -167,25 +168,25 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .page {
-    --hub-bg: #111a2a;
-    --hub-cream: #1a2740;
-    --hub-ink: #f8f1e4;
-    --hub-ink-soft: #bdc8da;
-    --hub-line: #2c3d5c;
-    --hub-blue-deep: #45689c;
-    --hub-blue-ink: #7298c7;
-    --hub-blue: #7298c7;
-    --hub-butter: rgba(243, 217, 143, 0.45);
-    --hub-butter-soft: rgba(243, 217, 143, 0.12);
-    --hub-shadow: rgba(2, 8, 18, 0.4);
-    --hub-focus: #f3d98f;
-  }
+/* Dark palette follows the site-wide theme set on <html data-theme>
+   (system preference by default, manual override via the theme toggle). */
+:global(html[data-theme="dark"]) .page {
+  --hub-bg: #111a2a;
+  --hub-cream: #1a2740;
+  --hub-ink: #f8f1e4;
+  --hub-ink-soft: #bdc8da;
+  --hub-line: #2c3d5c;
+  --hub-blue-deep: #45689c;
+  --hub-blue-ink: #7298c7;
+  --hub-blue: #7298c7;
+  --hub-butter: rgba(243, 217, 143, 0.45);
+  --hub-butter-soft: rgba(243, 217, 143, 0.12);
+  --hub-shadow: rgba(2, 8, 18, 0.4);
+  --hub-focus: #f3d98f;
+}
 
-  .linkButtonPrimary:hover {
-    color: #ffffff;
-  }
+:global(html[data-theme="dark"]) .linkButtonPrimary:hover {
+  color: #ffffff;
 }
 
 @media (max-width: 24rem) {

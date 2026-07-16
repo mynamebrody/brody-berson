@@ -43,7 +43,8 @@ const tabs: ConnectTab[] = [
 
 export function McpCard() {
   return (
-    <div className="overflow-hidden rounded-2xl bg-ink text-paper shadow-[0_24px_60px_-24px_rgba(38,52,74,0.45)]">
+    // light-tokens pins the palette so this stays a dark navy card in both themes
+    <div className="light-tokens overflow-hidden rounded-2xl bg-ink text-paper shadow-[0_24px_60px_-24px_rgba(38,52,74,0.45)]">
       <div className="flex items-center justify-between gap-4 border-b border-white/10 px-6 py-4 sm:px-8">
         <div className="flex items-center gap-2.5">
           <span className="relative flex size-2.5">

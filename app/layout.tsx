@@ -52,6 +52,23 @@ export const metadata: Metadata = {
   },
 };
 
+// Runs before first paint so the page never flashes the wrong theme.
+// Reads the manual override from localStorage, falls back to system preference,
+// and keeps following the system when no override is set.
+const themeInitScript = `(function () {
+  try {
+    var stored = localStorage.getItem("theme");
+    var media = window.matchMedia("(prefers-color-scheme: dark)");
+    var theme = stored === "light" || stored === "dark" ? stored : (media.matches ? "dark" : "light");
+    document.documentElement.dataset.theme = theme;
+    media.addEventListener("change", function (event) {
+      if (!localStorage.getItem("theme")) {
+        document.documentElement.dataset.theme = event.matches ? "dark" : "light";
+      }
+    });
+  } catch (e) {}
+})();`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -60,8 +77,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
         <Script

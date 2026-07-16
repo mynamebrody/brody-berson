@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { McpCard } from "@/components/mcp-card";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { resume } from "@/content/resume";
 import { site, socialLinks } from "@/content/site";
 
@@ -22,6 +23,7 @@ export default function Home() {
             <Link href="/resume" className="text-ink-soft transition-colors hover:text-blue-ink">
               Resume
             </Link>
+            <ThemeToggle />
           </nav>
         </div>
       </header>
@@ -152,7 +154,7 @@ export default function Home() {
             {resume.projects.map((project) => (
               <article
                 key={project.name}
-                className="flex flex-col rounded-xl border border-line bg-white/50 p-6 transition-colors hover:border-blue/50"
+                className="flex flex-col rounded-xl border border-line bg-surface p-6 transition-colors hover:border-blue/50"
               >
                 <div className="flex items-baseline justify-between gap-3">
                   <h3 className="flex flex-wrap items-baseline gap-2 font-display text-xl font-semibold">

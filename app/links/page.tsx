@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { linkHub, site, socialLinks } from "@/content/site";
 import styles from "./links.module.css";
 
@@ -88,6 +89,9 @@ function SocialIcon({ name }: { name: SocialIconName }) {
 export default function LinksPage() {
   return (
     <main className={styles.page}>
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <section className={styles.content} aria-labelledby="links-heading">
         <div className={styles.avatarFrame}>
           <Image
