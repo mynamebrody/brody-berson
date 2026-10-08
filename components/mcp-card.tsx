@@ -1,4 +1,4 @@
-import { mcpTools, site } from "@/content/site";
+import { mcpPrompts, mcpTools, site } from "@/content/site";
 import { ConnectTabs, type ConnectTab } from "./connect-tabs";
 import { CopyButton } from "./copy-button";
 
@@ -41,6 +41,9 @@ const tabs: ConnectTab[] = [
   },
 ];
 
+// Prompts are listed as slash commands, the way most clients surface them
+const guide = [...mcpTools, ...mcpPrompts.map((p) => ({ ...p, name: `/${p.name}` }))];
+
 export function McpCard() {
   return (
     // prime-tokens pins the Primetime palette so this always reads as a TV setup menu
@@ -73,15 +76,25 @@ export function McpCard() {
         </div>
 
         <div className="mt-8 border-t border-line pt-6">
-          <p className="osd text-lg text-ink-faint">TV guide · What your agent can ask</p>
-          <ul className="mt-3 overflow-hidden rounded-lg border border-line">
-            {mcpTools.map((tool) => (
+          <div className="flex items-baseline justify-between gap-4">
+            <p className="osd text-lg text-ink-faint">MCP guide · What your agent can ask</p>
+            <p className="osd text-base text-ink-faint">
+              {guide.length} items · scroll ↕
+            </p>
+          </div>
+          {/* Fixed-height rows so exactly three fit in view; the rest scroll */}
+          <ul
+            tabIndex={0}
+            aria-label="MCP tools and prompts"
+            className="mt-3 h-[15.75rem] snap-y snap-mandatory overflow-y-auto overscroll-contain rounded-lg border border-line focus-visible:outline-2 focus-visible:outline-glow sm:h-[8.25rem]"
+          >
+            {guide.map((tool) => (
               <li
                 key={tool.name}
-                className="grid gap-1 px-4 py-2.5 text-sm odd:bg-white/[0.04] sm:grid-cols-[12rem_1fr] sm:gap-4"
+                className="grid h-[5.25rem] snap-start content-center gap-1 px-4 text-sm odd:bg-white/[0.04] sm:h-[2.75rem] sm:grid-cols-[12rem_1fr] sm:items-center sm:gap-4"
               >
                 <code className="font-mono text-zest">{tool.name}</code>
-                <span className="text-ink-soft">{tool.description}</span>
+                <span className="line-clamp-2 text-ink-soft sm:line-clamp-1">{tool.description}</span>
               </li>
             ))}
           </ul>

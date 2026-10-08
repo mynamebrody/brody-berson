@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PlaybackToggle } from "@/components/playback-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { resume } from "@/content/resume";
 
@@ -33,6 +34,7 @@ export default function ResumePage() {
               Download PDF
             </a>
             <ThemeToggle />
+            <PlaybackToggle />
           </div>
         </div>
       </header>

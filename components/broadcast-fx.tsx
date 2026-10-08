@@ -2,7 +2,7 @@ import styles from "./broadcast-fx.module.css";
 
 /**
  * Site-wide broadcast texture layered over every page: grain, scanlines,
- * light leaks, and tube corners. Purely decorative.
+ * light leaks, and tube corners, plus the VHS pause screen. Purely decorative.
  */
 export function BroadcastFx() {
   return (
@@ -20,6 +20,11 @@ export function BroadcastFx() {
       </div>
       <div className={styles.power} aria-hidden="true">
         <div className={styles.powerLine} />
+      </div>
+      {/* VHS pause screen, shown while the site is paused (data-playback="paused") */}
+      <div className={styles.pause} aria-hidden="true">
+        <p className={styles.pauseLabel}>Pause</p>
+        <div className={styles.pauseBand} />
       </div>
     </>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { getPlayback, subscribePlayback } from "@/lib/playback";
 
 const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
@@ -14,12 +15,29 @@ function stamp(now: Date) {
   };
 }
 
-// A one-second clock as an external store: whole seconds on the client, null on the server
+// A one-second clock as an external store: whole seconds on the client, null on the server.
+// While the site is paused the timestamp holds on the second it was paused at.
+let frozenAt: number | null = null;
+
 function subscribe(onTick: () => void) {
   const id = setInterval(onTick, 1000);
-  return () => clearInterval(id);
+  const unsubscribe = subscribePlayback(onTick);
+  return () => {
+    clearInterval(id);
+    unsubscribe();
+  };
 }
-const getSecond = () => Math.floor(Date.now() / 1000);
+
+function getSecond() {
+  const now = Math.floor(Date.now() / 1000);
+  if (getPlayback() === "paused") {
+    frozenAt ??= now;
+    return frozenAt;
+  }
+  frozenAt = null;
+  return now;
+}
+
 const getServerSecond = () => null;
 
 /**

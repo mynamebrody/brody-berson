@@ -14,8 +14,11 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       root.dataset.theme = next;
     };
 
-    // Animate the switch as a channel change where supported (styles in globals.css)
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Animate the switch as a channel change where supported (styles in globals.css),
+    // unless motion is reduced by the OS or paused on the site
+    const reduceMotion =
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      root.dataset.playback === "paused";
     if (document.startViewTransition && !reduceMotion) {
       document.startViewTransition(apply);
     } else {

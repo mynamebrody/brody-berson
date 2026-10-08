@@ -61,10 +61,17 @@ export const metadata: Metadata = {
   },
 };
 
-// Runs before first paint so the page never flashes the wrong theme.
-// Reads the manual override from localStorage, falls back to system preference,
+// Runs before first paint so the page never flashes the wrong theme or motion state.
+// Theme: reads the manual override from localStorage, falls back to system preference,
 // and keeps following the system when no override is set.
+// Playback: restores a remembered Pause (lib/playback.ts) so paused visitors see no motion at all.
 const themeInitScript = `(function () {
+  try {
+    document.documentElement.dataset.playback =
+      localStorage.getItem("playback") === "paused" ? "paused" : "playing";
+  } catch (e) {
+    document.documentElement.dataset.playback = "playing";
+  }
   try {
     var stored = localStorage.getItem("theme");
     var media = window.matchMedia("(prefers-color-scheme: dark)");
