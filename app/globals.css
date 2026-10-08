@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(html[data-theme="dark"], html[data-theme="dark"] *));
+@custom-variant paused (&:where(html[data-playback="paused"], html[data-playback="paused"] *));
 
 /* BBTV palette. Two "broadcasts" share one set of tokens:
    Daytime (light) = blown-out film stock: salmon/peach walls, overexposed cream highlights,
@@ -311,6 +312,22 @@ body {
   html {
     scroll-behavior: auto;
   }
+}
+
+/* Site-wide Pause (components/playback-toggle.tsx). Ambient loops freeze on
+   whatever frame they're on, like a paused tape, and pick up again on Play.
+   One-shot entrances finish instantly instead, so nothing is left frozen
+   mid-fade (and they don't replay when Play comes back). */
+html[data-playback="paused"] *,
+html[data-playback="paused"] *::before,
+html[data-playback="paused"] *::after {
+  animation-play-state: paused !important;
+}
+
+html[data-playback="paused"] .fade-up {
+  animation-duration: 0s;
+  animation-delay: 0s !important;
+  animation-play-state: running !important;
 }
 
 a,

@@ -1,23 +1,8 @@
-import { mcpTools, site } from "@/content/site";
+import { discoveryHeaders, serverCard } from "@/lib/discovery";
 
 export const dynamic = "force-static";
 
+/** Legacy location kept for crawlers that already know it; serves the same card as /mcp/server-card. */
 export function GET() {
-  const card = {
-    schemaVersion: "draft-01",
-    name: "Brody Berson personal MCP",
-    version: "1.0.0",
-    description:
-      "Personal MCP server for brodyberson.com — provides tools for retrieving Brody Berson's resume, projects, and contact links.",
-    url: site.mcpUrl,
-    transport: "streamable-http",
-    protocolVersion: "2025-06-18",
-    authentication: { type: "none" },
-    capabilities: { tools: { listChanged: true } },
-    tools: mcpTools.map((t) => ({ name: t.name, description: t.description })),
-    owner: { name: site.name, url: site.url },
-    documentation: `${site.url}/AGENTS.md`,
-  };
-
-  return Response.json(card);
+  return Response.json(serverCard(), { headers: discoveryHeaders });
 }

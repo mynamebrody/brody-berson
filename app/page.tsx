@@ -2,9 +2,15 @@ import Link from "next/link";
 import { ColorBars } from "@/components/color-bars";
 import { CrtPortrait } from "@/components/crt-portrait";
 import { McpCard } from "@/components/mcp-card";
+import { PlaybackToggle } from "@/components/playback-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { WatchingShelf } from "@/components/watching-shelf";
 import { resume } from "@/content/resume";
 import { site, socialLinks } from "@/content/site";
+import { getRecentlyWatched } from "@/lib/letterboxd";
+
+// The Letterboxd shelf refreshes hourly; everything else is static content
+export const revalidate = 3600;
 
 const currentJob = resume.work[0];
 
@@ -20,7 +26,11 @@ function slotYear(date: string) {
   return date === "Present" ? "Now" : date.slice(-4);
 }
 
-export default function Home() {
+const SHELF_FIRST_BATCH = 6;
+
+export default async function Home() {
+  const watched = await getRecentlyWatched();
+
   return (
     <>
       <header className="sticky top-0 z-10 border-b border-line/60 bg-screen/50 backdrop-blur-md">
@@ -42,6 +52,7 @@ export default function Home() {
               Resume
             </Link>
             <ThemeToggle />
+            <PlaybackToggle />
           </nav>
         </div>
       </header>
@@ -118,7 +129,7 @@ export default function Home() {
 
         {/* MCP */}
         <section id="mcp" className="scroll-mt-24 pt-16 pb-20">
-          <p className="osd text-xl text-ink-faint">CH 08 · For your agent</p>
+          <p className="osd text-xl text-ink-faint">CH 03 · For your agent</p>
           <h2 className="mt-2 font-display text-4xl font-semibold tracking-wide uppercase sm:text-5xl">
             This site speaks <span className="marker">MCP</span>.
           </h2>
@@ -133,7 +144,7 @@ export default function Home() {
           <p className="osd mt-4 text-base text-ink-faint normal-case">
             Prefer plain files? <a href="/AGENTS.md" className="underline underline-offset-4 hover:text-glow">AGENTS.md</a> ·{" "}
             <a href="/llms.txt" className="underline underline-offset-4 hover:text-glow">llms.txt</a> ·{" "}
-            <a href="/.well-known/mcp.json" className="underline underline-offset-4 hover:text-glow">server card</a>
+            <a href="/mcp/server-card" className="underline underline-offset-4 hover:text-glow">server card</a>
           </p>
         </section>
 
@@ -141,7 +152,7 @@ export default function Home() {
 
         {/* Career: TV guide */}
         <section className="pt-16 pb-20">
-          <p className="osd text-xl text-ink-faint">CH 09 · Where I&rsquo;ve been</p>
+          <p className="osd text-xl text-ink-faint">CH 20 · Where I&rsquo;ve been</p>
           <h2 className="mt-2 font-display text-4xl font-semibold tracking-wide uppercase sm:text-5xl">
             A decade of <span className="marker">APIs</span>, integrations, and partners.
           </h2>
@@ -184,8 +195,8 @@ export default function Home() {
         <ColorBars />
 
         {/* Projects: DVD chapter select */}
-        <section className="pt-16 pb-24">
-          <p className="osd text-xl text-ink-faint">CH 10 · Side quests</p>
+        <section className="pt-16 pb-20">
+          <p className="osd text-xl text-ink-faint">CH 67 · Side quests</p>
           <h2 className="mt-2 font-display text-4xl font-semibold tracking-wide uppercase sm:text-5xl">
             Things built for the <span className="marker">fun</span> of it.
           </h2>
@@ -236,6 +247,31 @@ export default function Home() {
               </article>
             ))}
           </div>
+        </section>
+
+        <ColorBars />
+
+        {/* Letterboxd: video-store shelf */}
+        <section id="watching" className="scroll-mt-24 pt-16 pb-24">
+          <p className="osd text-xl text-ink-faint">CH 501 · What I&rsquo;ve been watching</p>
+          <h2 className="mt-2 font-display text-4xl font-semibold tracking-wide uppercase sm:text-5xl">
+            Fresh off the <span className="marker">Letterboxd</span> return slot.
+          </h2>
+          <p className="mt-4 max-w-2xl leading-relaxed text-ink-soft">
+            Straight from my{" "}
+            <a
+              href={watched.profileUrl}
+              className="font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow"
+            >
+              Letterboxd
+            </a>{" "}
+            diary, restocked every hour. Keep scrolling the shelf to dig further back.
+          </p>
+          <WatchingShelf
+            initial={watched.entries.slice(0, SHELF_FIRST_BATCH)}
+            done={watched.entries.length <= SHELF_FIRST_BATCH}
+            profileUrl={watched.profileUrl}
+          />
         </section>
       </main>
 

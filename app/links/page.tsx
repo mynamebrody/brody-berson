@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CrtPortrait } from "@/components/crt-portrait";
+import { PlaybackToggle } from "@/components/playback-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { linkHub, site, socialLinks } from "@/content/site";
 import styles from "./links.module.css";
@@ -89,8 +90,9 @@ function SocialIcon({ name }: { name: SocialIconName }) {
 export default function LinksPage() {
   return (
     <main className={styles.page}>
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 flex items-center gap-2">
         <ThemeToggle />
+        <PlaybackToggle />
       </div>
       <section className={styles.content} aria-labelledby="links-heading">
         <div className={styles.avatarFrame}>
