@@ -43,26 +43,26 @@ const tabs: ConnectTab[] = [
 
 export function McpCard() {
   return (
-    // light-tokens pins the palette so this stays a dark navy card in both themes
-    <div className="light-tokens overflow-hidden rounded-2xl bg-ink text-paper shadow-[0_24px_60px_-24px_rgba(38,52,74,0.45)]">
-      <div className="flex items-center justify-between gap-4 border-b border-white/10 px-6 py-4 sm:px-8">
+    // prime-tokens pins the Primetime palette so this always reads as a TV setup menu
+    <div className="prime-tokens scanlines overflow-hidden rounded-2xl border border-line bg-screen text-ink shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_rgba(58,76,255,0.7)]">
+      <div className="flex items-center justify-between gap-4 border-b border-line bg-signal/25 px-6 py-3 sm:px-8">
         <div className="flex items-center gap-2.5">
           <span className="relative flex size-2.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-butter opacity-60" />
-            <span className="relative inline-flex size-2.5 rounded-full bg-butter" />
+            <span className="absolute inline-flex h-full w-full motion-safe:animate-ping rounded-full bg-zest opacity-60" />
+            <span className="relative inline-flex size-2.5 rounded-full bg-zest" />
           </span>
-          <span className="font-mono text-xs tracking-widest text-white/60 uppercase">
-            Model Context Protocol
+          <span className="osd text-lg text-glow">
+            MCP setup ▸<span className="rec-blink">_</span>
           </span>
         </div>
-        <span className="hidden font-mono text-xs text-white/40 sm:block">
+        <span className="osd hidden text-base text-ink-faint sm:block">
           streamable HTTP · no auth
         </span>
       </div>
 
       <div className="px-6 py-6 sm:px-8 sm:py-8">
         <div className="flex items-center gap-2">
-          <code className="min-w-0 flex-1 overflow-x-auto rounded-lg border border-white/15 bg-black/30 px-4 py-3 font-mono text-sm text-butter sm:text-base">
+          <code className="min-w-0 flex-1 overflow-x-auto rounded-lg border border-line bg-black/40 px-4 py-3 font-mono text-sm text-glow [text-shadow:0_0_10px_rgba(143,211,255,0.55)] sm:text-base">
             {site.mcpUrl}
           </code>
           <CopyButton text={site.mcpUrl} />
@@ -72,15 +72,16 @@ export function McpCard() {
           <ConnectTabs tabs={tabs} />
         </div>
 
-        <div className="mt-8 border-t border-white/10 pt-6">
-          <p className="font-mono text-xs tracking-widest text-white/60 uppercase">
-            What your agent can ask
-          </p>
-          <ul className="mt-3 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+        <div className="mt-8 border-t border-line pt-6">
+          <p className="osd text-lg text-ink-faint">TV guide · What your agent can ask</p>
+          <ul className="mt-3 overflow-hidden rounded-lg border border-line">
             {mcpTools.map((tool) => (
-              <li key={tool.name} className="flex gap-2.5 text-sm">
-                <code className="shrink-0 font-mono text-butter">{tool.name}</code>
-                <span className="text-white/60">{tool.description}</span>
+              <li
+                key={tool.name}
+                className="grid gap-1 px-4 py-2.5 text-sm odd:bg-white/[0.04] sm:grid-cols-[12rem_1fr] sm:gap-4"
+              >
+                <code className="font-mono text-zest">{tool.name}</code>
+                <span className="text-ink-soft">{tool.description}</span>
               </li>
             ))}
           </ul>

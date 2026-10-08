@@ -1,0 +1,253 @@
+/* Full-viewport broadcast texture: 16mm grain, CRT scanlines, vignette, rounded tube
+   corners, light leaks, flicker, and a one-time power-on.
+   Everything here is decorative: fixed, aria-hidden, pointer-events: none. */
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.grain {
+  position: absolute;
+  inset: -50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+  animation: grain 0.9s steps(1) infinite;
+}
+
+:global(html[data-theme="dark"]) .grain {
+  opacity: 0.16;
+  mix-blend-mode: screen;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(90, 30, 40, 0.05) 0px,
+    rgba(90, 30, 40, 0.05) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+:global(html[data-theme="dark"]) .scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.28) 0px,
+    rgba(0, 0, 0, 0.28) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, transparent 50%, rgba(110, 40, 60, 0.28) 100%);
+}
+
+:global(html[data-theme="dark"]) .vignette {
+  background: radial-gradient(ellipse at 50% 45%, transparent 50%, rgba(2, 3, 14, 0.6) 100%);
+}
+
+/* Rounded picture-tube corners */
+.tube {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  box-shadow:
+    0 0 0 40px #05061a,
+    inset 0 0 18px rgba(5, 6, 26, 0.35);
+}
+
+.leak {
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 999px;
+  animation: leak-drift 22s ease-in-out infinite;
+}
+
+/* Daytime: an overexposed window blooming in warm, cool blue pooling in the shadows */
+.leakWarm {
+  top: -28vmax;
+  right: -26vmax;
+  background: radial-gradient(
+    circle,
+    rgba(255, 250, 235, 0.9) 0%,
+    rgba(255, 205, 170, 0.4) 35%,
+    transparent 65%
+  );
+}
+
+.leakCool {
+  bottom: -32vmax;
+  left: -30vmax;
+  background: radial-gradient(
+    circle,
+    rgba(110, 150, 230, 0.32) 0%,
+    rgba(150, 120, 200, 0.16) 35%,
+    transparent 65%
+  );
+  animation-delay: -11s;
+  animation-direction: reverse;
+}
+
+:global(html[data-theme="dark"]) .leak {
+  mix-blend-mode: screen;
+  filter: saturate(1.2);
+}
+
+:global(html[data-theme="dark"]) .leakWarm {
+  background: radial-gradient(
+    circle,
+    rgba(255, 143, 214, 0.55) 0%,
+    rgba(255, 179, 107, 0.25) 35%,
+    transparent 65%
+  );
+}
+
+:global(html[data-theme="dark"]) .leakCool {
+  background: radial-gradient(
+    circle,
+    rgba(200, 255, 122, 0.35) 0%,
+    rgba(143, 211, 255, 0.2) 35%,
+    transparent 65%
+  );
+}
+
+/* Daytime only: sunlight raking through blinds, blown out on the top-right wall */
+.shafts {
+  position: absolute;
+  top: -10vh;
+  right: -10vw;
+  width: 70vw;
+  height: 90vh;
+  background: repeating-linear-gradient(
+    -38deg,
+    rgba(255, 250, 238, 0) 0px,
+    rgba(255, 250, 238, 0) 46px,
+    rgba(255, 250, 238, 0.55) 54px,
+    rgba(255, 250, 238, 0.55) 72px,
+    rgba(255, 250, 238, 0) 80px,
+    rgba(255, 250, 238, 0) 130px
+  );
+  filter: blur(6px);
+  mask-image: radial-gradient(ellipse at 75% 25%, #000 0%, transparent 65%);
+  mix-blend-mode: screen;
+  animation: leak-drift 30s ease-in-out infinite;
+}
+
+:global(html[data-theme="dark"]) .shafts {
+  display: none;
+}
+
+/* Daytime only: lifted, milky blacks like an overexposed scan */
+.lift {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 226, 210, 0.08);
+  mix-blend-mode: screen;
+}
+
+:global(html[data-theme="dark"]) .lift {
+  display: none;
+}
+
+.flicker {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  opacity: 0.03;
+  animation: flicker 3.2s steps(1) infinite;
+}
+
+:global(html[data-theme="dark"]) .flicker {
+  background: #8fd3ff;
+}
+
+/* CRT power-on, once per full page load (the root layout persists across client navigation) */
+.power {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #04061a;
+  animation: crt-on-screen 0.9s ease-out forwards;
+}
+
+.powerLine {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, #ffffff 0%, #bfe4ff 35%, #4a5cff 70%, transparent 100%);
+  animation: crt-on-line 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain,
+  .leak,
+  .shafts,
+  .flicker {
+    animation: none;
+  }
+  .power {
+    display: none;
+  }
+}
+
+@media print {
+  .root,
+  .power {
+    display: none;
+  }
+}
+
+/* 16mm grain dances between random offsets a few times a second */
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  12% { transform: translate(-6%, -9%); }
+  25% { transform: translate(-14%, 4%); }
+  37% { transform: translate(7%, -17%); }
+  50% { transform: translate(-4%, 13%); }
+  62% { transform: translate(-13%, 6%); }
+  75% { transform: translate(11%, 0); }
+  87% { transform: translate(1%, 12%); }
+  100% { transform: translate(-8%, -4%); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.025; }
+  8% { opacity: 0.06; }
+  9% { opacity: 0.02; }
+  45% { opacity: 0.04; }
+  70% { opacity: 0.015; }
+  71% { opacity: 0.055; }
+}
+
+@keyframes leak-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.55; }
+  50% { transform: translate(-4vw, 3vh) scale(1.12); opacity: 0.8; }
+}
+
+/* CRT power-on: a bright line opens up into the picture */
+@keyframes crt-on-screen {
+  0%, 55% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+@keyframes crt-on-line {
+  0% { transform: scale(0, 0.004); opacity: 1; }
+  25% { transform: scale(1, 0.004); opacity: 1; }
+  55% { transform: scale(1, 1); opacity: 0.85; }
+  100% { transform: scale(1, 1); opacity: 0; }
+}
+
+

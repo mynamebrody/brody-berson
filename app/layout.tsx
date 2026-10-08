@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { Antonio, Inter, JetBrains_Mono, VT323 } from "next/font/google";
 import Script from "next/script";
+import { BroadcastFx } from "@/components/broadcast-fx";
+import { CamcorderOsd } from "@/components/camcorder-osd";
 import { site } from "@/content/site";
 import "./globals.css";
 
@@ -9,10 +11,17 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+// Tall condensed display face, the closest free match to a PRIMETIME-style title card
+const antonio = Antonio({
+  variable: "--font-antonio",
   subsets: ["latin"],
-  axes: ["SOFT", "WONK", "opsz"],
+});
+
+// Camcorder / TV on-screen-display pixel face (labels only, never body copy)
+const vt323 = VT323({
+  variable: "--font-vt323",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -78,13 +87,15 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${antonio.variable} ${vt323.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-full flex flex-col">
         {children}
+        <BroadcastFx />
+        <CamcorderOsd />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-29575C0GNT"
           strategy="afterInteractive"

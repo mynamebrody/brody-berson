@@ -16,19 +16,19 @@ function dateRange(start: string, end: string) {
 export default function ResumePage() {
   return (
     <>
-      <header className="border-b border-line/60 bg-paper/85 backdrop-blur-sm print:hidden">
+      <header className="border-b border-line/60 bg-screen/50 backdrop-blur-md print:hidden">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-4 sm:px-8">
           <Link
             href="/"
-            className="text-sm text-ink-soft transition-colors hover:text-blue-ink"
+            className="osd text-lg whitespace-nowrap text-ink-soft normal-case transition-colors hover:text-glow"
           >
-            ← brodyberson.com
+            ◀ brodyberson.com
           </Link>
           <div className="flex items-center gap-3">
             <a
               href="/brody-berson-resume.pdf"
               download
-              className="rounded-lg bg-blue-deep px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-ink"
+              className="gloss rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap sm:px-5"
             >
               Download PDF
             </a>
@@ -38,10 +38,11 @@ export default function ResumePage() {
       </header>
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-10 sm:px-8 sm:py-14 print:max-w-none print:p-0">
-        <article className="rounded-2xl border border-line bg-surface p-7 sm:p-12 print:rounded-none print:border-0 print:bg-white print:p-0">
+        <article className="rounded-2xl border border-line bg-surface p-7 shadow-[0_30px_70px_-40px_var(--signal)] sm:p-12 print:rounded-none print:border-0 print:bg-white print:p-0 print:shadow-none">
           {/* Header */}
           <header>
-            <h1 className="font-display text-4xl font-semibold tracking-tight print:text-3xl">
+            <p className="osd text-lg text-ink-faint print:hidden">▶ Now playing · CH 07</p>
+            <h1 className="title-glow mt-1 font-display text-6xl leading-none font-semibold tracking-wide uppercase print:mt-0 print:text-3xl print:normal-case">
               {resume.basics.name}
             </h1>
             <p className="mt-2 text-lg text-ink-soft print:text-base">{resume.basics.label}</p>
@@ -51,13 +52,14 @@ export default function ResumePage() {
             </p>
           </header>
 
-          <p className="mt-6 border-l-2 border-butter pl-4 text-sm leading-relaxed text-ink-soft print:mt-4">
+          <p className="mt-6 border-l-4 border-pop pl-4 text-sm leading-relaxed text-ink-soft print:mt-4">
             {resume.basics.summary}
           </p>
 
           {/* Work */}
           <section className="mt-10 print:mt-6">
-            <h2 className="font-mono text-xs font-semibold tracking-widest text-blue-ink uppercase">
+            <h2 className="osd text-xl text-signal dark:text-glow print:text-xs print:font-semibold print:tracking-widest print:text-ink">
+              <span className="print:hidden">▶ </span>
               Work experience
             </h2>
             <div className="mt-4 space-y-7 print:space-y-4">
@@ -69,7 +71,7 @@ export default function ResumePage() {
                       {job.url ? (
                         <a
                           href={job.url}
-                          className="underline decoration-blue/30 underline-offset-4 transition-colors hover:text-blue-ink hover:decoration-blue print:no-underline"
+                          className="underline decoration-pop decoration-2 underline-offset-4 transition-colors hover:text-glow print:no-underline"
                         >
                           {job.company}
                         </a>
@@ -77,7 +79,7 @@ export default function ResumePage() {
                         job.company
                       )}
                       {job.note ? (
-                        <span className="ml-2 rounded-full bg-butter-soft px-2 py-0.5 align-middle text-xs font-normal text-ink-soft print:border print:border-line">
+                        <span className="ml-2 rounded-sm bg-zest px-2 py-0.5 align-middle text-xs font-normal text-deep print:border print:border-line print:bg-white print:text-ink-soft">
                           {job.note}
                         </span>
                       ) : null}
@@ -93,7 +95,7 @@ export default function ResumePage() {
                         key={highlight}
                         className="flex gap-2.5 text-sm leading-relaxed text-ink-soft"
                       >
-                        <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-blue/60 print:bg-ink-soft" aria-hidden />
+                        <span className="mt-[7px] size-1.5 shrink-0 bg-pop print:rounded-full print:bg-ink-soft" aria-hidden />
                         {highlight}
                       </li>
                     ))}
@@ -105,7 +107,8 @@ export default function ResumePage() {
 
           {/* Projects */}
           <section className="mt-10 print:mt-6 print:break-inside-avoid">
-            <h2 className="font-mono text-xs font-semibold tracking-widest text-blue-ink uppercase">
+            <h2 className="osd text-xl text-signal dark:text-glow print:text-xs print:font-semibold print:tracking-widest print:text-ink">
+              <span className="print:hidden">▶ </span>
               Projects
             </h2>
             <div className="mt-4 space-y-4 print:space-y-2.5">
@@ -117,7 +120,7 @@ export default function ResumePage() {
                       <span className="font-mono text-xs text-ink-faint">{project.year}</span>
                     ) : null}
                     {project.tag ? (
-                      <span className="rounded-full bg-butter-soft px-2 py-0.5 text-xs text-ink-soft print:border print:border-line">
+                      <span className="rounded-sm bg-zest px-2 py-0.5 text-xs text-deep print:border print:border-line print:bg-white print:text-ink-soft">
                         {project.tag}
                       </span>
                     ) : null}
@@ -125,7 +128,7 @@ export default function ResumePage() {
                       <a
                         key={link.url}
                         href={link.url}
-                        className="text-xs font-medium text-blue-ink underline decoration-blue/40 underline-offset-4 hover:decoration-blue print:no-underline"
+                        className="text-xs font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow print:no-underline"
                       >
                         {link.label}
                       </a>
@@ -140,7 +143,8 @@ export default function ResumePage() {
           {/* Education + Skills */}
           <div className="mt-10 grid gap-8 sm:grid-cols-2 print:mt-6 print:break-inside-avoid">
             <section>
-              <h2 className="font-mono text-xs font-semibold tracking-widest text-blue-ink uppercase">
+              <h2 className="osd text-xl text-signal dark:text-glow print:text-xs print:font-semibold print:tracking-widest print:text-ink">
+                <span className="print:hidden">▶ </span>
                 Education
               </h2>
               {resume.education.map((edu) => (
@@ -149,7 +153,7 @@ export default function ResumePage() {
                     {edu.url ? (
                       <a
                         href={edu.url}
-                        className="underline decoration-blue/30 underline-offset-4 transition-colors hover:text-blue-ink hover:decoration-blue print:no-underline"
+                        className="underline decoration-pop decoration-2 underline-offset-4 transition-colors hover:text-glow print:no-underline"
                       >
                         {edu.institution}
                       </a>
@@ -167,14 +171,15 @@ export default function ResumePage() {
               ))}
             </section>
             <section>
-              <h2 className="font-mono text-xs font-semibold tracking-widest text-blue-ink uppercase">
+              <h2 className="osd text-xl text-signal dark:text-glow print:text-xs print:font-semibold print:tracking-widest print:text-ink">
+                <span className="print:hidden">▶ </span>
                 Skills
               </h2>
               <ul className="mt-4 flex flex-wrap gap-1.5">
                 {resume.skills.map((skill) => (
                   <li
                     key={skill}
-                    className="rounded-full border border-line bg-cream px-3 py-1 text-xs text-ink-soft print:bg-white"
+                    className="rounded-full border border-line bg-screen-2 px-3 py-1 text-xs text-ink-soft shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] print:bg-white print:shadow-none"
                   >
                     {skill}
                   </li>
@@ -184,13 +189,13 @@ export default function ResumePage() {
           </div>
         </article>
 
-        <p className="mt-6 text-center font-mono text-xs text-ink-faint print:hidden">
+        <p className="osd mt-6 text-center text-base text-ink-faint normal-case print:hidden">
           Agents can fetch this as JSON via the{" "}
-          <Link href="/#mcp" className="underline underline-offset-4 hover:text-blue-ink">
+          <Link href="/#mcp" className="underline underline-offset-4 hover:text-glow">
             MCP server
           </Link>{" "}
           or as markdown at{" "}
-          <a href="/resume.md" className="underline underline-offset-4 hover:text-blue-ink">
+          <a href="/resume.md" className="underline underline-offset-4 hover:text-glow">
             /resume.md
           </a>
           .

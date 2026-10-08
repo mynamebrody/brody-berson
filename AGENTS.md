@@ -40,7 +40,7 @@ app/
   llms.txt/                LLM index
   .well-known/mcp.json/    MCP server card
   robots.ts, sitemap.ts
-components/                UI (MCP connect card, tabs, copy button)
+components/                UI (MCP card, tabs, copy button, theme toggle, broadcast effects, CRT portrait, color bars)
 content/                   Single source of truth (see above)
 lib/markdown.ts            Shared markdown / llms / agents text builders
 public/                    Static assets + brody-berson-resume.pdf
@@ -79,7 +79,9 @@ One-time for PDF generation: `npx playwright install chromium`.
 
 ### UI / design
 
-- Match existing patterns: fonts (Fraunces / Inter / JetBrains Mono), CSS variables in `app/globals.css`, and the cream/paper/blue palette already on the site.
+- The look is "BBTV": a mid-2000s broadcast / 16mm-scan aesthetic. Light theme is "Daytime" (saturated pastels), dark is "Primetime" (CRT blue-black glow); `data-theme` is still `light` / `dark` under the hood.
+- Match existing patterns: fonts (Antonio for display, VT323 for OSD labels only, Inter for body, JetBrains Mono for code), the tokens in `app/globals.css` (`screen`, `ink`, `signal`, `glow`, `pop`, `zest`, `tang`, `peri`, `deep`), and the component classes there (`.osd`, `.title-glow`, `.gloss`, `.marker`, `.scanlines`).
+- Full-screen texture (grain, scanlines, leaks, power-on) lives in `components/broadcast-fx.tsx`; the camcorder REC / timestamp overlay in `components/camcorder-osd.tsx`. New motion must be disabled under `prefers-reduced-motion`, and nothing decorative may show in print (the resume PDF stays plain).
 - Keep the first viewport focused; the MCP section is a deliberate product surface, not decorative chrome.
 - Prefer small, focused changes. Do not introduce a new content system, CMS, or parallel copy sources.
 

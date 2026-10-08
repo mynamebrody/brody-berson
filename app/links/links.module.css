@@ -1,26 +1,14 @@
-.page {
-  --hub-bg: #faf6ec;
-  --hub-cream: #f4eedd;
-  --hub-ink: #26344a;
-  --hub-ink-soft: #4e5e77;
-  --hub-line: #e7dfc8;
-  --hub-blue-deep: #45689c;
-  --hub-blue-ink: #334f7c;
-  --hub-blue: #7298c7;
-  --hub-butter: #f3d98f;
-  --hub-butter-soft: #f9ecc8;
-  --hub-shadow: rgba(38, 52, 74, 0.08);
-  --hub-focus: #334f7c;
-  --hub-primary-text: #ffffff;
+/* Link-in-bio as a channel list. Colors come from the global BBTV tokens in
+   app/globals.css, so Daytime / Primetime follow the site-wide theme. */
 
+.page {
   position: relative;
   display: grid;
   min-height: 100svh;
   width: 100%;
   place-items: center;
-  padding: 2.75rem 1rem 2rem;
-  color: var(--hub-ink);
-  background: var(--hub-bg);
+  padding: 3.5rem 1rem 2.5rem;
+  color: var(--ink);
 }
 
 .content {
@@ -30,35 +18,24 @@
 }
 
 .avatarFrame {
-  position: relative;
   display: grid;
-  width: 9.5rem;
-  height: 9.5rem;
   margin-inline: auto;
   place-items: center;
-  border: 1px solid var(--hub-butter);
-  border-radius: 999px;
-  background: var(--hub-butter-soft);
-}
-
-.avatar {
-  width: 8.5rem;
-  height: 8.5rem;
-  object-fit: contain;
 }
 
 .name {
-  margin-top: 1.2rem;
-  font-family: var(--font-display);
-  font-size: clamp(2.15rem, 8vw, 3rem);
-  font-weight: 650;
-  line-height: 1;
-  letter-spacing: -0.035em;
+  margin-top: 1.5rem;
+  font-family: var(--font-antonio), "Arial Narrow", Impact, sans-serif;
+  font-size: clamp(2.6rem, 11vw, 3.75rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .bio {
-  margin-top: 0.75rem;
-  color: var(--hub-ink-soft);
+  margin-top: 0.85rem;
+  color: var(--ink-soft);
   font-size: clamp(0.8rem, 3.5vw, 1rem);
   line-height: 1.55;
 }
@@ -72,24 +49,31 @@
   display: flex;
   justify-content: center;
   gap: 0.65rem;
-  margin-top: 1.3rem;
+  margin-top: 1.4rem;
   padding: 0;
   list-style: none;
 }
 
+/* Glossy remote-control buttons */
 .socialLink {
   display: grid;
   width: 2.85rem;
   height: 2.85rem;
   place-items: center;
-  border: 1px solid var(--hub-line);
-  border-radius: 999px;
-  color: var(--hub-ink-soft);
-  background: var(--hub-cream);
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  color: var(--ink-soft);
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.08) 49%, transparent 51%),
+    var(--screen-2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 4px 10px -6px rgba(5, 6, 26, 0.5);
   transition:
     transform 180ms ease,
     border-color 180ms ease,
-    color 180ms ease;
+    color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .socialLink svg {
@@ -100,26 +84,22 @@
 
 .buttonList {
   display: grid;
-  gap: 0.78rem;
-  margin-top: 1.65rem;
+  gap: 0.7rem;
+  margin-top: 1.75rem;
 }
 
 .linkButton {
   display: flex;
   min-height: 3.5rem;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.9rem 1.15rem 0.9rem 1.35rem;
-  border: 1px solid var(--hub-line);
+  gap: 0.9rem;
+  padding: 0.85rem 1.15rem 0.85rem 1rem;
   border-radius: 0.75rem;
-  color: var(--hub-ink-soft);
-  background: var(--hub-cream);
   font-size: 0.95rem;
-  font-weight: 550;
+  font-weight: 600;
   letter-spacing: -0.01em;
   text-align: left;
   text-decoration: none;
-  box-shadow: 0 1px 2px var(--hub-shadow);
   transition:
     transform 180ms cubic-bezier(0.21, 0.47, 0.32, 0.98),
     border-color 180ms ease,
@@ -128,10 +108,39 @@
     box-shadow 180ms ease;
 }
 
-.linkButtonPrimary {
-  border-color: var(--hub-blue-deep);
-  color: var(--hub-primary-text);
-  background: var(--hub-blue-deep);
+/* The primary link gets its fill from the global .gloss class */
+.linkButton:not(.linkButtonPrimary) {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(5, 6, 26, 0.12);
+}
+
+.channel {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 4.4rem;
+  font-family: var(--font-vt323), ui-monospace, monospace;
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+}
+
+.cursor {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.linkButtonPrimary .cursor {
+  opacity: 1;
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
 }
 
 .arrow {
@@ -143,71 +152,50 @@
 
 .socialLink:focus-visible,
 .linkButton:focus-visible {
-  outline: 3px solid var(--hub-focus);
+  outline: 3px solid var(--glow);
   outline-offset: 3px;
+}
+
+.linkButton:focus-visible .cursor {
+  opacity: 1;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .socialLink:hover {
-    border-color: var(--hub-blue);
-    color: var(--hub-blue-ink);
+    border-color: var(--glow);
+    color: var(--glow);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 0 18px -4px var(--glow);
     transform: translateY(-2px);
   }
 
   .linkButton:hover {
-    border-color: var(--hub-blue);
-    color: var(--hub-blue-ink);
-    box-shadow: 0 0.5rem 1rem var(--hub-shadow);
     transform: translateY(-2px);
   }
 
-  .linkButtonPrimary:hover {
-    border-color: var(--hub-blue-ink);
-    color: var(--hub-primary-text);
-    background: var(--hub-blue-ink);
+  .linkButton:hover .cursor {
+    opacity: 1;
   }
-}
 
-/* Dark palette follows the site-wide theme set on <html data-theme>
-   (system preference by default, manual override via the theme toggle). */
-:global(html[data-theme="dark"]) .page {
-  --hub-bg: #111a2a;
-  --hub-cream: #1a2740;
-  --hub-ink: #f8f1e4;
-  --hub-ink-soft: #bdc8da;
-  --hub-line: #2c3d5c;
-  --hub-blue-deep: #45689c;
-  --hub-blue-ink: #7298c7;
-  --hub-blue: #7298c7;
-  --hub-butter: rgba(243, 217, 143, 0.45);
-  --hub-butter-soft: rgba(243, 217, 143, 0.12);
-  --hub-shadow: rgba(2, 8, 18, 0.4);
-  --hub-focus: #f3d98f;
-}
-
-:global(html[data-theme="dark"]) .linkButtonPrimary:hover {
-  color: #ffffff;
+  .linkButton:not(.linkButtonPrimary):hover {
+    border-color: var(--signal);
+    color: #ffffff;
+    background: var(--signal);
+    box-shadow: 0 0 22px -6px var(--glow);
+  }
 }
 
 @media (max-width: 24rem) {
   .page {
     padding-inline: 0.8rem;
   }
-
-  .avatarFrame {
-    width: 8.6rem;
-    height: 8.6rem;
-  }
-
-  .avatar {
-    width: 7.7rem;
-    height: 7.7rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .socialLink,
-  .linkButton {
+  .linkButton,
+  .cursor {
     transition: none;
   }
 }
