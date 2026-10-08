@@ -29,21 +29,24 @@ export function ConnectTabs({ tabs }: { tabs: ConnectTab[] }) {
             role="tab"
             aria-selected={t.id === tab.id}
             onClick={() => setActive(t.id)}
-            className={`cursor-pointer rounded-full px-3.5 py-1.5 font-mono text-xs transition-colors ${
+            className={`osd cursor-pointer rounded-md px-3 py-1 text-lg transition-colors ${
               t.id === tab.id
-                ? "bg-butter text-ink"
-                : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white/90"
+                ? "bg-signal text-white"
+                : "text-ink-soft hover:bg-white/10 hover:text-glow"
             }`}
           >
+            <span className={t.id === tab.id ? "" : "invisible"} aria-hidden>
+              ▶{" "}
+            </span>
             {t.label}
           </button>
         ))}
       </div>
 
       <div role="tabpanel" className="mt-4">
-        <p className="text-sm text-white/70">{tab.hint}</p>
+        <p className="text-sm text-ink-soft">{tab.hint}</p>
         <div className="mt-3 flex items-start gap-2">
-          <pre className="min-w-0 flex-1 overflow-x-auto rounded-lg bg-black/30 p-4 font-mono text-[13px] leading-relaxed text-white/90">
+          <pre className="min-w-0 flex-1 overflow-x-auto rounded-lg border border-line bg-black/40 p-4 font-mono text-[13px] leading-relaxed text-ink">
             {tab.snippet}
           </pre>
           <CopyButton text={tab.copyText ?? tab.snippet} />
@@ -51,7 +54,7 @@ export function ConnectTabs({ tabs }: { tabs: ConnectTab[] }) {
         {tab.action ? (
           <a
             href={tab.action.href}
-            className="mt-3 inline-flex items-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-deep"
+            className="gloss mt-3 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold"
           >
             {tab.action.label}
             <span aria-hidden>→</span>

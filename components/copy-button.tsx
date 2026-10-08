@@ -36,8 +36,8 @@ export function CopyButton({
       aria-label={copied ? "Copied" : "Copy to clipboard"}
       className={`shrink-0 cursor-pointer rounded-md border px-2.5 py-1 font-mono text-xs transition-colors ${
         copied
-          ? "border-butter bg-butter text-ink"
-          : "border-white/20 bg-white/5 text-white/80 hover:border-butter hover:text-butter"
+          ? "border-zest bg-zest text-deep"
+          : "border-line bg-white/5 text-ink-soft hover:border-glow hover:text-glow"
       } ${className}`}
     >
       {copied ? "copied" : "copy"}

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import { CrtPortrait } from "@/components/crt-portrait";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { linkHub, site, socialLinks } from "@/content/site";
 import styles from "./links.module.css";
@@ -94,18 +94,10 @@ export default function LinksPage() {
       </div>
       <section className={styles.content} aria-labelledby="links-heading">
         <div className={styles.avatarFrame}>
-          <Image
-            src="/memoji.png"
-            alt={`${site.name}'s memoji`}
-            width={136}
-            height={136}
-            priority
-            sizes="136px"
-            className={styles.avatar}
-          />
+          <CrtPortrait size={152} alt={`${site.name}'s memoji`} priority />
         </div>
 
-        <h1 id="links-heading" className={styles.name}>
+        <h1 id="links-heading" className={`title-glow ${styles.name}`}>
           {site.name}
         </h1>
         <p className={styles.bio}>
@@ -141,7 +133,11 @@ export default function LinksPage() {
             const href = primaryLink.url === site.url ? "/" : primaryLink.url;
             const buttonContent = (
               <>
-                <span>{primaryLink.label}</span>
+                <span className={styles.channel} aria-hidden="true">
+                  <span className={styles.cursor}>▶</span>
+                  CH {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className={styles.label}>{primaryLink.label}</span>
                 <span className={styles.arrow} aria-hidden="true">
                   {isExternal ? "↗" : "→"}
                 </span>
@@ -149,7 +145,7 @@ export default function LinksPage() {
             );
 
             const buttonClass =
-              index === 0 ? `${styles.linkButton} ${styles.linkButtonPrimary}` : styles.linkButton;
+              index === 0 ? `gloss ${styles.linkButton} ${styles.linkButtonPrimary}` : styles.linkButton;
 
             return isExternal ? (
               <a

@@ -190,10 +190,10 @@ export const resume = {
     {
       name: "cinamini",
       year: "2026",
-      tag: "Unmaintained",
+      tag: "Deprecated",
       description:
         "A daily movie puzzle site: guess the film from progressively easier clues, then come back tomorrow.",
-      links: [{ label: "cinamini.app", url: "https://cinamini.app" }],
+      links: [{ label: "GitHub", url: "https://github.com/mynamebrody/cinamini" }],
     },
     {
       name: "Doop Doop Bot",

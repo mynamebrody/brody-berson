@@ -2,71 +2,92 @@
 
 @custom-variant dark (&:where(html[data-theme="dark"], html[data-theme="dark"] *));
 
-/* .light-tokens pins a subtree to the light palette regardless of theme
-   (used by surfaces that are intentionally dark-on-light, like the MCP card). */
-:root,
-.light-tokens {
-  /* Palette: warm paper, deep blue-slate ink, blue grey primary, morning butter accent */
-  --paper: #faf6ec;
-  --cream: #f4eedd;
-  --ink: #26344a;
-  --ink-soft: #4e5e77;
-  --ink-faint: #7e8ba0;
-  --blue: #7298c7;
-  --blue-deep: #45689c;
-  --blue-ink: #334f7c;
-  --butter: #f3d98f;
-  --butter-soft: #f9ecc8;
-  --line: #e7dfc8;
-  --surface: rgba(255, 255, 255, 0.55);
+/* BBTV palette. Two "broadcasts" share one set of tokens:
+   Daytime (light) = blown-out film stock: salmon/peach walls, overexposed cream highlights,
+   cool blue shadows. Primetime (dark) = CRT blue-black glow.
+   The pastel accents (pop / zest / tang / peri) and --deep are constant across both. */
+:root {
+  --screen: #f2c4bb;
+  --screen-2: #fbe1d6;
+  --ink: #1c2a5e;
+  --ink-soft: #3a4677;
+  --ink-faint: #534b78;
+  --signal: #3d68c4;
+  --glow: #2a4bb0;
+  --line: #e2a79f;
+  --surface: rgba(255, 244, 236, 0.5);
+  --marker: #a8d8ff;
+  --portrait-bg: radial-gradient(circle at 32% 22%, #fffaf0 0%, #ffd9c2 35%, #f0a9a6 75%, #d98b98 110%);
+  --portrait-tint: #3d68c4;
+  /* Overexposed "window light" blooming in from the top corners of a warm room */
+  --sky:
+    radial-gradient(55% 55% at 6% 0%, #fffcf4 0%, rgba(255, 244, 228, 0.85) 30%, rgba(255, 236, 220, 0) 70%),
+    radial-gradient(40% 45% at 96% 10%, rgba(255, 250, 236, 0.9) 0%, rgba(255, 246, 230, 0) 70%),
+    linear-gradient(180deg, #f7cdbf 0%, #f0b2a6 45%, #e6979c 100%);
+  --halo: rgba(255, 168, 120, 0.85);
+  --title-shadow: #fff3e2;
+
+  --pop: #ff8fd6;
+  --zest: #c8ff7a;
+  --tang: #ffb36b;
+  --peri: #a9b4ff;
+  --deep: #14186b;
   color-scheme: light;
 }
 
-/* Dark palette. The data-theme attribute is set on <html> before first paint
-   (system preference by default, localStorage override via the theme toggle). */
-html[data-theme="dark"] {
-  --paper: #111a2a;
-  --cream: #1a2740;
-  --ink: #f8f1e4;
-  --ink-soft: #bdc8da;
-  --ink-faint: #8b99b1;
-  --blue: #7298c7;
-  --blue-deep: #45689c;
-  --blue-ink: #7298c7;
-  --butter: rgba(243, 217, 143, 0.45);
-  --butter-soft: rgba(243, 217, 143, 0.12);
-  --line: #2c3d5c;
-  --surface: rgba(26, 39, 64, 0.5);
+/* Primetime. The data-theme attribute is set on <html> before first paint
+   (system preference by default, localStorage override via the theme toggle).
+   .prime-tokens pins a subtree to this palette in both themes (the MCP setup menu). */
+html[data-theme="dark"],
+.prime-tokens {
+  --screen: #070a24;
+  --screen-2: #0e1440;
+  --ink: #e8f1ff;
+  --ink-soft: #a9b8e8;
+  --ink-faint: #6f7cb8;
+  --signal: #4a5cff;
+  --glow: #8fd3ff;
+  --line: #232c6b;
+  --surface: rgba(14, 20, 64, 0.55);
+  --marker: rgba(74, 92, 255, 0.6);
+  --portrait-bg: radial-gradient(circle at 50% 40%, #1b2a8f 0%, #0b1050 55%, #04061a 100%);
+  --portrait-tint: #5aa8ff;
+  --sky: radial-gradient(120% 80% at 50% 0%, #121a52 0%, #070a24 60%);
+  --halo: var(--glow);
+  --title-shadow: var(--pop);
   color-scheme: dark;
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-cream: var(--cream);
+  --color-screen: var(--screen);
+  --color-screen-2: var(--screen-2);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
-  --color-blue: var(--blue);
-  --color-blue-deep: var(--blue-deep);
-  --color-blue-ink: var(--blue-ink);
-  --color-butter: var(--butter);
-  --color-butter-soft: var(--butter-soft);
+  --color-signal: var(--signal);
+  --color-glow: var(--glow);
   --color-line: var(--line);
   --color-surface: var(--surface);
+  --color-pop: var(--pop);
+  --color-zest: var(--zest);
+  --color-tang: var(--tang);
+  --color-peri: var(--peri);
+  --color-deep: var(--deep);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-antonio), "Arial Narrow", Impact, sans-serif;
+  --font-osd: var(--font-vt323), ui-monospace, monospace;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 ::selection {
-  background: var(--butter);
-  color: var(--ink);
+  background: var(--pop);
+  color: var(--deep);
 }
 
 html[data-theme="dark"] ::selection {
-  background: #45689c;
-  color: #f8f1e4;
+  background: var(--signal);
+  color: #ffffff;
 }
 
 html {
@@ -74,26 +95,137 @@ html {
 }
 
 body {
-  background: var(--paper);
+  background: var(--sky);
+  background-color: var(--screen);
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans);
   text-rendering: optimizeLegibility;
 }
 
-/* Highlighter stroke behind the lower part of a word */
-.marker {
-  background-image: linear-gradient(
-    to top,
-    var(--butter) 0%,
-    var(--butter) 42%,
-    transparent 42%
-  );
-  padding: 0 0.12em;
-  margin: 0 -0.06em;
-  border-radius: 2px;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+/* Component classes live in a layer so Tailwind utilities can still override them */
+@layer components {
+  /* Highlighter band behind the lower part of a word */
+  .marker {
+    background-image: linear-gradient(
+      to top,
+      var(--marker) 0%,
+      var(--marker) 42%,
+      transparent 42%
+    );
+    padding: 0 0.12em;
+    margin: 0 -0.06em;
+    border-radius: 2px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  /* ---------- Broadcast type ---------- */
+
+  /* Camcorder / TV on-screen-display text */
+  .osd {
+    font-family: var(--font-vt323), ui-monospace, monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-shadow: 0 0 6px color-mix(in srgb, var(--glow) 35%, transparent);
+  }
+
+  /* Daytime title: ultramarine with an offset pastel print shadow and a hint of RGB split */
+  .title-glow {
+    color: var(--glow);
+    text-shadow:
+      -1px 0 rgba(255, 60, 140, 0.35),
+      1px 0 rgba(40, 210, 255, 0.35),
+      0.06em 0.06em 0 var(--title-shadow);
+    transition: text-shadow 160ms ease;
+  }
+
+  .title-glow:hover {
+    text-shadow:
+      -3px 0 rgba(255, 60, 140, 0.45),
+      3px 0 rgba(40, 210, 255, 0.45),
+      0.06em 0.06em 0 var(--title-shadow);
+  }
+
+  /* Primetime title: phosphor halation, like a bright title burned into a CRT */
+  html[data-theme="dark"] .title-glow,
+  .prime-tokens .title-glow {
+    text-shadow:
+      -1px 0 rgba(255, 60, 140, 0.4),
+      1px 0 rgba(40, 210, 255, 0.4),
+      0 0 4px color-mix(in srgb, var(--glow) 80%, transparent),
+      0 0 18px color-mix(in srgb, var(--glow) 55%, transparent),
+      0 0 48px color-mix(in srgb, var(--signal) 70%, transparent);
+  }
+
+  html[data-theme="dark"] .title-glow:hover,
+  .prime-tokens .title-glow:hover {
+    text-shadow:
+      -3px 0 rgba(255, 60, 140, 0.5),
+      3px 0 rgba(40, 210, 255, 0.5),
+      0 0 4px color-mix(in srgb, var(--glow) 80%, transparent),
+      0 0 18px color-mix(in srgb, var(--glow) 55%, transparent),
+      0 0 48px color-mix(in srgb, var(--signal) 70%, transparent);
+  }
+
+  /* ---------- Broadcast surfaces ---------- */
+
+  /* Web 2.0 gloss: saturated fill with a hard top-half highlight */
+  .gloss {
+    --gloss-fill: var(--signal);
+    --gloss-text: #ffffff;
+    position: relative;
+    color: var(--gloss-text);
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(255, 255, 255, 0.14) 49%,
+        rgba(255, 255, 255, 0) 51%,
+        rgba(255, 255, 255, 0.12) 100%
+      ),
+      var(--gloss-fill);
+    border: 1px solid color-mix(in srgb, var(--gloss-fill) 70%, #000000);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.65),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.16),
+      0 8px 20px -10px var(--gloss-fill);
+    transition:
+      box-shadow 180ms ease,
+      filter 180ms ease,
+      transform 180ms ease;
+  }
+
+  .gloss:hover {
+    filter: brightness(1.08) saturate(1.1);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.65),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.16),
+      0 0 24px -4px var(--glow);
+  }
+
+  .gloss-pop {
+    --gloss-fill: var(--pop);
+    --gloss-text: var(--deep);
+  }
+
+  .gloss-zest {
+    --gloss-fill: var(--zest);
+    --gloss-text: var(--deep);
+  }
+
+  .scanlines {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.035) 0px,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
 }
+
+/* ---------- Motion ---------- */
 
 @keyframes fade-up {
   from {
@@ -110,9 +242,71 @@ body {
   animation: fade-up 0.7s cubic-bezier(0.21, 0.47, 0.32, 0.98) both;
 }
 
+/* Projector gate weave */
+@keyframes weave {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(0.2px, -0.15px); }
+  50% { transform: translate(-0.15px, 0.25px); }
+  75% { transform: translate(0.1px, 0.1px); }
+}
+
+@keyframes rec-blink {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0.15; }
+}
+
+.weave {
+  animation: weave 0.9s steps(2) infinite;
+}
+
+.rec-blink {
+  animation: rec-blink 1.2s steps(1) infinite;
+}
+
+/* Daytime / Primetime switch: the old picture blows out while the new one
+   rolls in from the top, like changing the channel on an old set.
+   Driven by document.startViewTransition in the theme toggle. */
+@keyframes tv-out {
+  to {
+    opacity: 0;
+    filter: brightness(1.7) saturate(0.6) blur(2px);
+  }
+}
+
+@keyframes tv-in {
+  from {
+    clip-path: inset(0 0 100% 0);
+    filter: brightness(2.2) saturate(0.5) blur(3px);
+  }
+  55% {
+    filter: brightness(1.35) saturate(0.85) blur(0.5px);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    filter: none;
+  }
+}
+
+::view-transition-old(root) {
+  animation: tv-out 520ms ease-in both;
+}
+
+::view-transition-new(root) {
+  animation: tv-in 640ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .fade-up {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
     animation: none;
+  }
+  .fade-up,
+  .weave,
+  .rec-blink {
+    animation: none;
+  }
+  .title-glow {
+    transition: none;
   }
   html {
     scroll-behavior: auto;
@@ -121,7 +315,7 @@ body {
 
 a,
 button {
-  outline-color: var(--blue-deep);
+  outline-color: var(--glow);
 }
 
 @page {
@@ -130,25 +324,34 @@ button {
 }
 
 @media print {
-  html,
+  :root,
   html[data-theme="dark"] {
     font-size: 13px;
-    --paper: #faf6ec;
-    --cream: #f4eedd;
-    --ink: #26344a;
-    --ink-soft: #4e5e77;
-    --ink-faint: #7e8ba0;
-    --blue: #7298c7;
-    --blue-deep: #45689c;
-    --blue-ink: #334f7c;
-    --butter: #f3d98f;
-    --butter-soft: #f9ecc8;
-    --line: #e7dfc8;
-    --surface: rgba(255, 255, 255, 0.55);
+    --screen: #ffffff;
+    --screen-2: #ffffff;
+    --ink: #1a2333;
+    --ink-soft: #3d4a60;
+    --ink-faint: #6b7890;
+    --signal: #2f3fb8;
+    --glow: #1a2333;
+    --line: #dde2ec;
+    --surface: #ffffff;
+    --pop: #d5d9e4;
     color-scheme: light;
   }
   body {
     background: #ffffff;
     color: #1a2333;
+  }
+  .font-display {
+    font-family: var(--font-inter), ui-sans-serif, sans-serif;
+    letter-spacing: -0.02em;
+  }
+  .title-glow,
+  .osd {
+    text-shadow: none;
+  }
+  .osd {
+    font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   }
 }
