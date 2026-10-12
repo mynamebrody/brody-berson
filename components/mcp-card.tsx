@@ -1,4 +1,5 @@
 import { mcpPrompts, mcpTools, site } from "@/content/site";
+import { Collapsible } from "./collapsible";
 import { ConnectTabs, type ConnectTab } from "./connect-tabs";
 import { CopyButton } from "./copy-button";
 
@@ -46,24 +47,43 @@ const guide = [...mcpTools, ...mcpPrompts.map((p) => ({ ...p, name: `/${p.name}`
 
 export function McpCard() {
   return (
-    // prime-tokens pins the Primetime palette so this always reads as a TV setup menu
-    <div className="prime-tokens scanlines overflow-hidden rounded-2xl border border-line bg-screen text-ink shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_rgba(58,76,255,0.7)]">
-      <div className="flex items-center justify-between gap-4 border-b border-line bg-signal/25 px-6 py-3 sm:px-8">
-        <div className="flex items-center gap-2.5">
-          <span className="relative flex size-2.5">
-            <span className="absolute inline-flex h-full w-full motion-safe:animate-ping rounded-full bg-zest opacity-60" />
-            <span className="relative inline-flex size-2.5 rounded-full bg-zest" />
+    // prime-tokens pins the Primetime palette so this always reads as a TV setup menu.
+    // Collapsed by default: the header bar toggles everything below it.
+    <Collapsible
+      className="prime-tokens scanlines overflow-hidden rounded-2xl border border-line bg-screen text-ink shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_rgba(58,76,255,0.7)]"
+      summaryClassName="flex items-center justify-between gap-4 bg-signal/25 px-6 py-3 transition-colors hover:bg-signal/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-glow sm:px-8"
+      summary={
+        <>
+          <span className="flex items-center gap-2.5">
+            <span className="relative flex size-2.5">
+              <span className="absolute inline-flex h-full w-full motion-safe:animate-ping rounded-full bg-zest opacity-60" />
+              <span className="relative inline-flex size-2.5 rounded-full bg-zest" />
+            </span>
+            <span className="osd text-lg text-glow">
+              MCP setup{" "}
+              <span
+                aria-hidden
+                className="inline-block transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-data-open:rotate-90 motion-reduce:transition-none paused:transition-none"
+              >
+                ▸
+              </span>
+              <span className="rec-blink">_</span>
+            </span>
           </span>
-          <span className="osd text-lg text-glow">
-            MCP setup ▸<span className="rec-blink">_</span>
+          <span className="flex items-center gap-4">
+            <span className="osd hidden text-base text-ink-faint sm:block">
+              streamable HTTP · no auth
+            </span>
+            <span className="osd rounded-md border border-line px-2.5 text-base text-ink-soft transition-colors group-hover/summary:border-glow group-hover/summary:text-glow">
+              <span className="group-data-open:hidden">Open</span>
+              <span className="hidden group-data-open:inline">Close</span>
+            </span>
           </span>
-        </div>
-        <span className="osd hidden text-base text-ink-faint sm:block">
-          streamable HTTP · no auth
-        </span>
-      </div>
-
-      <div className="px-6 py-6 sm:px-8 sm:py-8">
+        </>
+      }
+    >
+      {/* The divider lives on the body so it slides away with it */}
+      <div className="border-t border-line px-6 py-6 sm:px-8 sm:py-8">
         <div className="flex items-center gap-2">
           <code className="min-w-0 flex-1 overflow-x-auto rounded-lg border border-line bg-black/40 px-4 py-3 font-mono text-sm text-glow [text-shadow:0_0_10px_rgba(143,211,255,0.55)] sm:text-base">
             {site.mcpUrl}
@@ -76,7 +96,7 @@ export function McpCard() {
         </div>
 
         <div className="mt-8 border-t border-line pt-6">
-          <div className="flex items-baseline justify-between gap-4">
+          <div className="flex flex-col gap-x-4 sm:flex-row sm:items-baseline sm:justify-between">
             <p className="osd text-lg text-ink-faint">MCP guide · What your agent can ask</p>
             <p className="osd text-base text-ink-faint">
               {guide.length} items · scroll ↕
@@ -100,6 +120,6 @@ export function McpCard() {
           </ul>
         </div>
       </div>
-    </div>
+    </Collapsible>
   );
 }

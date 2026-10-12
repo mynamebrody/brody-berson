@@ -28,3 +28,8 @@ export function subscribePlayback(onChange: () => void) {
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-playback"] });
   return () => observer.disconnect();
 }
+
+/** True when motion should snap instead of animate: reduced motion in the OS, or the site is paused. */
+export function prefersStill() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches || getPlayback() === "paused";
+}
