@@ -2,6 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import type { WatchedFilm } from "@/lib/letterboxd";
+import { prefersStill } from "@/lib/playback";
+import { BroadcastTexture } from "./broadcast-fx";
 import styles from "./vhs-tape.module.css";
 
 const cases = ["black", "white", "cardboard"] as const;
@@ -99,9 +101,13 @@ export function watchedOn(date: string) {
 
 const SPOILER_WARNING = /^This review may contain spoilers\.?/i;
 
+/** Matches the tune-out duration on .tv-dialog[data-closing] in globals.css. */
+const CLOSE_MS = 240;
+
 /**
  * Three-line excerpt; when it's cut off, "Read full review" opens the whole thing
- * in a dialog (native <dialog>: focus trap, Esc to close, top layer above the shelf).
+ * in a dialog (native <dialog>: focus trap, Esc to close, top layer above the shelf)
+ * that tunes in like a channel change.
  * Reviews flagged as spoilers show only the warning until the dialog is opened.
  */
 function Review({ film, rating }: { film: WatchedFilm; rating: string | null }) {
@@ -116,6 +122,21 @@ function Review({ film, rating }: { film: WatchedFilm; rating: string | null }) 
     const el = excerpt.current;
     if (el) setClamped(el.scrollHeight > el.clientHeight + 1);
   }, [review]);
+
+  // Play the tune-out (data-closing, styled in globals.css) before actually closing
+  function close() {
+    const el = dialog.current;
+    if (!el?.open || el.dataset.closing !== undefined) return;
+    if (prefersStill()) {
+      el.close();
+      return;
+    }
+    el.dataset.closing = "";
+    window.setTimeout(() => {
+      delete el.dataset.closing;
+      el.close();
+    }, CLOSE_MS);
+  }
 
   return (
     <>
@@ -141,11 +162,19 @@ function Review({ film, rating }: { film: WatchedFilm; rating: string | null }) 
         aria-labelledby={titleId}
         // Clicking the backdrop (the dialog element itself, outside the panel) closes it
         onClick={(event) => {
-          if (event.target === dialog.current) dialog.current.close();
+          if (event.target === dialog.current) close();
         }}
-        className="m-auto max-h-[85vh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto rounded-2xl border border-line bg-screen-2 p-0 text-ink shadow-[0_30px_70px_-30px_rgba(5,6,26,0.8)] backdrop:bg-deep/60 backdrop:backdrop-blur-sm"
+        // Esc closes through the same animated path
+        onCancel={(event) => {
+          event.preventDefault();
+          close();
+        }}
+        // The dialog is a transparent full-viewport layer holding the panel and the
+        // broadcast texture. Modal dialogs render in the top layer, above the page-level
+        // texture, so they need their own copy to stay "on TV".
+        className="tv-dialog m-0 h-dvh max-h-none w-full max-w-none place-items-center overflow-hidden border-0 bg-transparent p-0 text-ink open:grid backdrop:bg-deep/60 backdrop:backdrop-blur-sm"
       >
-        <div className="grid gap-6 p-6 sm:grid-cols-[9rem_1fr] sm:p-8">
+        <div className="tv-dialog-panel scanlines grid max-h-[85dvh] w-[calc(100%-2rem)] max-w-2xl gap-6 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-screen-2 p-6 shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_var(--signal)] sm:grid-cols-[9rem_1fr] sm:p-8">
           {film.poster ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -171,13 +200,17 @@ function Review({ film, rating }: { film: WatchedFilm; rating: string | null }) 
               <button
                 type="button"
                 autoFocus
-                onClick={() => dialog.current?.close()}
+                onClick={close}
                 className="osd cursor-pointer rounded-full border border-line px-4 py-1.5 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow"
               >
                 Close ✕
               </button>
             </div>
           </div>
+        </div>
+        {/* After the panel so the texture stays on top while the panel's entrance runs */}
+        <div className="tv-dialog-fx pointer-events-none fixed inset-0">
+          <BroadcastTexture />
         </div>
       </dialog>
     </>

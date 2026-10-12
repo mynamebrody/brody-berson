@@ -223,7 +223,8 @@
   transition: opacity 220ms ease;
 }
 
-/* Centered on the sticky header (py-3 around h-9 controls, about 61px tall) */
+/* Wide screens: centered in the header's empty middle (py-3 around h-9 controls,
+   about 61px tall; the /resume header is just as wide so its middle stays clear too) */
 .pauseLabel {
   position: absolute;
   top: 30px;
@@ -247,10 +248,31 @@
   transform: translate(-50%, -50%);
 }
 
-/* Phones: the header is full (name, Resume, toggles), so PAUSE sits just under it */
-@media (max-width: 639px) {
+/* Phones and tablets: the header has no clear middle (name, nav, toggles), so PAUSE
+   drops just under it onto a soft black patch that feathers out into the page,
+   keeping it legible over whatever content scrolls beneath */
+@media (max-width: 1023px) {
   .pauseLabel {
-    top: 86px;
+    top: 104px;
+    padding: 0.55em 1.1em;
+  }
+
+  .pauseLabel::before {
+    content: "";
+    position: absolute;
+    inset: -0.6em -1.4em;
+    z-index: -1;
+    background: radial-gradient(
+      closest-side,
+      rgba(4, 6, 26, 0.88) 0%,
+      rgba(4, 6, 26, 0.7) 45%,
+      rgba(4, 6, 26, 0) 100%
+    );
+  }
+
+  /* Pages without a header bar (/links) have room up top beside the corner toggles */
+  :global(body:not(:has(header))) .pauseLabel {
+    top: 40px;
   }
 }
 

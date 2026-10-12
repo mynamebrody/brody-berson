@@ -18,20 +18,23 @@ export default function ResumePage() {
   return (
     <>
       <header className="border-b border-line/60 bg-screen/50 backdrop-blur-md print:hidden">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-4 sm:px-8">
+        {/* As wide as the home header, so the middle stays clear for the PAUSE label */}
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-4 sm:px-8">
           <Link
             href="/"
             className="osd text-lg whitespace-nowrap text-ink-soft normal-case transition-colors hover:text-glow"
           >
-            ◀ brodyberson.com
+            ◀ <span className="sm:hidden">Home</span>
+            <span className="hidden sm:inline">brodyberson.com</span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <a
               href="/brody-berson-resume.pdf"
               download
+              aria-label="Download PDF"
               className="gloss rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap sm:px-5"
             >
-              Download PDF
+              <span className="hidden sm:inline">Download </span>PDF
             </a>
             <ThemeToggle />
             <PlaybackToggle />

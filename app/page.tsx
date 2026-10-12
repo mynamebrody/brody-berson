@@ -41,7 +41,7 @@ export default async function Home() {
           >
             Brody Berson
           </Link>
-          <nav className="flex items-center gap-4 text-sm">
+          <nav className="flex items-center gap-2.5 text-sm sm:gap-4">
             <a
               href="#mcp"
               className="osd hidden rounded-md border border-line bg-screen-2 px-2.5 py-0.5 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow sm:block"
@@ -61,7 +61,7 @@ export default async function Home() {
         {/* Hero: title card */}
         <section className="grid items-center gap-12 pt-14 pb-20 sm:grid-cols-[1fr_auto] sm:pt-20 sm:pb-24">
           <div>
-            <p className="osd fade-up text-xl text-ink-faint">▶ Now playing · {site.location}</p>
+            <p className="osd fade-up text-xl text-balance text-ink-faint">▶ Now playing · {site.location}</p>
             <h1
               className="title-glow fade-up mt-3 font-display text-7xl leading-[0.9] font-semibold tracking-wide uppercase sm:text-8xl"
               style={{ animationDelay: "60ms" }}

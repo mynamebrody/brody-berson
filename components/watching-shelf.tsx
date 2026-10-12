@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { WatchedFilm } from "@/lib/letterboxd";
+import { prefersStill } from "@/lib/playback";
 import { EndOfTape, stickerPlan, VhsTape } from "./vhs-tape";
 
 const PAGE_SIZE = 6;
@@ -11,13 +12,6 @@ type Props = {
   done: boolean;
   profileUrl: string;
 };
-
-function prefersStill() {
-  return (
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-    document.documentElement.dataset.playback === "paused"
-  );
-}
 
 /**
  * Horizontal video-store shelf of recent Letterboxd watches. The first batch is

@@ -296,6 +296,52 @@ body {
   animation: tv-in 640ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
+/* Modal dialogs tune in like an old set warming up: the panel opens out of a bright
+   horizontal line while the backdrop and its broadcast texture fade up. Scale and
+   filter (no clipping) so the border and glow ring arrive with the content.
+   Closing plays the same thing in reverse (data-closing, set briefly before close()).
+   Display: none → shown restarts the entrance, so it replays on every open. */
+@keyframes tv-tune-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94, 0.03);
+    filter: brightness(2.2) saturate(0.5);
+  }
+  45% {
+    opacity: 1;
+    filter: brightness(1.35) saturate(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes tv-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.tv-dialog[open]::backdrop,
+.tv-dialog[open] > .tv-dialog-fx {
+  animation: tv-fade-in 320ms ease-out both;
+}
+
+.tv-dialog[open] > .tv-dialog-panel {
+  animation: tv-tune-in 480ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.tv-dialog[data-closing]::backdrop,
+.tv-dialog[data-closing] > .tv-dialog-fx {
+  animation: tv-fade-in 240ms ease-in reverse both;
+}
+
+.tv-dialog[data-closing] > .tv-dialog-panel {
+  animation: tv-tune-in 240ms ease-in reverse both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root) {
@@ -303,8 +349,10 @@ body {
   }
   .fade-up,
   .weave,
-  .rec-blink {
-    animation: none;
+  .rec-blink,
+  .tv-dialog::backdrop,
+  .tv-dialog > * {
+    animation: none !important;
   }
   .title-glow {
     transition: none;
@@ -324,7 +372,9 @@ html[data-playback="paused"] *::after {
   animation-play-state: paused !important;
 }
 
-html[data-playback="paused"] .fade-up {
+html[data-playback="paused"] .fade-up,
+html[data-playback="paused"] .tv-dialog[open]::backdrop,
+html[data-playback="paused"] .tv-dialog[open] > * {
   animation-duration: 0s;
   animation-delay: 0s !important;
   animation-play-state: running !important;
