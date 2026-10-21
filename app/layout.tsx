@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Antonio, Inter, JetBrains_Mono, VT323 } from "next/font/google";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import { BroadcastFx } from "@/components/broadcast-fx";
 import { CamcorderOsd } from "@/components/camcorder-osd";
 import { site } from "@/content/site";
@@ -103,6 +104,7 @@ export default function RootLayout({
         {children}
         <BroadcastFx />
         <CamcorderOsd />
+        <Analytics />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-29575C0GNT"
           strategy="afterInteractive"
