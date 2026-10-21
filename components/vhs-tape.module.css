@@ -1,7 +1,7 @@
-/* VHS tapes for the Letterboxd shelf: a clamshell case with a clear plastic front,
-   the Letterboxd poster as the paper sleeve insert, and a VHS strip along the
-   bottom. Everything but the poster is CSS, so each tape can be distressed a
-   little differently. */
+/* VHS tapes for the Letterboxd shelf. Most films are a square-cornered cardboard
+   slipcase, the Letterboxd poster printed edge to edge; Disney and Pixar get the
+   rounded white clamshell. Everything but the poster is CSS, and the wear stacks
+   differently on every tape (the mix comes from shelfPlan in vhs-tape.tsx). */
 
 .slot {
   flex: none;
@@ -38,10 +38,11 @@
 }
 
 .tape {
+  /* Paper grain, reused by several kinds of wear */
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   position: relative;
   z-index: 1;
   display: block;
-  border-radius: 10px;
   transform: rotate(var(--tilt, 0deg));
   transform-origin: 50% 100%;
   transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -60,78 +61,121 @@
 
 /* ---------- Case ---------- */
 
+/* Same outer shape for both cases (3:5, about a real sleeve) so the shelf stays level */
 .case {
   position: relative;
-  display: block;
-  padding: 7px;
-  border-radius: 10px;
+  z-index: 1;
+  display: flex;
+  aspect-ratio: 3 / 5;
   box-shadow:
     0 18px 26px -16px rgba(0, 0, 0, 0.75),
     0 2px 3px rgba(0, 0, 0, 0.35);
 }
 
-/* The lip of the clear sleeve pocket, just inside the case edge */
-.case::after {
+/* Cardboard slipcase: the print *is* the box. --board shows wherever the print is
+   gone; --fiber is the torn paper edge. */
+.slipcase {
+  --inset: 0px;
+  --board: #b48a5c;
+  --fiber: #eadbbd;
+}
+
+.slipcase .case {
+  border-radius: 2px;
+  background: var(--board);
+}
+
+.chipboard {
+  --board: #8f8a80;
+  --fiber: #dcd7cb;
+}
+
+.bleached {
+  --board: #e4ddcc;
+  --fiber: #fbf8f0;
+}
+
+/* Edge of the box, catching a little light on top */
+.slipcase .case::after {
   content: "";
   position: absolute;
-  inset: 3px;
+  inset: 0;
   z-index: 1;
-  border-radius: 8px;
+  border-radius: inherit;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    inset 0 0 0 1px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
   pointer-events: none;
 }
 
-.black .case {
-  border: 1px solid #000000;
-  background: linear-gradient(160deg, #26262c 0%, #0c0c0f 45%, #050506 100%);
+/* Disney clamshell: white plastic with rounded corners on the open side, the sleeve
+   under a clear front. The left side is the hinge, flat, with the art running
+   right up to it. */
+.clamshell {
+  --inset: 7px;
+  --board: #efebe0;
+  --fiber: #f8f5ec;
 }
 
-/* Video-store rental clamshell */
-.white .case {
+.clamshell .case {
+  padding: var(--inset) var(--inset) var(--inset) 0;
   border: 1px solid #c4bcaa;
+  border-left: 0;
+  border-radius: 0 10px 10px 0;
   background: linear-gradient(160deg, #fbf9f4 0%, #e7e2d6 55%, #d6d0c1 100%);
 }
 
-.white .case::after {
+.clamshell .sleeve {
+  border-radius: 0 2px 2px 0;
+}
+
+/* The lip of the clear sleeve pocket, just inside the case edge */
+.clamshell .case::after {
+  content: "";
+  position: absolute;
+  inset: 3px 3px 3px 0;
+  z-index: 1;
+  border-radius: 0 8px 8px 0;
   box-shadow:
     inset 0 0 0 1px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  pointer-events: none;
 }
 
-/* Cardboard slipcase: no plastic, the sleeve *is* the box, with rubbed-down edges */
-/* Same outer size as the clamshells (1px border + 7px padding) so the shelf stays level */
-.cardboard .case {
-  margin: 4px;
-  padding: 3px;
-  border: 1px solid #8f6b45;
-  border-radius: 3px;
-  background: #b98d5f;
-}
-
-.cardboard .case::after {
-  inset: 0;
-  border-radius: 3px;
+/* The black cassette inside a slipcase: hidden behind the box until hover, then it
+   slides a little way out of the open bottom, ridged grip and all */
+.cassette {
+  position: absolute;
+  right: 0;
+  bottom: 1px;
+  left: 0;
+  height: 40px;
+  border-radius: 0 0 3px 3px;
+  background:
+    linear-gradient(to right, transparent 14%, #34343a 14% 86%, transparent 86%) 0 calc(100% - 4px) / 100% 3px no-repeat,
+    repeating-linear-gradient(to right, transparent 0 4px, rgba(255, 255, 255, 0.09) 4px 5px) 0 100% / 100% 12px no-repeat,
+    linear-gradient(to bottom, #232328, #0e0e11 70%, #2c2c32);
   box-shadow:
-    inset 0 0 0 1.5px rgba(255, 240, 220, 0.4),
-    inset 0 0 10px rgba(80, 50, 20, 0.35);
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.28),
+    inset 1px 0 0 rgba(255, 255, 255, 0.14),
+    inset -1px 0 0 rgba(255, 255, 255, 0.14),
+    0 3px 5px rgba(0, 0, 0, 0.55);
+  transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-.cardboard .plastic {
-  display: none;
+.slot:hover .cassette,
+.tape:focus-visible .cassette {
+  transform: translateY(19px);
 }
 
-/* ---------- Sleeve insert ---------- */
+/* ---------- Sleeve ---------- */
 
-/* Real VHS sleeve proportions (104 × 187 mm): poster art on top, VHS strip below */
 .sleeve {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex: 1;
   overflow: hidden;
-  aspect-ratio: 104 / 187;
-  border-radius: 3px;
+  border-radius: 2px;
   background: #1b1b1f;
 }
 
@@ -140,7 +184,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
   box-shadow:
     inset 0 0 14px rgba(0, 0, 0, 0.4),
@@ -150,10 +194,10 @@
 .art {
   position: relative;
   display: block;
-  flex: none;
-  aspect-ratio: 2 / 3;
+  flex: 1;
 }
 
+/* A poster is 2:3 and the box is 3:5, so a sliver comes off each side */
 .poster {
   position: absolute;
   inset: 0;
@@ -175,71 +219,18 @@
   text-transform: uppercase;
 }
 
-/* Bottom strip: just the title, with a BBTV rainbow stripe on top. The type shrinks
-   with the title length (--chars, set inline) so even long titles fit on one line. */
-.band {
-  position: relative;
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 3px 8px 0;
-  container-type: inline-size;
-}
-
-.band::before {
-  content: "";
+/* Every sleeve gets a little grain on top of whatever else happened to it */
+.grain {
   position: absolute;
-  inset: 0 0 auto;
-  height: 3px;
-  background: linear-gradient(
-    to right,
-    var(--pop) 0 25%,
-    var(--tang) 25% 50%,
-    var(--zest) 50% 75%,
-    #9ff0ff 75%
-  );
+  inset: 0;
+  z-index: 2;
+  background-image: var(--noise);
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-.bandTitle {
-  overflow: hidden;
-  max-width: 100%;
-  font-family: var(--font-antonio), "Arial Narrow", sans-serif;
-  /* Antonio caps plus tracking run about 0.62em per character; --chars is the
-     longest line, and titles over 24 characters get two lines (--lines) */
-  font-size: clamp(8px, calc(100cqi / (var(--chars, 12) * 0.62)), 15px);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  line-height: 1.1;
-  text-align: center;
-  text-transform: uppercase;
-  text-wrap: balance;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: var(--lines, 1);
-}
-
-.bandBlack .band {
-  background: #101014;
-  color: #f3f0e8;
-}
-
-.bandCream .band {
-  background: #efe7d3;
-  color: #1b1b1b;
-}
-
-.bandRed .band {
-  background: #c4161c;
-  color: #fff3d6;
-}
-
-.bandBlue .band {
-  background: #1d3d9a;
-  color: #ffffff;
-}
-
-/* ---------- Clear plastic front ---------- */
+/* ---------- Laminate / clear plastic front ---------- */
 
 .plastic {
   position: absolute;
@@ -266,6 +257,12 @@
   transition: background-position 420ms ease;
 }
 
+/* On a slipcase it's just the gloss of the printed laminate */
+.slipcase .plastic {
+  opacity: 0.55;
+  box-shadow: none;
+}
+
 .slot:hover .plastic,
 .tape:focus-visible .plastic {
   background-position: 45% 0, 0 0, 0 0;
@@ -273,78 +270,154 @@
 
 /* ---------- Wear ---------- */
 
-/* Every sleeve gets a little grain; specific wear stacks on the pseudo-elements */
-.wear {
+/* One layer per kind of wear, stacked over the art inside the sleeve */
+.fx,
+.fx::before,
+.fx::after,
+.plastic::after,
+.ear::before {
   position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-  opacity: 0.5;
-}
-
-.wear::before,
-.wear::after,
-.sleeve::after,
-.plastic::after {
-  content: "";
-  position: absolute;
-  inset: 0;
   pointer-events: none;
 }
 
-.faded .poster {
-  filter: saturate(0.4) sepia(0.4) brightness(1.1) contrast(0.85) hue-rotate(-8deg);
+.fx {
+  inset: 0;
+  z-index: 1;
 }
 
-.faded .band {
-  filter: saturate(0.55) brightness(1.08);
+.fx::before,
+.fx::after,
+.plastic::after {
+  content: "";
+  inset: 0;
 }
 
-.creased .wear::before {
-  mix-blend-mode: normal;
+/* Sun-faded: left spine-out in a window display, washed out harder toward one edge */
+.sunFaded .poster {
+  filter: saturate(0.4) sepia(0.35) brightness(1.08) contrast(0.86) hue-rotate(-8deg);
+}
+
+.fx[data-fx="sunFaded"] {
+  background: linear-gradient(
+    var(--fade-angle, 90deg),
+    rgba(255, 246, 222, 0.6),
+    rgba(255, 246, 222, 0.16) 45%,
+    transparent 78%
+  );
+  mix-blend-mode: screen;
+}
+
+/* Edge-worn: the print rubbed off every edge down to fraying board, corners worst */
+.fx[data-fx="edgeworn"]::before {
+  background: var(--fiber);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 200' preserveAspectRatio='none'%3E%3Cfilter id='f' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.3' numOctaves='3' seed='7'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='9' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect width='120' height='200' fill='none' stroke='%23000' stroke-width='6' filter='url(%23f)'/%3E%3C/svg%3E");
+  mask-size: 100% 100%;
+  transform: scale(var(--flip, 1), var(--crease-flip, 1));
+}
+
+.fx[data-fx="edgeworn"]::after {
   background:
-    linear-gradient(
-      100deg,
-      transparent 46.8%,
-      rgba(255, 255, 255, 0.75) 47.4%,
-      rgba(0, 0, 0, 0.55) 48.1%,
-      transparent 48.8%
-    ),
-    linear-gradient(
-      9deg,
-      transparent 62.2%,
-      rgba(255, 255, 255, 0.6) 62.7%,
-      rgba(0, 0, 0, 0.45) 63.3%,
-      transparent 63.9%
-    ),
-    linear-gradient(-35deg, transparent 18%, rgba(255, 255, 255, 0.45) 18.4%, transparent 19.2%);
+    radial-gradient(circle at 3% 97%, var(--fiber), transparent 13%),
+    radial-gradient(circle at 97% 3%, var(--fiber), transparent 11%),
+    radial-gradient(circle at 98% 98%, var(--fiber), transparent 8%),
+    radial-gradient(ellipse 18% 3% at 64% 99%, var(--fiber), transparent),
+    radial-gradient(ellipse 3% 14% at 99% 55%, var(--fiber), transparent);
+  mask-image: var(--noise);
+  mask-size: 70px;
+  opacity: 0.85;
 }
 
-.scuffed .wear::after {
-  mix-blend-mode: normal;
+/* Chipped edges: little bites knocked out of the print along the edges, not a full fray */
+.fx[data-fx="edgeChipped"] {
+  transform: scale(var(--flip, 1), var(--crease-flip, 1));
+}
+
+.fx[data-fx="edgeChipped"]::before {
   background:
-    radial-gradient(circle at 6% 95%, rgba(255, 250, 240, 0.75), transparent 14%),
-    radial-gradient(circle at 96% 4%, rgba(255, 250, 240, 0.7), transparent 12%),
-    radial-gradient(ellipse 18% 4% at 70% 97%, rgba(255, 250, 240, 0.6), transparent),
-    radial-gradient(ellipse 4% 14% at 99% 55%, rgba(255, 250, 240, 0.55), transparent),
-    radial-gradient(ellipse at 35% 45%, rgba(255, 255, 255, 0.16), transparent 32%);
+    radial-gradient(ellipse 15px 8px at 22% 0, var(--fiber) 60%, transparent 80%),
+    radial-gradient(ellipse 8px 5px at 61% 0, var(--fiber) 60%, transparent 80%),
+    radial-gradient(ellipse 7px 17px at 100% 18%, var(--fiber) 60%, transparent 80%),
+    radial-gradient(ellipse 5px 9px at 100% 47%, var(--fiber) 60%, transparent 80%),
+    radial-gradient(ellipse 8px 22px at 100% 71%, var(--fiber) 60%, transparent 80%),
+    radial-gradient(ellipse 19px 8px at 38% 100%, var(--fiber) 60%, transparent 80%),
+    radial-gradient(ellipse 10px 6px at 83% 100%, var(--fiber) 60%, transparent 80%),
+    radial-gradient(ellipse 7px 14px at 0 33%, var(--fiber) 60%, transparent 80%),
+    radial-gradient(ellipse 5px 8px at 0 86%, var(--fiber) 60%, transparent 80%),
+    radial-gradient(ellipse 11px 11px at 0 0, var(--fiber) 60%, transparent 80%);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='2'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 1 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mask-size: 22px;
 }
 
-/* Torn insert: a corner of the paper sleeve rips away, showing the white fiber edge */
+/* Rubbed corners: all four worn round to bare board from being picked up */
+.fx[data-fx="cornersRubbed"] {
+  background:
+    radial-gradient(circle 24px at 0 0, var(--fiber) 45%, transparent 85%),
+    radial-gradient(circle 19px at 100% 0, var(--fiber) 45%, transparent 85%),
+    radial-gradient(circle 27px at 100% 100%, var(--fiber) 45%, transparent 85%),
+    radial-gradient(circle 17px at 0 100%, var(--fiber) 45%, transparent 85%);
+  mask-size: 26px;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.4' numOctaves='3'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 1 1 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  transform: scaleX(var(--flip, 1));
+}
+
+/* Shelf scuffs: a soft band of rubbed print along the bottom and one side, from
+   years of sliding on and off the shelf */
+.fx[data-fx="shelfScuffed"] {
+  background:
+    linear-gradient(to top, var(--fiber), color-mix(in srgb, var(--fiber) 55%, transparent) 4%, transparent 12%),
+    linear-gradient(to left, var(--fiber), color-mix(in srgb, var(--fiber) 45%, transparent) 3%, transparent 9%);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.08 0.6' numOctaves='3'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 1 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  transform: scaleX(var(--flip, 1));
+}
+
+/* Dog-eared: a bottom corner folded over, showing the back of the paper */
+.dogEared .sleeve {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--ear)), calc(100% - var(--ear)) 100%, 0 100%);
+}
+
+.dogEared.earLeft .sleeve {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, var(--ear) 100%, 0 calc(100% - var(--ear)));
+}
+
+.ear {
+  position: absolute;
+  right: var(--inset);
+  bottom: var(--inset);
+  z-index: 1;
+  width: var(--ear);
+  height: var(--ear);
+  filter: drop-shadow(-1.5px -1.5px 1.5px rgba(0, 0, 0, 0.45));
+}
+
+.earLeft .ear {
+  right: auto;
+  left: 0;
+  filter: drop-shadow(1.5px -1.5px 1.5px rgba(0, 0, 0, 0.45));
+}
+
+/* The fold is the missing corner mirrored across the crease */
+.ear::before {
+  content: "";
+  inset: 0;
+  background: linear-gradient(135deg, var(--fiber) 20%, color-mix(in srgb, var(--fiber) 78%, #6b5a3c));
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.earLeft .ear::before {
+  background: linear-gradient(225deg, var(--fiber) 20%, color-mix(in srgb, var(--fiber) 78%, #6b5a3c));
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+/* Torn: a ragged bite out of the top edge, white fiber showing along the rip */
 .torn .case::before {
   content: "";
   position: absolute;
-  top: 7px;
-  right: 7px;
+  top: var(--inset);
+  right: var(--inset);
   width: 30%;
   height: 12%;
-  background: linear-gradient(225deg, #f6f1e4 35%, #ddd5c2 100%);
+  background: linear-gradient(225deg, var(--fiber) 35%, color-mix(in srgb, var(--fiber) 85%, #000000) 100%);
   clip-path: polygon(52% 0, 100% 0, 100% 100%);
-}
-
-.cardboard.torn .case::before {
-  top: 3px;
-  right: 3px;
 }
 
 .torn .sleeve {
@@ -363,39 +436,241 @@
   );
 }
 
-/* A stray strip of old tape on the sleeve; position, length, and angle vary per
-   tape (custom properties set inline), and it never lands on two tapes in a row */
-.taped .sleeve::after {
-  inset: auto;
-  top: var(--tape-top, 50%);
-  left: var(--tape-left, 30%);
-  z-index: 1;
-  width: var(--tape-width, 44%);
-  height: 8%;
-  max-height: 22px;
-  border-radius: 1px;
+/* Creased: folded in someone's bag, the print cracked white along the folds */
+/* Angles, positions, and strength all vary per tape (set inline); the second and
+   third folds are sometimes faint or missing */
+.fx[data-fx="creased"] {
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E"),
-    rgba(238, 226, 196, 0.6);
-  box-shadow: 0 0 0 1px rgba(160, 140, 100, 0.35);
-  /* Torn-off ends */
-  clip-path: polygon(0 8%, 4% 0, 96% 6%, 100% 0, 98% 92%, 100% 100%, 3% 94%, 0 100%);
-  transform: rotate(var(--tape-turn, -4deg));
+    linear-gradient(
+      var(--c1-angle, 100deg),
+      transparent calc(var(--c1-pos, 47%) - 0.6%),
+      rgba(255, 255, 255, 0.75) var(--c1-pos, 47%),
+      rgba(0, 0, 0, 0.55) calc(var(--c1-pos, 47%) + 0.7%),
+      transparent calc(var(--c1-pos, 47%) + 1.4%)
+    ),
+    linear-gradient(
+      var(--c2-angle, 9deg),
+      transparent calc(var(--c2-pos, 62%) - 0.5%),
+      rgba(255, 255, 255, calc(0.6 * var(--c2-alpha, 1))) var(--c2-pos, 62%),
+      rgba(0, 0, 0, calc(0.45 * var(--c2-alpha, 1))) calc(var(--c2-pos, 62%) + 0.6%),
+      transparent calc(var(--c2-pos, 62%) + 1.2%)
+    ),
+    linear-gradient(
+      var(--c3-angle, 125deg),
+      transparent calc(var(--c3-pos, 18%) - 0.4%),
+      rgba(255, 255, 255, calc(0.45 * var(--c3-alpha, 1))) var(--c3-pos, 18%),
+      transparent calc(var(--c3-pos, 18%) + 0.8%)
+    );
 }
 
-/* Hairline scratches in the plastic front */
+/* Water stain: a cup set down on it once, drying to a tide mark */
+.fx[data-fx="waterStain"] {
+  background:
+    radial-gradient(
+      circle at var(--stain-x) var(--stain-y),
+      rgba(170, 120, 45, 0.2) 0 calc(var(--stain-r) - 4px),
+      rgba(110, 70, 20, 0.55) calc(var(--stain-r) - 1.5px),
+      rgba(110, 70, 20, 0.12) var(--stain-r),
+      transparent calc(var(--stain-r) + 2px)
+    ),
+    radial-gradient(
+      circle at calc(var(--stain-x) + 16px) calc(var(--stain-y) + 22px),
+      rgba(170, 120, 45, 0.12) 0 calc(var(--stain-r) * 0.6 - 3px),
+      rgba(110, 70, 20, 0.45) calc(var(--stain-r) * 0.6 - 1px),
+      transparent calc(var(--stain-r) * 0.6 + 1.5px)
+    );
+  mask-image: var(--noise);
+  mask-size: 90px;
+  mix-blend-mode: multiply;
+}
+
+/* Sticker residue: an old price tag peeled off, taking the print with it and
+   leaving white paper fiber and a scrap of the orange tag behind */
+.fx[data-fx="residue"]::before,
+.fx[data-fx="residue"]::after {
+  inset: auto;
+  top: var(--residue-y);
+  left: var(--residue-x);
+  transform: rotate(var(--residue-turn));
+}
+
+.fx[data-fx="residue"]::before {
+  width: 30%;
+  height: 7%;
+  background: var(--noise), #f1ece0;
+  background-size: 50px, auto;
+  background-blend-mode: multiply;
+  clip-path: polygon(3% 18%, 22% 0, 48% 9%, 71% 0, 97% 12%, 100% 58%, 88% 100%, 60% 86%, 34% 100%, 8% 90%, 0 52%);
+  box-shadow: inset 0 0 6px rgba(120, 100, 70, 0.6);
+}
+
+.fx[data-fx="residue"]::after {
+  width: 11%;
+  height: 4%;
+  margin: 1.5% 0 0 19%;
+  background: #ff7a1a;
+  clip-path: polygon(0 20%, 40% 0, 100% 10%, 85% 55%, 100% 100%, 30% 85%, 0 100%, 12% 55%);
+}
+
+/* Scratched: hairlines in the laminate (or the clamshell's clear front) */
 .scratched .plastic::after {
   background: repeating-linear-gradient(
-    72deg,
+    var(--scratch-angle, 72deg),
     transparent 0 9px,
-    rgba(255, 255, 255, 0.4) 9px 10px,
+    rgba(255, 255, 255, 0.3) 9px 10px,
     transparent 10px 23px
   );
   mask-image: radial-gradient(ellipse at 60% 40%, #000000 10%, transparent 70%);
 }
 
-/* ---------- Stickers (stuck on the plastic) ---------- */
+.slipcase.scratched .plastic {
+  opacity: 0.85;
+}
 
+/* Grimy: yellowed with age, a dark thumb smudge where it gets pulled off the shelf */
+.grimy .poster {
+  filter: brightness(0.9) sepia(0.2);
+}
+
+.fx[data-fx="grimy"] {
+  background:
+    radial-gradient(ellipse 22% 13% at 92% 52%, rgba(45, 32, 18, 0.42), transparent 70%),
+    radial-gradient(ellipse 13% 8% at 85% 63%, rgba(45, 32, 18, 0.28), transparent 70%),
+    linear-gradient(rgba(150, 115, 50, 0.16), rgba(150, 115, 50, 0.16));
+  box-shadow: inset 0 0 18px rgba(50, 35, 15, 0.5);
+  mix-blend-mode: multiply;
+  transform: scaleX(var(--flip, 1));
+}
+
+/* Grimy and sun-faded together just compound the poster filter */
+.grimy.sunFaded .poster {
+  filter: saturate(0.4) sepia(0.5) brightness(0.98) contrast(0.86);
+}
+
+/* Peeling: the laminate lifting off one edge, a glossy ridge with a shadow under it */
+.fx[data-fx="peeling"] {
+  transform: scaleX(var(--flip, 1));
+}
+
+.fx[data-fx="peeling"]::before {
+  left: auto;
+  width: 16%;
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0.18) 45%,
+    rgba(0, 0, 0, 0.32) 52%,
+    transparent 62%
+  );
+  mask-image: linear-gradient(to bottom, transparent 8%, #000000 26% 58%, transparent 82%);
+}
+
+.fx[data-fx="peeling"]::after {
+  left: auto;
+  width: 10%;
+  background: repeating-linear-gradient(
+    170deg,
+    transparent 0 7px,
+    rgba(255, 255, 255, 0.35) 7px 8px,
+    transparent 8px 13px
+  );
+  mask-image: linear-gradient(to bottom, transparent 14%, #000000 30% 52%, transparent 70%);
+}
+
+/* Split seam: the glued side of the box coming apart */
+.fx[data-fx="splitSeam"] {
+  transform: scaleX(var(--flip, 1));
+}
+
+.fx[data-fx="splitSeam"]::before {
+  inset: auto;
+  top: var(--seam-y);
+  right: 0;
+  width: 6px;
+  height: 38%;
+  background: linear-gradient(to left, #120d09 0 2.5px, var(--fiber) 2.5px 4px, transparent 4px);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 40% 100%, 60% 80%, 10% 62%, 55% 45%, 0 30%, 45% 14%);
+}
+
+.fx[data-fx="splitSeam"]::after {
+  inset: auto;
+  top: var(--seam-y);
+  right: 0;
+  width: 14px;
+  height: 38%;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.4), transparent);
+}
+
+/* Crushed corner: dropped on its corner, the board crumpled into a fan of wrinkles */
+.fx[data-fx="crushedCorner"] {
+  transform: scaleX(var(--flip, 1));
+}
+
+.fx[data-fx="crushedCorner"]::before {
+  background:
+    conic-gradient(
+      from 180deg at 100% 0,
+      transparent 0 7deg,
+      rgba(255, 255, 255, 0.55) 7deg 8deg,
+      rgba(0, 0, 0, 0.45) 8deg 9.5deg,
+      transparent 9.5deg 19deg,
+      rgba(255, 255, 255, 0.5) 19deg 20deg,
+      rgba(0, 0, 0, 0.4) 20deg 21deg,
+      transparent 21deg 34deg,
+      rgba(255, 255, 255, 0.6) 34deg 35.5deg,
+      rgba(0, 0, 0, 0.5) 35.5deg 37deg,
+      transparent 37deg 51deg,
+      rgba(255, 255, 255, 0.45) 51deg 52deg,
+      rgba(0, 0, 0, 0.4) 52deg 53.5deg,
+      transparent 53.5deg 68deg,
+      rgba(255, 255, 255, 0.5) 68deg 69deg,
+      rgba(0, 0, 0, 0.45) 69deg 70.5deg,
+      transparent 70.5deg
+    ),
+    linear-gradient(225deg, transparent 0 20px, rgba(255, 255, 255, 0.55) 20px 21px, rgba(0, 0, 0, 0.5) 21px 23px, transparent 23px),
+    radial-gradient(circle 70px at 100% 0, rgba(30, 18, 6, 0.55), transparent);
+  mask-image: radial-gradient(circle 70px at 100% 0, #000000 45%, transparent);
+}
+
+/* Rubbed down to bare board right at the tip */
+.fx[data-fx="crushedCorner"]::after {
+  background:
+    radial-gradient(circle 22px at 100% 0, var(--fiber) 50%, transparent),
+    radial-gradient(ellipse 6px 30px at 100% 0, var(--fiber), transparent),
+    radial-gradient(ellipse 34px 5px at 100% 0, var(--fiber), transparent);
+  mask-image: var(--noise);
+  mask-size: 36px;
+}
+
+/* Foxing: brown humidity spots from a summer in a storage unit */
+.fx[data-fx="foxing"] {
+  background:
+    radial-gradient(circle at 20% 30%, rgba(115, 66, 15, 0.8) 0 1.4px, rgba(115, 66, 15, 0.25) 2.2px, transparent 3.4px),
+    radial-gradient(circle at 70% 60%, rgba(115, 66, 15, 0.7) 0 2.4px, rgba(115, 66, 15, 0.2) 3.6px, transparent 5px),
+    radial-gradient(circle at 45% 85%, rgba(115, 66, 15, 0.75) 0 1px, transparent 2px),
+    radial-gradient(circle at 85% 15%, rgba(115, 66, 15, 0.6) 0 3.2px, rgba(115, 66, 15, 0.2) 4.6px, transparent 6.5px),
+    radial-gradient(ellipse 50% 45% at var(--fox-x) var(--fox-y), rgba(150, 100, 35, 0.22), transparent);
+  background-size: 23px 31px, 37px 29px, 17px 19px, 53px 47px, 100% 100%;
+  background-position: 0 0, 11px 7px, 5px 13px, 19px 3px, 0 0;
+  mask-image: radial-gradient(ellipse 48% 40% at var(--fox-x) var(--fox-y), #000000 10%, transparent 100%);
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+}
+
+/* Foxing shows on dark art too: the spots are lighter where the ink has lifted */
+.fx[data-fx="foxing"]::after {
+  background:
+    radial-gradient(circle at 60% 40%, rgba(235, 200, 140, 0.55) 0 1.2px, transparent 2.4px),
+    radial-gradient(circle at 30% 70%, rgba(235, 200, 140, 0.45) 0 2px, transparent 3.4px);
+  background-size: 29px 37px, 41px 33px;
+  mask-image: radial-gradient(ellipse 55% 48% at var(--fox-x) var(--fox-y), #000000 30%, transparent 100%);
+  mix-blend-mode: screen;
+}
+
+/* ---------- Stickers (stuck on the front) ---------- */
+
+/* Every sticker keeps to its own zone of the box, with placement and tilt varying
+   per tape (custom properties set inline); tilts stay small enough to read */
 .sticker {
   position: absolute;
   z-index: 2;
@@ -408,95 +683,162 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
+/* Round stickers with their text stacked on two lines */
+.newRelease,
+.rewind,
+.staffPick,
+.previouslyViewed {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: var(--font-antonio), "Arial Narrow", sans-serif;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+/* Top left, colored by genre */
+.newRelease {
+  top: var(--nr-top, 4%);
+  left: var(--nr-left, 4%);
+  width: 50px;
+  height: 50px;
+  background: var(--nr-bg, #e8392f);
+  color: var(--nr-ink, #ffffff);
+  font-size: 11px;
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--nr-ink, #ffffff) 70%, transparent),
+    inset 0 0 0 4px var(--nr-bg, #e8392f),
+    0 1px 2px rgba(0, 0, 0, 0.45);
+  transform: rotate(var(--nr-turn, -8deg));
+}
+
+/* Top right */
 .rating {
-  top: 14px;
-  right: -8px;
+  top: var(--rating-top, 4%);
+  right: var(--rating-right, 6px);
   padding: 3px 7px;
   border-radius: 999px;
   background: #ffe14a;
   color: #1a1a1a;
-  transform: rotate(7deg);
+  transform: rotate(var(--rating-turn, 7deg));
 }
 
 .price {
-  top: 14px;
-  right: -6px;
+  top: var(--rating-top, 4%);
+  right: var(--rating-right, 8px);
   padding: 3px 6px;
   border-radius: 3px;
   background: #ffffff;
   color: #111111;
-  transform: rotate(6deg);
+  transform: rotate(var(--rating-turn, 6deg));
 }
 
-/* Sits just above the VHS strip */
-.staffPick {
-  bottom: 22%;
-  left: 10px;
-  padding: 3px 8px;
-  background: var(--pop);
-  color: var(--deep);
-  transform: rotate(-6deg);
-}
-
-.rewatch {
-  top: 48%;
-  right: -6px;
-  padding: 3px 7px;
-  background: var(--zest);
-  color: var(--deep);
-  transform: rotate(5deg);
-}
-
-/* Placement and angle vary per tape (custom properties set inline) */
+/* Upper middle */
 .rewind {
-  top: var(--rewind-top, 18%);
+  top: var(--rewind-top, 30%);
   left: var(--rewind-left, 12%);
-  display: grid;
-  place-items: center;
   width: 52px;
   height: 52px;
   border: 2px solid #d81b4f;
-  border-radius: 50%;
   background: #ffffff;
   color: #d81b4f;
-  font-size: 12px;
-  text-align: center;
-  transform: rotate(var(--rewind-turn, -12deg));
-}
-
-/* "New release" corner ribbon across the top-left of the case */
-.ribbon {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 3;
-  overflow: hidden;
-  width: 76px;
-  height: 76px;
-  border-top-left-radius: 10px;
-  pointer-events: none;
-}
-
-.ribbon span {
-  position: absolute;
-  top: 16px;
-  left: -26px;
-  width: 112px;
-  padding: 3px 0;
-  background: #ff3b30;
-  color: #ffffff;
   font-family: var(--font-vt323), ui-monospace, monospace;
-  font-size: 13px;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  text-align: center;
-  text-transform: uppercase;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
-  transform: rotate(-45deg);
+  font-size: 12px;
+  font-weight: 400;
+  transform: rotate(var(--rewind-turn, -8deg));
 }
 
-.cardboard .ribbon {
-  border-top-left-radius: 3px;
+/* Bottom left: black, with a thin white ring just inside the edge */
+.staffPick {
+  bottom: var(--staff-bottom, 4%);
+  left: var(--staff-left, 6%);
+  width: 46px;
+  height: 46px;
+  background: #0d0d0f;
+  color: #ffffff;
+  font-size: 11px;
+  box-shadow:
+    inset 0 0 0 2px #0d0d0f,
+    inset 0 0 0 3px #ffffff,
+    0 1px 2px rgba(0, 0, 0, 0.5);
+  transform: rotate(var(--staff-turn, -6deg));
+}
+
+/* Bottom right: the store's property label, barcode and stock number */
+.storeLabel {
+  right: var(--label-right, 6%);
+  bottom: var(--label-bottom, 4%);
+  width: 42%;
+  padding: 3px 3px 12px;
+  border-radius: 1px;
+  background:
+    repeating-linear-gradient(
+        to right,
+        #111111 0 1px,
+        transparent 1px 2.5px,
+        #111111 2.5px 4.5px,
+        transparent 4.5px 5.5px,
+        #111111 5.5px 6px,
+        transparent 6px 8px
+      )
+      4px calc(100% - 3px) / calc(100% - 8px) 7px no-repeat,
+    #fbfaf5;
+  color: #111111;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  transform: rotate(var(--label-turn, -2deg));
+}
+
+/* Bottom right, stacked above the store label when there is one. Shape and color
+   come off whatever roll was at the counter that day */
+.previouslyViewed {
+  right: var(--pv-right, 6%);
+  bottom: var(--pv-bottom, 6%);
+  width: 56px;
+  height: 56px;
+  background: var(--pv-bg, #ff5a1f);
+  color: var(--pv-ink, #fff8e6);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  transform: rotate(var(--pv-turn, 6deg));
+}
+
+/* clip-path would cut any shadow off, so the cut-out shapes sit flat */
+.previouslyViewed[data-shape="burst"],
+.previouslyViewed[data-shape="scallop"] {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.previouslyViewed[data-shape="burst"] {
+  width: 62px;
+  height: 62px;
+  clip-path: polygon(
+    50% 0, 59% 12%, 75% 6%, 76% 22%, 93% 25%, 86% 40%, 100% 50%, 86% 60%, 93% 75%, 76% 78%,
+    75% 94%, 59% 88%, 50% 100%, 41% 88%, 25% 94%, 24% 78%, 7% 75%, 14% 60%, 0 50%, 14% 40%,
+    7% 25%, 24% 22%, 25% 6%, 41% 12%
+  );
+}
+
+.previouslyViewed[data-shape="scallop"] {
+  width: 58px;
+  height: 58px;
+  clip-path: polygon(95.5% 50.0%, 96.4% 54.1%, 98.1% 58.5%, 98.3% 62.9%, 95.9% 66.7%, 92.3% 69.7%, 89.4% 72.8%, 88.2% 76.7%, 87.4% 81.4%, 85.4% 85.4%, 81.4% 87.4%, 76.7% 88.2%, 72.8% 89.4%, 69.7% 92.3%, 66.7% 95.9%, 62.9% 98.3%, 58.5% 98.1%, 54.1% 96.4%, 50.0% 95.5%, 45.9% 96.4%, 41.5% 98.1%, 37.1% 98.3%, 33.3% 95.9%, 30.3% 92.3%, 27.3% 89.4%, 23.3% 88.2%, 18.6% 87.4%, 14.6% 85.4%, 12.6% 81.4%, 11.8% 76.7%, 10.6% 72.8%, 7.7% 69.7%, 4.1% 66.7%, 1.7% 62.9%, 1.9% 58.5%, 3.6% 54.1%, 4.5% 50.0%, 3.6% 45.9%, 1.9% 41.5%, 1.7% 37.1%, 4.1% 33.3%, 7.7% 30.3%, 10.6% 27.2%, 11.8% 23.3%, 12.6% 18.6%, 14.6% 14.6%, 18.6% 12.6%, 23.3% 11.8%, 27.2% 10.6%, 30.3% 7.7%, 33.3% 4.1%, 37.1% 1.7%, 41.5% 1.9%, 45.9% 3.6%, 50.0% 4.5%, 54.1% 3.6%, 58.5% 1.9%, 62.9% 1.7%, 66.7% 4.1%, 69.7% 7.7%, 72.7% 10.6%, 76.7% 11.8%, 81.4% 12.6%, 85.4% 14.6%, 87.4% 18.6%, 88.2% 23.3%, 89.4% 27.3%, 92.3% 30.3%, 95.9% 33.3%, 98.3% 37.1%, 98.1% 41.5%, 96.4% 45.9%);
+}
+
+.previouslyViewed[data-shape="round"] {
+  box-shadow:
+    inset 0 0 0 3px var(--pv-bg, #ff5a1f),
+    inset 0 0 0 4px color-mix(in srgb, var(--pv-ink, #ffffff) 60%, transparent),
+    0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.previouslyViewed[data-shape="oval"] {
+  width: 70px;
+  height: 44px;
 }
 
 /* ---------- Blank tape (end of shelf / signal lost) ---------- */
@@ -526,12 +868,14 @@
    it just snaps up instead of animating */
 @media (prefers-reduced-motion: reduce) {
   .tape,
-  .plastic {
+  .plastic,
+  .cassette {
     transition: none;
   }
 }
 
 :global(html[data-playback="paused"]) .tape,
-:global(html[data-playback="paused"]) .plastic {
+:global(html[data-playback="paused"]) .plastic,
+:global(html[data-playback="paused"]) .cassette {
   transition: none;
 }
