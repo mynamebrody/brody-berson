@@ -47,7 +47,7 @@ components/                UI (MCP card, tabs, copy button, theme + playback tog
 content/                   Single source of truth (see above)
 lib/markdown.ts            Shared markdown / llms / agents text builders
 lib/discovery.ts           Server card + AI catalog builders
-lib/letterboxd.ts          Letterboxd RSS fetch/parse (hourly cache), used by the homepage shelf and MCP
+lib/letterboxd.ts          Letterboxd RSS fetch/parse (hourly cache) + TMDB Disney/Pixar lookup, used by the homepage shelf and MCP
 lib/playback.ts            Site-wide Play/Pause state (data-playback on <html>)
 public/                    Static assets + brody-berson-resume.pdf
 scripts/
@@ -67,6 +67,8 @@ npm run pdf      # regenerate public/brody-berson-resume.pdf (server must be run
 ```
 
 One-time for PDF generation: `npx playwright install chromium`.
+
+Optional env: `TMDB_API_KEY` (in `.env.local` locally, Vercel env in production) lets the VHS shelf give Disney and Pixar films the white clamshell. Without it every tape is a cardboard slipcase.
 
 ## Contribution tips
 

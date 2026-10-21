@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { WatchedFilm } from "@/lib/letterboxd";
 import { prefersStill } from "@/lib/playback";
-import { EndOfTape, stickerPlan, VhsTape } from "./vhs-tape";
+import { EndOfTape, shelfPlan, VhsTape } from "./vhs-tape";
 
 const PAGE_SIZE = 6;
 
@@ -64,7 +64,7 @@ export function WatchingShelf({ initial, done: initialDone, profileUrl }: Props)
     });
   }
 
-  const stickers = stickerPlan(films);
+  const plan = shelfPlan(films);
 
   if (films.length === 0) {
     return (
@@ -97,7 +97,7 @@ export function WatchingShelf({ initial, done: initialDone, profileUrl }: Props)
         className="-mx-5 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-px-5 px-5 pt-2 pb-6 focus-visible:outline-2 focus-visible:outline-glow sm:-mx-8 sm:scroll-px-8 sm:px-8"
       >
         {films.map((film, index) => (
-          <VhsTape key={film.id} film={film} index={index} stickers={stickers[index]} />
+          <VhsTape key={film.id} film={film} plan={plan[index]} />
         ))}
         {done ? (
           <EndOfTape href={profileUrl} note="End of tape" label="See it all on" />

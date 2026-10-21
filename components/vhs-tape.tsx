@@ -6,10 +6,65 @@ import { prefersStill } from "@/lib/playback";
 import { BroadcastTexture } from "./broadcast-fx";
 import styles from "./vhs-tape.module.css";
 
-const cases = ["black", "white", "cardboard"] as const;
-const wears = ["faded", "creased", "scuffed", "torn", "scratched"] as const;
-const bands = ["bandBlack", "bandCream", "bandRed", "bandBlue"] as const;
+/** Everything that can happen to a rental box after a few hundred trips home. */
+const slipcaseWear = [
+  "sunFaded",
+  "edgeworn",
+  "edgeChipped",
+  "cornersRubbed",
+  "shelfScuffed",
+  "dogEared",
+  "torn",
+  "crushedCorner",
+  "creased",
+  "waterStain",
+  "residue",
+  "scratched",
+  "grimy",
+  "peeling",
+  "splitSeam",
+  "foxing",
+] as const;
+type Wear = (typeof slipcaseWear)[number];
+/** A clamshell protects the paper insert, so only some damage gets through the plastic. */
+const clamshellWear: readonly Wear[] = ["sunFaded", "dogEared", "creased", "residue", "scratched", "grimy", "foxing"];
+/** At most one from each group per tape: the members pile up on the same edges and corners. */
+const exclusiveWear: readonly (readonly Wear[])[] = [
+  ["torn", "dogEared", "crushedCorner"],
+  ["edgeworn", "edgeChipped", "cornersRubbed", "shelfScuffed"],
+];
+/** Board the slipcase is printed on: what shows through where the print is worn off. */
+const stocks = ["kraft", "chipboard", "bleached"] as const;
 const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+/** New Release stickers are color-coded by genre, like the shelf dots at a rental store. */
+const genreColors: [RegExp, string, string][] = [
+  [/horror/i, "#b3121b", "#ffffff"],
+  [/thriller|crime|mystery/i, "#5b2a86", "#ffffff"],
+  [/comedy/i, "#ffd23f", "#1a1a1a"],
+  [/action|adventure|war|western/i, "#ff6a13", "#ffffff"],
+  [/romance/i, "#ff5fa2", "#ffffff"],
+  [/science fiction|sci-fi|fantasy/i, "#16a3a3", "#ffffff"],
+  [/animation|family|kids/i, "#3bb54a", "#ffffff"],
+  [/documentary|music|history/i, "#c98a1a", "#ffffff"],
+  [/drama/i, "#2f62d8", "#ffffff"],
+];
+const defaultGenreColor = ["#e8392f", "#ffffff"];
+
+function genreColor(genre: string | null) {
+  const match = genre ? genreColors.find(([pattern]) => pattern.test(genre)) : undefined;
+  return match ? [match[1], match[2]] : defaultGenreColor;
+}
+
+/** Previously Viewed stickers came off whatever roll was at the counter. */
+const pvShapes = ["burst", "round", "scallop", "oval"] as const;
+const pvColors = [
+  ["#ff5a1f", "#fff8e6"],
+  ["#e8392f", "#ffffff"],
+  ["#ffd23f", "#1a1a1a"],
+  ["#8ee04a", "#10240a"],
+  ["#2f62d8", "#ffffff"],
+];
 
 /** Small stable string hash (FNV-1a) so a film always gets the same look. */
 function hash(value: string) {
@@ -21,71 +76,136 @@ function hash(value: string) {
   return h >>> 0;
 }
 
-export type StickerPlan = { rewind: boolean; tape: boolean };
+/** An upright-enough tilt, so a sticker always stays readable: -max…+max degrees. */
+const turn = (h: number, max: number) => `${(h % (max * 2 + 1)) - max}deg`;
+/** A percentage between min and max. */
+const between = (h: number, min: number, max: number) => min + (h % (max - min + 1));
+
+export type TapePlan = {
+  stock: (typeof stocks)[number];
+  wear: Wear[];
+  rewind: boolean;
+  label: boolean;
+};
+
+/** Two or three kinds of wear, none of them shared with the tape before it. */
+function pickWear(film: WatchedFilm, prev: Wear[]) {
+  const pool = (film.disney ? clamshellWear : slipcaseWear).filter((w) => !prev.includes(w));
+  const ranked = pool
+    .map((w) => [w, hash(`${film.id}:${w}`)] as const)
+    .sort((a, b) => a[1] - b[1])
+    .map(([w]) => w);
+  const count = 2 + ((hash(film.id) >>> 5) % 2);
+  const picked: Wear[] = [];
+  for (const w of ranked) {
+    if (picked.length === count) break;
+    if (exclusiveWear.some((group) => group.includes(w) && picked.some((p) => group.includes(p)))) continue;
+    picked.push(w);
+  }
+  return picked;
+}
 
 /**
- * Which tapes get a "Be kind rewind" sticker and which get a stray piece of old
- * tape: each roughly one in three, never on two tapes in a row. Depends only on
- * earlier films, so tapes already on the shelf keep their look as more load in.
+ * The shelf's look, tape by tape: board stock and wear never repeat between
+ * neighbors; "Be kind rewind" stickers and BBTV Video store labels each land on
+ * roughly one in three, never two in a row. Depends only on earlier films, so
+ * tapes already on the shelf keep their look as more load in.
  */
-export function stickerPlan(films: WatchedFilm[]) {
-  const plan: StickerPlan[] = [];
+export function shelfPlan(films: WatchedFilm[]) {
+  const plan: TapePlan[] = [];
   films.forEach((film, i) => {
     const h = hash(film.id);
     const prev = plan[i - 1];
+    let stock = stocks[(h >>> 26) % stocks.length];
+    if (stock === prev?.stock) stock = stocks[((h >>> 26) + 1) % stocks.length];
     plan.push({
+      stock,
+      wear: pickWear(film, prev?.wear ?? []),
       rewind: !prev?.rewind && h % 3 === 0,
-      tape: !prev?.tape && (h >>> 3) % 3 === 1,
+      label: !prev?.label && (h >>> 3) % 3 === 1,
     });
   });
   return plan;
 }
 
 /**
- * Case style cycles by shelf position so neighbors never match; wear, tilt,
- * the bottom strip, and sticker placement come from the film's id, so they're
- * stable across renders and reloads.
+ * Tilt, the price sticker, and where each sticker and bit of damage lands come
+ * from the film's id, so they're stable across renders and reloads. Each sticker
+ * stays in its own zone of the box: New Release top left, rating or price top
+ * right, rewind in the upper middle, Staff Pick bottom left, the store label and
+ * Previously Viewed bottom right (Previously Viewed stacks above the label).
  */
-function variant(film: WatchedFilm, index: number) {
+function variant(film: WatchedFilm, plan: TapePlan) {
   const h = hash(film.id);
-  const first = wears[h % wears.length];
-  const second = wears[(h >>> 4) % wears.length];
+  const a = hash(`${film.id}:fx`);
+  const b = hash(`${film.id}:fx2`);
+  const c = hash(`${film.id}:fx3`);
+  const k = hash(`${film.id}:crease`);
+  const s1 = hash(`${film.id}:sticker`);
+  const s2 = hash(`${film.id}:sticker2`);
+  const s3 = hash(`${film.id}:sticker3`);
+  const [nrBg, nrInk] = genreColor(film.genre);
+  const [pvBg, pvInk] = pvColors[(s3 >>> 20) % pvColors.length];
+  const labelBottom = between(s2 >>> 18, 3, 8);
   return {
-    caseStyle: cases[index % cases.length],
-    wear: (h >>> 8) % 3 === 0 || second === first ? [first] : [first, second],
-    band: bands[(h >>> 10) % bands.length],
     tilt: (((h >>> 12) % 7) - 3) * 0.5,
     price: (h >>> 22) % 5 === 1,
-    // Rewind sticker lands somewhere in the upper-left two thirds of the art
-    rewindAt: {
-      "--rewind-top": `${14 + ((h >>> 14) % 34)}%`,
-      "--rewind-left": `${6 + ((h >>> 19) % 36)}%`,
-      "--rewind-turn": `${((h >>> 24) % 41) - 20}deg`,
+    earLeft: (a >>> 25) % 2 === 1,
+    pvShape: pvShapes[(s3 >>> 26) % pvShapes.length],
+    stockNo: String((c >>> 3) % 100000).padStart(5, "0"),
+    stickersAt: {
+      "--nr-top": `${between(s1, 2, 10)}%`,
+      "--nr-left": `${between(s1 >>> 4, 2, 12)}%`,
+      "--nr-turn": turn(s1 >>> 8, 12),
+      "--nr-bg": nrBg,
+      "--nr-ink": nrInk,
+      "--rating-top": `${between(s1 >>> 13, 2, 7)}%`,
+      "--rating-right": `${between(s1 >>> 17, 3, 9)}%`,
+      "--rating-turn": turn(s1 >>> 21, 9),
+      "--rewind-top": `${between(h >>> 14, 26, 48)}%`,
+      "--rewind-left": `${between(h >>> 19, 6, 40)}%`,
+      "--rewind-turn": turn(h >>> 24, 12),
+      "--staff-bottom": `${between(s2, 3, 11)}%`,
+      "--staff-left": `${between(s2 >>> 4, 3, 10)}%`,
+      "--staff-turn": turn(s2 >>> 8, 12),
+      "--label-bottom": `${labelBottom}%`,
+      "--label-right": `${between(s2 >>> 22, 3, 9)}%`,
+      "--label-turn": turn(s2 >>> 26, 5),
+      // Just above the store label when there is one, otherwise anywhere low on the right
+      "--pv-bottom": plan.label ? `calc(${labelBottom}% + 30px)` : `${between(s3, 3, 13)}%`,
+      "--pv-right": `${between(s3 >>> 5, 3, 14)}%`,
+      "--pv-turn": turn(s3 >>> 10, 12),
+      "--pv-bg": pvBg,
+      "--pv-ink": pvInk,
     },
-    // The stray tape gets its own hash so it doesn't move in lockstep with the sticker
-    tapeAt: (() => {
-      const t = hash(`${film.id}:tape`);
-      return {
-        "--tape-top": `${8 + (t % 62)}%`,
-        "--tape-left": `${4 + ((t >>> 6) % 42)}%`,
-        "--tape-width": `${34 + ((t >>> 12) % 22)}%`,
-        "--tape-turn": `${((t >>> 18) % 51) - 25}deg`,
-      };
-    })(),
+    // Placement for whichever wear the tape ended up with
+    wearAt: {
+      "--fade-angle": `${[90, 180, 270, 0][a % 4]}deg`,
+      "--ear": `${22 + ((a >>> 2) % 14)}px`,
+      "--crease-flip": (a >>> 6) % 2 ? 1 : -1,
+      "--stain-x": `${15 + ((a >>> 7) % 65)}%`,
+      "--stain-y": `${18 + ((a >>> 13) % 60)}%`,
+      "--stain-r": `${18 + ((a >>> 19) % 18)}px`,
+      "--residue-x": `${8 + (b % 46)}%`,
+      "--residue-y": `${10 + ((b >>> 6) % 70)}%`,
+      "--residue-turn": `${((b >>> 13) % 31) - 15}deg`,
+      "--scratch-angle": `${[35, 58, 122, 145][(b >>> 18) % 4] + ((b >>> 20) % 12)}deg`,
+      "--flip": (b >>> 24) % 2 ? 1 : -1,
+      "--seam-y": `${10 + ((b >>> 25) % 45)}%`,
+      "--fox-x": `${20 + ((c >>> 1) % 60)}%`,
+      "--fox-y": `${20 + ((c >>> 7) % 60)}%`,
+      // Creases: a mostly-vertical fold, a mostly-horizontal one, and a stray diagonal,
+      // each somewhere different (and some fainter or missing) on every tape
+      "--c1-angle": `${80 + (k % 31)}deg`,
+      "--c1-pos": `${18 + ((k >>> 5) % 65)}%`,
+      "--c2-angle": `${-14 + ((k >>> 11) % 29)}deg`,
+      "--c2-pos": `${15 + ((k >>> 16) % 70)}%`,
+      "--c2-alpha": [0, 0.6, 0.85, 1][(k >>> 21) % 4],
+      "--c3-angle": `${20 + ((k >>> 23) % 140)}deg`,
+      "--c3-pos": `${15 + ((c >>> 14) % 70)}%`,
+      "--c3-alpha": [0, 0.5, 0.8, 1][(c >>> 22) % 4],
+    },
   };
-}
-
-/** Long titles wrap onto two lines rather than shrinking to an unreadable size. */
-const titleLines = (title: string) => (title.length > 24 ? 2 : 1);
-/** Characters on the longest line, which is what the band's font size is fitted to. */
-function titleChars(title: string) {
-  if (titleLines(title) === 1) return title.length;
-  const words = title.split(" ");
-  let best = title.length;
-  for (let i = 1; i < words.length; i++) {
-    best = Math.min(best, Math.max(words.slice(0, i).join(" ").length, words.slice(i).join(" ").length));
-  }
-  return best;
 }
 
 export function stars(rating: number | null) {
@@ -217,24 +337,15 @@ function Review({ film, rating }: { film: WatchedFilm; rating: string | null }) 
   );
 }
 
-export function VhsTape({
-  film,
-  index,
-  stickers,
-}: {
-  film: WatchedFilm;
-  index: number;
-  stickers: StickerPlan;
-}) {
-  const v = variant(film, index);
-  const newRelease = film.year !== null && film.watchedDate.startsWith(String(film.year));
+export function VhsTape({ film, plan }: { film: WatchedFilm; plan: TapePlan }) {
+  const v = variant(film, plan);
   const rating = stars(film.rating);
   const classes = [
     styles.tape,
-    styles[v.caseStyle],
-    styles[v.band],
-    ...v.wear.map((w) => styles[w]),
-    stickers.tape ? styles.taped : "",
+    film.disney ? styles.clamshell : styles.slipcase,
+    styles[plan.stock],
+    ...plan.wear.map((w) => styles[w]),
+    plan.wear.includes("dogEared") && v.earLeft ? styles.earLeft : "",
   ];
 
   return (
@@ -243,9 +354,11 @@ export function VhsTape({
         <a
           href={film.url}
           className={classes.join(" ")}
-          style={{ "--tilt": `${v.tilt}deg`, ...v.rewindAt, ...v.tapeAt } as React.CSSProperties}
+          style={{ "--tilt": `${v.tilt}deg`, ...v.stickersAt, ...v.wearAt } as React.CSSProperties}
           aria-label={`${film.title}${film.year ? ` (${film.year})` : ""} on Letterboxd`}
         >
+          {/* The tape inside a slipcase, which slides out the open bottom on hover */}
+          {film.disney ? null : <span className={styles.cassette} aria-hidden="true" />}
           <span className={styles.case}>
             <span className={styles.sleeve}>
               <span className={styles.art}>
@@ -257,20 +370,19 @@ export function VhsTape({
                   <span className={styles.noPoster}>{film.title}</span>
                 )}
               </span>
-              <span
-                className={styles.band}
-                style={{ "--chars": titleChars(film.title), "--lines": titleLines(film.title) } as React.CSSProperties}
-                aria-hidden="true"
-              >
-                <span className={styles.bandTitle}>{film.title}</span>
-              </span>
-              <span className={styles.wear} aria-hidden="true" />
+              {plan.wear.map((w) => (
+                <span key={w} className={styles.fx} data-fx={w} aria-hidden="true" />
+              ))}
+              <span className={styles.grain} aria-hidden="true" />
             </span>
+            {plan.wear.includes("dogEared") ? <span className={styles.ear} aria-hidden="true" /> : null}
             <span className={styles.plastic} aria-hidden="true" />
 
-            {newRelease ? (
-              <span className={styles.ribbon} aria-hidden="true">
-                <span>New release</span>
+            {film.newRelease ? (
+              <span className={`${styles.sticker} ${styles.newRelease}`} aria-hidden="true">
+                New
+                <br />
+                release
               </span>
             ) : null}
             {rating ? <span className={`${styles.sticker} ${styles.rating}`}>{rating}</span> : null}
@@ -279,15 +391,32 @@ export function VhsTape({
                 $2.99
               </span>
             ) : null}
-            {stickers.rewind ? (
+            {plan.rewind ? (
               <span className={`${styles.sticker} ${styles.rewind}`} aria-hidden="true">
                 Be kind
                 <br />
                 rewind
               </span>
             ) : null}
-            {film.rewatch ? <span className={`${styles.sticker} ${styles.rewatch}`}>Rewatch</span> : null}
-            {film.liked ? <span className={`${styles.sticker} ${styles.staffPick}`}>Staff pick ♥</span> : null}
+            {film.liked ? (
+              <span className={`${styles.sticker} ${styles.staffPick}`}>
+                Staff
+                <br />
+                pick
+              </span>
+            ) : null}
+            {plan.label ? (
+              <span className={`${styles.sticker} ${styles.storeLabel}`} aria-hidden="true">
+                BBTV Video · {v.stockNo}
+              </span>
+            ) : null}
+            {film.rewatch ? (
+              <span className={`${styles.sticker} ${styles.previouslyViewed}`} data-shape={v.pvShape}>
+                Previously
+                <br />
+                viewed
+              </span>
+            ) : null}
           </span>
         </a>
       </div>
@@ -313,7 +442,7 @@ export function EndOfTape({ href, label, note }: { href: string; label: string; 
   return (
     <article className={styles.slot}>
       <div className={styles.bay}>
-        <a href={href} className={`${styles.tape} ${styles.black} ${styles.bandBlack} ${styles.blank}`}>
+        <a href={href} className={`${styles.tape} ${styles.slipcase} ${styles.bleached} ${styles.blank}`}>
           <span className={styles.case}>
             <span className={styles.sleeve}>
               <span className={styles.art}>
@@ -325,9 +454,7 @@ export function EndOfTape({ href, label, note }: { href: string; label: string; 
                   <span className="osd text-base">Letterboxd →</span>
                 </span>
               </span>
-              <span className={styles.band} style={{ "--chars": 11 } as React.CSSProperties} aria-hidden="true">
-                <span className={styles.bandTitle}>T-120 Blank</span>
-              </span>
+              <span className={styles.grain} aria-hidden="true" />
             </span>
             <span className={styles.plastic} aria-hidden="true" />
           </span>
