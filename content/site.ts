@@ -58,7 +58,7 @@ export const personal = {
     focus: "Building with AI and keeping up with the latest and greatest.",
     building: ["A UniFi home network", "An AI-controlled smart house"],
     reading: ["The Dungeon Crawler Carl series"],
-    watching: `Recent watches are on Letterboxd (${letterboxd.profile}) and the get_recently_watched MCP tool.`,
+    watching: `Recent watches are on ${site.url}/watched, Letterboxd (${letterboxd.profile}), and the get_recently_watched MCP tool.`,
   },
   favorites: {
     films: ["Donnie Darko", "Get Out", "Whiplash", "Scream"],

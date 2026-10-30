@@ -3,10 +3,11 @@ import { ColorBars } from "@/components/color-bars";
 import { CrtPortrait } from "@/components/crt-portrait";
 import { McpCard } from "@/components/mcp-card";
 import { PlaybackToggle } from "@/components/playback-toggle";
+import { SiteFooter } from "@/components/site-footer";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { WatchingShelf } from "@/components/watching-shelf";
 import { resume } from "@/content/resume";
-import { site, socialLinks } from "@/content/site";
+import { site } from "@/content/site";
 import { getRecentlyWatched } from "@/lib/letterboxd";
 
 // The Letterboxd shelf refreshes hourly; everything else is static content
@@ -26,7 +27,8 @@ function slotYear(date: string) {
   return date === "Present" ? "Now" : date.slice(-4);
 }
 
-const SHELF_FIRST_BATCH = 6;
+// The homepage shelf holds the latest dozen; /watched has the whole feed
+const SHELF_SIZE = 12;
 
 export default async function Home() {
   const watched = await getRecentlyWatched();
@@ -265,70 +267,20 @@ export default async function Home() {
             >
               Letterboxd
             </a>{" "}
-            diary, restocked every hour. Keep scrolling the shelf to dig further back.
+            diary, restocked every hour. Here&rsquo;s the latest dozen; the rest are on{" "}
+            <Link
+              href="/watched"
+              className="font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow"
+            >
+              the whole wall
+            </Link>
+            .
           </p>
-          <WatchingShelf
-            initial={watched.entries.slice(0, SHELF_FIRST_BATCH)}
-            done={watched.entries.length <= SHELF_FIRST_BATCH}
-            profileUrl={watched.profileUrl}
-          />
+          <WatchingShelf films={watched.entries.slice(0, SHELF_SIZE)} profileUrl={watched.profileUrl} />
         </section>
       </main>
 
-      {/* Sign-off */}
-      <footer className="bg-screen-2">
-        <ColorBars size="tall" />
-        <div className="mx-auto max-w-5xl px-5 py-12 sm:px-8">
-          <p className="osd text-xl text-ink-faint">BBTV · End of broadcast</p>
-          <div className="mt-6 flex flex-col justify-between gap-8 sm:flex-row">
-            <div>
-              <p className="font-display text-2xl font-semibold tracking-wide uppercase">Brody Berson</p>
-              <p className="mt-1 text-sm text-ink-soft">{site.location}</p>
-              <a
-                href={`mailto:${site.email}`}
-                className="mt-1 inline-block text-sm font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow"
-              >
-                {site.email}
-              </a>
-            </div>
-            <nav className="grid grid-cols-2 gap-x-10 gap-y-1.5 text-sm sm:grid-cols-3">
-              {socialLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.url}
-                  className="text-ink-soft transition-colors hover:text-glow"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-          </div>
-          <div className="osd mt-10 flex flex-col gap-2 border-t border-line pt-6 text-base text-ink-faint normal-case sm:flex-row sm:items-center sm:justify-between">
-            <p>
-              Reading this as an AI?{" "}
-              <a href="/AGENTS.md" className="underline underline-offset-4 hover:text-glow">
-                AGENTS.md
-              </a>{" "}
-              ·{" "}
-              <a href="/llms.txt" className="underline underline-offset-4 hover:text-glow">
-                llms.txt
-              </a>{" "}
-              ·{" "}
-              <a href="/mcp" className="underline underline-offset-4 hover:text-glow">
-                /mcp
-              </a>
-            </p>
-            <p>
-              <a
-                href="https://github.com/mynamebrody/brody-berson"
-                className="underline underline-offset-4 hover:text-glow"
-              >
-                Source on GitHub
-              </a>
-            </p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

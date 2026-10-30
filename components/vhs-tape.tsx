@@ -225,38 +225,18 @@ const SPOILER_WARNING = /^This review may contain spoilers\.?/i;
 const CLOSE_MS = 240;
 
 /**
- * Three-line excerpt; when it's cut off, "Read full review" opens the whole thing
- * in a dialog (native <dialog>: focus trap, Esc to close, top layer above the shelf)
- * that tunes in like a channel change.
- * Reviews flagged as spoilers show only the warning until the dialog is opened.
+ * Three-line excerpt under a tape on the homepage shelf; when it's cut off, "Read
+ * full review" opens the dialog. Reviews flagged as spoilers show only the warning.
  */
-function Review({ film, rating }: { film: WatchedFilm; rating: string | null }) {
-  const review = film.review ?? "";
+function ReviewExcerpt({ review, onOpen }: { review: string; onOpen: () => void }) {
   const spoiler = SPOILER_WARNING.test(review);
   const [clamped, setClamped] = useState(false);
   const excerpt = useRef<HTMLParagraphElement>(null);
-  const dialog = useRef<HTMLDialogElement>(null);
-  const titleId = useId();
 
   useEffect(() => {
     const el = excerpt.current;
     if (el) setClamped(el.scrollHeight > el.clientHeight + 1);
   }, [review]);
-
-  // Play the tune-out (data-closing, styled in globals.css) before actually closing
-  function close() {
-    const el = dialog.current;
-    if (!el?.open || el.dataset.closing !== undefined) return;
-    if (prefersStill()) {
-      el.close();
-      return;
-    }
-    el.dataset.closing = "";
-    window.setTimeout(() => {
-      delete el.dataset.closing;
-      el.close();
-    }, CLOSE_MS);
-  }
 
   return (
     <>
@@ -270,76 +250,116 @@ function Review({ film, rating }: { film: WatchedFilm; rating: string | null }) 
       {spoiler || clamped ? (
         <button
           type="button"
-          onClick={() => dialog.current?.showModal()}
+          onClick={onOpen}
           aria-haspopup="dialog"
           className="osd mt-1 cursor-pointer text-base text-ink-faint underline decoration-pop decoration-2 underline-offset-4 hover:text-glow"
         >
           Read full review →
         </button>
       ) : null}
-      <dialog
-        ref={dialog}
-        aria-labelledby={titleId}
-        // Clicking the backdrop (the dialog element itself, outside the panel) closes it
-        onClick={(event) => {
-          if (event.target === dialog.current) close();
-        }}
-        // Esc closes through the same animated path
-        onCancel={(event) => {
-          event.preventDefault();
-          close();
-        }}
-        // The dialog is a transparent full-viewport layer holding the panel and the
-        // broadcast texture. Modal dialogs render in the top layer, above the page-level
-        // texture, so they need their own copy to stay "on TV".
-        className="tv-dialog m-0 h-dvh max-h-none w-full max-w-none place-items-center overflow-hidden border-0 bg-transparent p-0 text-ink open:grid backdrop:bg-deep/60 backdrop:backdrop-blur-sm"
-      >
-        <div className="tv-dialog-panel scanlines grid max-h-[85dvh] w-[calc(100%-2rem)] max-w-2xl gap-6 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-screen-2 p-6 shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_var(--signal)] sm:grid-cols-[9rem_1fr] sm:p-8">
-          {film.poster ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={film.poster}
-              alt=""
-              className="hidden w-36 rounded-md border border-line shadow-lg sm:block"
-            />
-          ) : null}
-          <div className="min-w-0">
-            <p className="osd text-base text-ink-faint">Review · Watched {watchedOn(film.watchedDate)}</p>
-            <h3 id={titleId} className="mt-1 font-display text-3xl leading-tight font-semibold tracking-wide uppercase">
-              {film.title}
-              {film.year ? <span className="text-ink-faint"> ({film.year})</span> : null}
-            </h3>
-            <p className="osd mt-1 text-lg text-ink-soft">
-              {[rating, film.liked ? "♥ Liked" : null, film.rewatch ? "Rewatch" : null].filter(Boolean).join(" · ")}
-            </p>
-            <p className="mt-4 leading-relaxed whitespace-pre-line text-ink-soft">{review}</p>
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              <a href={film.url} className="gloss rounded-full px-5 py-2 text-sm font-semibold">
-                Open on Letterboxd →
-              </a>
-              <button
-                type="button"
-                autoFocus
-                onClick={close}
-                className="osd cursor-pointer rounded-full border border-line px-4 py-1.5 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow"
-              >
-                Close ✕
-              </button>
-            </div>
-          </div>
-        </div>
-        {/* After the panel so the texture stays on top while the panel's entrance runs */}
-        <div className="tv-dialog-fx pointer-events-none fixed inset-0">
-          <BroadcastTexture />
-        </div>
-      </dialog>
     </>
   );
 }
 
-export function VhsTape({ film, plan }: { film: WatchedFilm; plan: TapePlan }) {
+/**
+ * The whole review in a dialog (native <dialog>: focus trap, Esc to close, top
+ * layer above the shelf) that tunes in like a channel change. VhsTape owns the
+ * ref and the open/close, so the box, the title, and the review buttons can all
+ * open it.
+ */
+function ReviewDialog({
+  film,
+  rating,
+  dialog,
+  onClose,
+}: {
+  film: WatchedFilm;
+  rating: string | null;
+  dialog: React.RefObject<HTMLDialogElement | null>;
+  onClose: () => void;
+}) {
+  const titleId = useId();
+
+  return (
+    <dialog
+      ref={dialog}
+      aria-labelledby={titleId}
+      // Clicking the backdrop (the dialog element itself, outside the panel) closes it
+      onClick={(event) => {
+        if (event.target === dialog.current) onClose();
+      }}
+      // Esc closes through the same animated path
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+      // The dialog is a transparent full-viewport layer holding the panel and the
+      // broadcast texture. Modal dialogs render in the top layer, above the page-level
+      // texture, so they need their own copy to stay "on TV".
+      className="tv-dialog m-0 h-dvh max-h-none w-full max-w-none place-items-center overflow-hidden border-0 bg-transparent p-0 text-ink open:grid backdrop:bg-deep/60 backdrop:backdrop-blur-sm"
+    >
+      <div className="tv-dialog-panel scanlines grid max-h-[85dvh] w-[calc(100%-2rem)] max-w-2xl gap-6 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-screen-2 p-6 shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_var(--signal)] sm:grid-cols-[9rem_1fr] sm:p-8">
+        {film.poster ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={film.poster}
+            alt=""
+            className="hidden w-36 rounded-md border border-line shadow-lg sm:block"
+          />
+        ) : null}
+        <div className="min-w-0">
+          <p className="osd text-base text-ink-faint">Review · Watched {watchedOn(film.watchedDate)}</p>
+          <h3 id={titleId} className="mt-1 font-display text-3xl leading-tight font-semibold tracking-wide uppercase">
+            {film.title}
+            {film.year ? <span className="text-ink-faint"> ({film.year})</span> : null}
+          </h3>
+          <p className="osd mt-1 text-lg text-ink-soft">
+            {[rating, film.liked ? "♥ Liked" : null, film.rewatch ? "Rewatch" : null].filter(Boolean).join(" · ")}
+          </p>
+          <p className="mt-4 leading-relaxed whitespace-pre-line text-ink-soft">{film.review}</p>
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <a href={film.url} className="gloss rounded-full px-5 py-2 text-sm font-semibold">
+              Open on Letterboxd →
+            </a>
+            <button
+              type="button"
+              autoFocus
+              onClick={onClose}
+              className="osd cursor-pointer rounded-full border border-line px-4 py-1.5 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow"
+            >
+              Close ✕
+            </button>
+          </div>
+        </div>
+      </div>
+      {/* After the panel so the texture stays on top while the panel's entrance runs */}
+      <div className="tv-dialog-fx pointer-events-none fixed inset-0">
+        <BroadcastTexture />
+      </div>
+    </dialog>
+  );
+}
+
+/**
+ * One film on a shelf. "shelf" is the homepage's scrolling row; "wall" packs into
+ * the /watched rack with a shelf-edge label in place of the caption; "lead" is a
+ * wall tape on the rack's first shelf (the latest three), given more room.
+ * A film with a review opens it in a dialog when clicked; one without links
+ * straight to Letterboxd.
+ */
+export function VhsTape({
+  film,
+  plan,
+  size = "shelf",
+}: {
+  film: WatchedFilm;
+  plan: TapePlan;
+  size?: "shelf" | "wall" | "lead";
+}) {
   const v = variant(film, plan);
   const rating = stars(film.rating);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const name = `${film.title}${film.year ? ` (${film.year})` : ""}`;
   const classes = [
     styles.tape,
     film.disney ? styles.clamshell : styles.slipcase,
@@ -347,100 +367,197 @@ export function VhsTape({ film, plan }: { film: WatchedFilm; plan: TapePlan }) {
     ...plan.wear.map((w) => styles[w]),
     plan.wear.includes("dogEared") && v.earLeft ? styles.earLeft : "",
   ];
+  const slot = {
+    shelf: styles.slot,
+    wall: `${styles.slot} ${styles.wall}`,
+    lead: `${styles.slot} ${styles.wall} ${styles.lead}`,
+  }[size];
+
+  function openReview() {
+    dialog.current?.showModal();
+  }
+
+  // Play the tune-out (data-closing, styled in globals.css) before actually closing
+  function closeReview() {
+    const el = dialog.current;
+    if (!el?.open || el.dataset.closing !== undefined) return;
+    if (prefersStill()) {
+      el.close();
+      return;
+    }
+    el.dataset.closing = "";
+    window.setTimeout(() => {
+      delete el.dataset.closing;
+      el.close();
+    }, CLOSE_MS);
+  }
+
+  const box = (
+    <>
+      {/* The tape inside a slipcase, which slides out the open bottom on hover */}
+      {film.disney ? null : <span className={styles.cassette} aria-hidden="true" />}
+      <span className={styles.case}>
+        <span className={styles.sleeve}>
+          <span className={styles.art}>
+            {film.poster ? (
+              // Letterboxd's CDN already serves sized posters; skip next/image optimization
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={film.poster} alt="" loading="lazy" decoding="async" className={styles.poster} />
+            ) : (
+              <span className={styles.noPoster}>{film.title}</span>
+            )}
+          </span>
+          {plan.wear.map((w) => (
+            <span key={w} className={styles.fx} data-fx={w} aria-hidden="true" />
+          ))}
+          <span className={styles.grain} aria-hidden="true" />
+        </span>
+        {plan.wear.includes("dogEared") ? <span className={styles.ear} aria-hidden="true" /> : null}
+        <span className={styles.plastic} aria-hidden="true" />
+
+        {film.newRelease ? (
+          <span className={`${styles.sticker} ${styles.newRelease}`} aria-hidden="true">
+            New
+            <br />
+            release
+          </span>
+        ) : null}
+        {rating ? <span className={`${styles.sticker} ${styles.rating}`}>{rating}</span> : null}
+        {v.price && !rating ? (
+          <span className={`${styles.sticker} ${styles.price}`} aria-hidden="true">
+            $2.99
+          </span>
+        ) : null}
+        {plan.rewind ? (
+          <span className={`${styles.sticker} ${styles.rewind}`} aria-hidden="true">
+            Be kind
+            <br />
+            rewind
+          </span>
+        ) : null}
+        {film.liked ? (
+          <span className={`${styles.sticker} ${styles.staffPick}`}>
+            Staff
+            <br />
+            pick
+          </span>
+        ) : null}
+        {plan.label ? (
+          <span className={`${styles.sticker} ${styles.storeLabel}`} aria-hidden="true">
+            BBTV Video · {v.stockNo}
+          </span>
+        ) : null}
+        {film.rewatch ? (
+          <span className={`${styles.sticker} ${styles.previouslyViewed}`} data-shape={v.pvShape}>
+            Previously
+            <br />
+            viewed
+          </span>
+        ) : null}
+      </span>
+    </>
+  );
+  const tapeProps = {
+    className: classes.join(" "),
+    style: { "--tilt": `${v.tilt}deg`, ...v.stickersAt, ...v.wearAt } as React.CSSProperties,
+  };
 
   return (
-    <article className={styles.slot}>
+    <article className={slot}>
       <div className={styles.bay}>
-        <a
-          href={film.url}
-          className={classes.join(" ")}
-          style={{ "--tilt": `${v.tilt}deg`, ...v.stickersAt, ...v.wearAt } as React.CSSProperties}
-          aria-label={`${film.title}${film.year ? ` (${film.year})` : ""} on Letterboxd`}
-        >
-          {/* The tape inside a slipcase, which slides out the open bottom on hover */}
-          {film.disney ? null : <span className={styles.cassette} aria-hidden="true" />}
-          <span className={styles.case}>
-            <span className={styles.sleeve}>
-              <span className={styles.art}>
-                {film.poster ? (
-                  // Letterboxd's CDN already serves sized posters; skip next/image optimization
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={film.poster} alt="" loading="lazy" decoding="async" className={styles.poster} />
-                ) : (
-                  <span className={styles.noPoster}>{film.title}</span>
-                )}
-              </span>
-              {plan.wear.map((w) => (
-                <span key={w} className={styles.fx} data-fx={w} aria-hidden="true" />
-              ))}
-              <span className={styles.grain} aria-hidden="true" />
-            </span>
-            {plan.wear.includes("dogEared") ? <span className={styles.ear} aria-hidden="true" /> : null}
-            <span className={styles.plastic} aria-hidden="true" />
-
-            {film.newRelease ? (
-              <span className={`${styles.sticker} ${styles.newRelease}`} aria-hidden="true">
-                New
-                <br />
-                release
-              </span>
-            ) : null}
-            {rating ? <span className={`${styles.sticker} ${styles.rating}`}>{rating}</span> : null}
-            {v.price && !rating ? (
-              <span className={`${styles.sticker} ${styles.price}`} aria-hidden="true">
-                $2.99
-              </span>
-            ) : null}
-            {plan.rewind ? (
-              <span className={`${styles.sticker} ${styles.rewind}`} aria-hidden="true">
-                Be kind
-                <br />
-                rewind
-              </span>
-            ) : null}
-            {film.liked ? (
-              <span className={`${styles.sticker} ${styles.staffPick}`}>
-                Staff
-                <br />
-                pick
-              </span>
-            ) : null}
-            {plan.label ? (
-              <span className={`${styles.sticker} ${styles.storeLabel}`} aria-hidden="true">
-                BBTV Video · {v.stockNo}
-              </span>
-            ) : null}
-            {film.rewatch ? (
-              <span className={`${styles.sticker} ${styles.previouslyViewed}`} data-shape={v.pvShape}>
-                Previously
-                <br />
-                viewed
-              </span>
-            ) : null}
-          </span>
-        </a>
-      </div>
-
-      <div className="mt-4 px-1">
-        <h3 className="font-display text-lg leading-tight font-semibold tracking-wide uppercase">
-          <a href={film.url} className="hover:text-glow">
-            {film.title}
+        {film.review ? (
+          <button
+            type="button"
+            onClick={openReview}
+            aria-haspopup="dialog"
+            aria-label={`${name}: read the review`}
+            {...tapeProps}
+          >
+            {box}
+          </button>
+        ) : (
+          <a href={film.url} aria-label={`${name} on Letterboxd`} {...tapeProps}>
+            {box}
           </a>
-        </h3>
-        <p className="osd mt-0.5 text-base text-ink-faint">
-          {[film.year, rating, film.liked ? "♥" : null].filter(Boolean).join(" · ")}
-        </p>
-        <p className="osd text-sm text-ink-faint">Watched {watchedOn(film.watchedDate)}</p>
-        {film.review ? <Review film={film} rating={rating} /> : null}
+        )}
       </div>
+
+      {size === "shelf" ? (
+        <div className="mt-4 px-1">
+          <h3 className="font-display text-lg leading-tight font-semibold tracking-wide uppercase">
+            {film.review ? (
+              <button
+                type="button"
+                onClick={openReview}
+                aria-haspopup="dialog"
+                className="cursor-pointer text-left uppercase hover:text-glow"
+              >
+                {film.title}
+              </button>
+            ) : (
+              <a href={film.url} className="hover:text-glow">
+                {film.title}
+              </a>
+            )}
+          </h3>
+          <p className="osd mt-0.5 text-base text-ink-faint">
+            {[film.year, rating, film.liked ? "♥" : null].filter(Boolean).join(" · ")}
+          </p>
+          <p className="osd text-sm text-ink-faint">Watched {watchedOn(film.watchedDate)}</p>
+          {film.review ? <ReviewExcerpt review={film.review} onOpen={openReview} /> : null}
+        </div>
+      ) : (
+        // Price-channel strip on the shelf lip: title, stars, date, and the review if there is one
+        <div className={styles.shelfTag}>
+          <h3
+            title={film.title}
+            className="truncate font-display text-sm leading-tight font-semibold tracking-wide uppercase"
+          >
+            {film.title}
+          </h3>
+          <p className="osd mt-0.5 text-sm leading-none text-ink-faint">{watchedOn(film.watchedDate)}</p>
+          {rating || film.liked || film.review ? (
+            <div className="mt-1 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
+              <span className="osd text-sm leading-none whitespace-nowrap text-ink-soft">
+                {[rating, film.liked ? "♥" : null].filter(Boolean).join(" ")}
+              </span>
+              {film.review ? (
+                <button
+                  type="button"
+                  onClick={openReview}
+                  aria-haspopup="dialog"
+                  aria-label={`Read the review of ${name}`}
+                  className="osd cursor-pointer text-sm leading-none whitespace-nowrap text-ink-faint underline decoration-pop decoration-2 underline-offset-2 hover:text-glow"
+                >
+                  Review →
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      )}
+      {film.review ? <ReviewDialog film={film} rating={rating} dialog={dialog} onClose={closeReview} /> : null}
     </article>
   );
 }
 
 /** Blank tape that closes out the shelf (or stands in when the feed is down). */
-export function EndOfTape({ href, label, note }: { href: string; label: string; note: string }) {
+export function EndOfTape({
+  href,
+  label,
+  note,
+  target = "Letterboxd →",
+  wall = false,
+}: {
+  href: string;
+  label: string;
+  note: string;
+  target?: string;
+  /** Sitting in the /watched rack rather than the homepage's scrolling shelf */
+  wall?: boolean;
+}) {
   return (
-    <article className={styles.slot}>
+    <article className={wall ? `${styles.slot} ${styles.wall}` : styles.slot}>
       <div className={styles.bay}>
         <a href={href} className={`${styles.tape} ${styles.slipcase} ${styles.bleached} ${styles.blank}`}>
           <span className={styles.case}>
@@ -451,7 +568,7 @@ export function EndOfTape({ href, label, note }: { href: string; label: string; 
                   <span className="font-display text-2xl leading-none font-semibold tracking-wide uppercase">
                     {label}
                   </span>
-                  <span className="osd text-base">Letterboxd →</span>
+                  <span className="osd text-base">{target}</span>
                 </span>
               </span>
               <span className={styles.grain} aria-hidden="true" />
