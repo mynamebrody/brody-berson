@@ -372,7 +372,7 @@ const handler = createMcpHandler(
         return structured({
           profileUrl,
           total: matches.length,
-          // Parsing drops shelf-only fields (disney, genre, newRelease) so the output matches the schema
+          // Parsing drops shelf-only fields (disney, genre, newRelease, trailers) so the output matches the schema
           entries: matches.slice(0, limit).map(({ review, ...film }) =>
             watchedSchema.parse(include_reviews ? { ...film, review } : film)
           ),
