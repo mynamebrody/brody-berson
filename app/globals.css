@@ -342,7 +342,72 @@ body {
   animation: tv-tune-in 240ms ease-in reverse both;
 }
 
+/* Changing the channel on the trailer TV: a burst of snow and rolling bands that
+   clears to the next trailer, and the channel number flashed in the corner the
+   way a set shows it for a few seconds. Both remount (keyed) on every change. */
+@keyframes channel-static {
+  0% {
+    opacity: 1;
+    background-position:
+      0 0,
+      0 0;
+  }
+  25% {
+    background-position:
+      -37px 21px,
+      0 -14px;
+  }
+  50% {
+    opacity: 0.9;
+    background-position:
+      19px -43px,
+      0 9px;
+  }
+  75% {
+    background-position:
+      -11px 30px,
+      0 -22px;
+  }
+  100% {
+    opacity: 0;
+    background-position:
+      23px 7px,
+      0 4px;
+  }
+}
+
+.channel-static {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -0.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.16) 0 2px,
+      transparent 2px 7px,
+      rgba(5, 6, 26, 0.35) 7px 11px,
+      transparent 11px 19px
+    );
+  background-color: #2a2c3a;
+  animation: channel-static 380ms steps(8, end) both;
+}
+
+@keyframes channel-osd {
+  0%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.channel-osd {
+  animation: channel-osd 2.8s ease-in both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .channel-static {
+    display: none;
+  }
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none;
@@ -350,6 +415,7 @@ body {
   .fade-up,
   .weave,
   .rec-blink,
+  .channel-osd,
   .tv-dialog::backdrop,
   .tv-dialog > * {
     animation: none !important;
@@ -374,7 +440,9 @@ html[data-playback="paused"] *::after {
 
 html[data-playback="paused"] .fade-up,
 html[data-playback="paused"] .tv-dialog[open]::backdrop,
-html[data-playback="paused"] .tv-dialog[open] > * {
+html[data-playback="paused"] .tv-dialog[open] > *,
+html[data-playback="paused"] .channel-static,
+html[data-playback="paused"] .channel-osd {
   animation-duration: 0s;
   animation-delay: 0s !important;
   animation-play-state: running !important;

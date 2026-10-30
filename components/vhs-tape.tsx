@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import type { WatchedFilm } from "@/lib/letterboxd";
+import type { Trailer, WatchedFilm } from "@/lib/letterboxd";
 import { prefersStill } from "@/lib/playback";
 import { BroadcastTexture } from "./broadcast-fx";
+import { ColorBars } from "./color-bars";
 import styles from "./vhs-tape.module.css";
 
 /** Everything that can happen to a rental box after a few hundred trips home. */
@@ -261,24 +262,165 @@ function ReviewExcerpt({ review, onOpen }: { review: string; onOpen: () => void 
   );
 }
 
+const channelNo = (index: number) => `CH ${String(index + 1).padStart(2, "0")}`;
+
 /**
- * The whole review in a dialog (native <dialog>: focus trap, Esc to close, top
- * layer above the shelf) that tunes in like a channel change. VhsTape owns the
- * ref and the open/close, so the box, the title, and the review buttons can all
- * open it.
+ * The film's YouTube videos (trailers first) on a little CRT. It waits on the trailer's thumbnail
+ * until Play is pressed (no YouTube player loads before that); CH −/CH + flip
+ * between trailers through a burst of static, and once one is playing the next
+ * starts on its own. Mounted only while the dialog is open, so closing the
+ * dialog stops playback and the next open starts back on channel one.
  */
-function ReviewDialog({
+function TrailerScreen({ trailers, title }: { trailers: Trailer[]; title: string }) {
+  const [channel, setChannel] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [tune, setTune] = useState(0);
+  // The channel number sits on the paused screen, then only flashes on channel changes
+  // so it isn't left over YouTube's own title bar
+  const [osd, setOsd] = useState(true);
+  const trailer = trailers[channel];
+
+  function play() {
+    setPlaying(true);
+    setOsd(false);
+  }
+
+  function changeChannel(step: number) {
+    setChannel((current) => (current + step + trailers.length) % trailers.length);
+    setOsd(true);
+    if (!prefersStill()) setTune((n) => n + 1);
+  }
+
+  return (
+    <section aria-label="Trailers">
+      <div className="rounded-[18px] bg-deep p-2 shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_0_50px_-12px_var(--glow)] sm:p-2.5">
+        <div className="relative aspect-video overflow-hidden rounded-[12px] bg-black">
+          {!trailer ? (
+            <div className="absolute inset-0">
+              <ColorBars size="fill" />
+              <p className="osd absolute inset-0 grid place-items-center text-3xl text-white [text-shadow:0_0_10px_rgba(5,6,26,0.9),0_2px_0_rgba(5,6,26,0.9)]">
+                No signal
+              </p>
+            </div>
+          ) : playing ? (
+            <iframe
+              key={`video:${trailer.key}`}
+              src={`https://www.youtube-nocookie.com/embed/${trailer.key}?autoplay=1&rel=0&playsinline=1&modestbranding=1`}
+              title={`${title} trailer: ${trailer.name}`}
+              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+              allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
+              className="absolute inset-0 h-full w-full border-0"
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={play}
+              aria-label={`Play ${title} trailer: ${trailer.name}`}
+              className="group absolute inset-0 cursor-pointer"
+            >
+              {/* YouTube's own thumbnail; hqdefault exists for every video (letterboxed 4:3, cropped by cover) */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`https://i.ytimg.com/vi/${trailer.key}/hqdefault.jpg`}
+                alt=""
+                className="h-full w-full object-cover opacity-85 [filter:saturate(0.85)_contrast(1.1)] transition-opacity group-hover:opacity-100"
+              />
+              <span className="osd absolute inset-0 grid place-items-center">
+                <span className="rounded-full border border-white/40 bg-deep/70 px-5 py-1.5 text-2xl text-white shadow-[0_0_24px_-4px_var(--glow)] transition-colors group-hover:border-glow group-hover:text-glow">
+                  ▶ Play
+                </span>
+              </span>
+            </button>
+          )}
+
+          {trailer && osd ? (
+            <p
+              key={`osd:${channel}`}
+              aria-hidden="true"
+              className={`osd pointer-events-none absolute top-3 left-4 text-2xl leading-none text-[#8ee04a] [text-shadow:0_0_6px_rgba(142,224,74,0.6),0_2px_0_rgba(5,6,26,0.85)] ${playing ? "channel-osd" : ""}`}
+            >
+              {channelNo(channel)}
+            </p>
+          ) : null}
+          {tune ? (
+            <span key={`static:${tune}`} className="channel-static pointer-events-none absolute inset-0" aria-hidden="true" />
+          ) : null}
+          {/* Aperture grille and glass, over the picture without taking its clicks */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-60"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(0deg, rgba(5,6,26,0.22) 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, rgba(5,6,26,0.12) 0 1px, transparent 1px 3px)",
+            }}
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 rounded-[12px] bg-[radial-gradient(ellipse_at_24%_12%,rgba(255,255,255,0.16),transparent_45%)] shadow-[inset_0_0_40px_rgba(5,6,26,0.7)]"
+          />
+        </div>
+      </div>
+
+      {trailer ? (
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <p aria-live="polite" className="osd min-w-0 truncate text-base text-ink-faint">
+            <span className="sr-only">Now showing: </span>
+            {trailer.name}
+          </p>
+          {trailers.length > 1 ? (
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={() => changeChannel(-1)}
+                aria-label="Previous trailer"
+                className="osd cursor-pointer rounded-full border border-line px-3 py-1 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow"
+              >
+                CH −
+              </button>
+              <span className="osd text-base text-ink-faint tabular-nums" aria-hidden="true">
+                {channel + 1}/{trailers.length}
+              </span>
+              <button
+                type="button"
+                onClick={() => changeChannel(1)}
+                aria-label="Next trailer"
+                className="osd cursor-pointer rounded-full border border-line px-3 py-1 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow"
+              >
+                CH +
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+/**
+ * The film on TV, in a dialog (native <dialog>: focus trap, Esc to close, top
+ * layer above the shelf) that tunes in like a channel change: the poster, the
+ * diary entry, and the review if there is one, with the film's videos on a TV below.
+ * VhsTape owns the ref and the open/close, so the box, the title, and the
+ * review buttons can all open it.
+ */
+function FilmDialog({
   film,
   rating,
+  open,
   dialog,
   onClose,
+  onClosed,
 }: {
   film: WatchedFilm;
   rating: string | null;
+  open: boolean;
   dialog: React.RefObject<HTMLDialogElement | null>;
   onClose: () => void;
+  onClosed: () => void;
 }) {
   const titleId = useId();
+  const kind = film.review ? "Review · " : film.trailers.length ? "Trailer · " : "";
 
   return (
     <dialog
@@ -293,44 +435,55 @@ function ReviewDialog({
         event.preventDefault();
         onClose();
       }}
+      onClose={onClosed}
       // The dialog is a transparent full-viewport layer holding the panel and the
       // broadcast texture. Modal dialogs render in the top layer, above the page-level
       // texture, so they need their own copy to stay "on TV".
       className="tv-dialog m-0 h-dvh max-h-none w-full max-w-none place-items-center overflow-hidden border-0 bg-transparent p-0 text-ink open:grid backdrop:bg-deep/60 backdrop:backdrop-blur-sm"
     >
-      <div className="tv-dialog-panel scanlines grid max-h-[85dvh] w-[calc(100%-2rem)] max-w-2xl gap-6 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-screen-2 p-6 shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_var(--signal)] sm:grid-cols-[9rem_1fr] sm:p-8">
-        {film.poster ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={film.poster}
-            alt=""
-            className="hidden w-36 rounded-md border border-line shadow-lg sm:block"
-          />
-        ) : null}
-        <div className="min-w-0">
-          <p className="osd text-base text-ink-faint">Review · Watched {watchedOn(film.watchedDate)}</p>
-          <h3 id={titleId} className="mt-1 font-display text-3xl leading-tight font-semibold tracking-wide uppercase">
-            {film.title}
-            {film.year ? <span className="text-ink-faint"> ({film.year})</span> : null}
-          </h3>
-          <p className="osd mt-1 text-lg text-ink-soft">
-            {[rating, film.liked ? "♥ Liked" : null, film.rewatch ? "Rewatch" : null].filter(Boolean).join(" · ")}
-          </p>
-          <p className="mt-4 leading-relaxed whitespace-pre-line text-ink-soft">{film.review}</p>
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <a href={film.url} className="gloss rounded-full px-5 py-2 text-sm font-semibold">
-              Open on Letterboxd →
-            </a>
-            <button
-              type="button"
-              autoFocus
-              onClick={onClose}
-              className="osd cursor-pointer rounded-full border border-line px-4 py-1.5 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow"
-            >
-              Close ✕
-            </button>
+      <div
+        className={`tv-dialog-panel scanlines grid max-h-[85dvh] w-[calc(100%-2rem)] gap-6 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-screen-2 p-6 shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_var(--signal)] sm:p-8 ${film.trailers.length ? "max-w-3xl" : "max-w-2xl"}`}
+      >
+        <div className="grid gap-6 sm:grid-cols-[9rem_1fr]">
+          {film.poster ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={film.poster}
+              alt=""
+              className="hidden w-36 rounded-md border border-line shadow-lg sm:block"
+            />
+          ) : null}
+          <div className="min-w-0">
+            <p className="osd text-base text-ink-faint">
+              {kind}Watched {watchedOn(film.watchedDate)}
+            </p>
+            <h3 id={titleId} className="mt-1 font-display text-3xl leading-tight font-semibold tracking-wide uppercase">
+              {film.title}
+              {film.year ? <span className="text-ink-faint"> ({film.year})</span> : null}
+            </h3>
+            <p className="osd mt-1 text-lg text-ink-soft">
+              {[rating, film.liked ? "♥ Liked" : null, film.rewatch ? "Rewatch" : null].filter(Boolean).join(" · ")}
+            </p>
+            {film.review ? (
+              <p className="mt-4 leading-relaxed whitespace-pre-line text-ink-soft">{film.review}</p>
+            ) : null}
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <a href={film.url} className="gloss rounded-full px-5 py-2 text-sm font-semibold">
+                Open on Letterboxd →
+              </a>
+              <button
+                type="button"
+                autoFocus
+                onClick={onClose}
+                className="osd cursor-pointer rounded-full border border-line px-4 py-1.5 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow"
+              >
+                Close ✕
+              </button>
+            </div>
           </div>
         </div>
+        {/* Only while open: closing unmounts the player, which stops the trailer */}
+        {open ? <TrailerScreen trailers={film.trailers} title={film.title} /> : null}
       </div>
       {/* After the panel so the texture stays on top while the panel's entrance runs */}
       <div className="tv-dialog-fx pointer-events-none fixed inset-0">
@@ -344,8 +497,8 @@ function ReviewDialog({
  * One film on a shelf. "shelf" is the homepage's scrolling row; "wall" packs into
  * the /watched rack with a shelf-edge label in place of the caption; "lead" is a
  * wall tape on the rack's first shelf (the latest three), given more room.
- * A film with a review opens it in a dialog when clicked; one without links
- * straight to Letterboxd.
+ * Clicking any tape puts the film on TV: a dialog with its videos, the diary
+ * entry, the review when there is one, and a link to Letterboxd.
  */
 export function VhsTape({
   film,
@@ -359,6 +512,7 @@ export function VhsTape({
   const v = variant(film, plan);
   const rating = stars(film.rating);
   const dialog = useRef<HTMLDialogElement>(null);
+  const [open, setOpen] = useState(false);
   const name = `${film.title}${film.year ? ` (${film.year})` : ""}`;
   const classes = [
     styles.tape,
@@ -373,12 +527,18 @@ export function VhsTape({
     lead: `${styles.slot} ${styles.wall} ${styles.lead}`,
   }[size];
 
-  function openReview() {
-    dialog.current?.showModal();
+  // Show the dialog once React has rendered the TV into it
+  useEffect(() => {
+    const el = dialog.current;
+    if (open && el && !el.open) el.showModal();
+  }, [open]);
+
+  function openFilm() {
+    setOpen(true);
   }
 
   // Play the tune-out (data-closing, styled in globals.css) before actually closing
-  function closeReview() {
+  function closeFilm() {
     const el = dialog.current;
     if (!el?.open || el.dataset.closing !== undefined) return;
     if (prefersStill()) {
@@ -465,49 +625,37 @@ export function VhsTape({
   return (
     <article className={slot}>
       <div className={styles.bay}>
-        {film.review ? (
-          <button
-            type="button"
-            onClick={openReview}
-            aria-haspopup="dialog"
-            aria-label={`${name}: read the review`}
-            {...tapeProps}
-          >
-            {box}
-          </button>
-        ) : (
-          <a href={film.url} aria-label={`${name} on Letterboxd`} {...tapeProps}>
-            {box}
-          </a>
-        )}
+        <button
+          type="button"
+          onClick={openFilm}
+          aria-haspopup="dialog"
+          aria-label={`${name}: ${film.review ? "review and trailers" : "trailers and details"}`}
+          {...tapeProps}
+        >
+          {box}
+        </button>
       </div>
 
       {size === "shelf" ? (
         <div className="mt-4 px-1">
           <h3 className="font-display text-lg leading-tight font-semibold tracking-wide uppercase">
-            {film.review ? (
-              <button
-                type="button"
-                onClick={openReview}
-                aria-haspopup="dialog"
-                className="cursor-pointer text-left uppercase hover:text-glow"
-              >
-                {film.title}
-              </button>
-            ) : (
-              <a href={film.url} className="hover:text-glow">
-                {film.title}
-              </a>
-            )}
+            <button
+              type="button"
+              onClick={openFilm}
+              aria-haspopup="dialog"
+              className="cursor-pointer text-left uppercase hover:text-glow"
+            >
+              {film.title}
+            </button>
           </h3>
           <p className="osd mt-0.5 text-base text-ink-faint">
             {[film.year, rating, film.liked ? "♥" : null].filter(Boolean).join(" · ")}
           </p>
           <p className="osd text-sm text-ink-faint">Watched {watchedOn(film.watchedDate)}</p>
-          {film.review ? <ReviewExcerpt review={film.review} onOpen={openReview} /> : null}
+          {film.review ? <ReviewExcerpt review={film.review} onOpen={openFilm} /> : null}
         </div>
       ) : (
-        // Price-channel strip on the shelf lip: title, stars, date, and the review if there is one
+        // Price-channel strip on the shelf lip: title, stars, date, and the review (or trailer) if there is one
         <div className={styles.shelfTag}>
           <h3
             title={film.title}
@@ -516,27 +664,34 @@ export function VhsTape({
             {film.title}
           </h3>
           <p className="osd mt-0.5 text-sm leading-none text-ink-faint">{watchedOn(film.watchedDate)}</p>
-          {rating || film.liked || film.review ? (
+          {rating || film.liked || film.review || film.trailers.length ? (
             <div className="mt-1 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
               <span className="osd text-sm leading-none whitespace-nowrap text-ink-soft">
                 {[rating, film.liked ? "♥" : null].filter(Boolean).join(" ")}
               </span>
-              {film.review ? (
+              {film.review || film.trailers.length ? (
                 <button
                   type="button"
-                  onClick={openReview}
+                  onClick={openFilm}
                   aria-haspopup="dialog"
-                  aria-label={`Read the review of ${name}`}
+                  aria-label={film.review ? `Read the review of ${name}` : `Watch the trailer for ${name}`}
                   className="osd cursor-pointer text-sm leading-none whitespace-nowrap text-ink-faint underline decoration-pop decoration-2 underline-offset-2 hover:text-glow"
                 >
-                  Review →
+                  {film.review ? "Review →" : "Trailer →"}
                 </button>
               ) : null}
             </div>
           ) : null}
         </div>
       )}
-      {film.review ? <ReviewDialog film={film} rating={rating} dialog={dialog} onClose={closeReview} /> : null}
+      <FilmDialog
+        film={film}
+        rating={rating}
+        open={open}
+        dialog={dialog}
+        onClose={closeFilm}
+        onClosed={() => setOpen(false)}
+      />
     </article>
   );
 }
