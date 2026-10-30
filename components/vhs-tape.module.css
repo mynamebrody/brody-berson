@@ -15,6 +15,46 @@
   }
 }
 
+/* /watched: the back wall sizes each slot to its grid cell instead */
+.wall {
+  width: auto;
+  scroll-snap-align: none;
+}
+
+/* Wall boxes run narrower than the homepage shelf, so the store label sizes to its
+   (slightly smaller) text instead of the box */
+.wall .storeLabel {
+  width: auto;
+  font-size: 8px;
+  letter-spacing: 0.02em;
+}
+
+/* The latest three on the wall's first shelf. From lg up that shelf is a row of
+   its own, three across over a wall six across (watched-wall.module.css); each box
+   and label is the homepage shelf's size, centered in its wide cell, so the spare
+   width becomes air between them while the ledge still runs edge to edge. Below lg
+   they're ordinary wall tapes. */
+@media (min-width: 1024px) {
+  .lead .tape,
+  .lead .shelfTag {
+    max-width: 12rem;
+    margin-inline: auto;
+  }
+}
+
+/* Shelf-edge label on the back wall: a paper strip slid into the price channel on
+   the shelf lip, tucked just under the ledge */
+.shelfTag {
+  position: relative;
+  margin: -3px 0.125rem 0;
+  padding: 0.35rem 0.5rem 0.4rem;
+  border: 1px solid var(--line);
+  border-top: 0;
+  border-radius: 0 0 3px 3px;
+  background: var(--screen-2);
+  box-shadow: 0 8px 12px -10px rgba(0, 0, 0, 0.55);
+}
+
 /* One bay of the shelf: the ledge runs under the tape and across the gap to the next bay */
 .bay {
   position: relative;
@@ -46,6 +86,18 @@
   transform: rotate(var(--tilt, 0deg));
   transform-origin: 50% 100%;
   transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* A tape with a review is a button (it opens the review), not a link */
+button.tape {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
 }
 
 /* Hovering anywhere on a film (tape, title, or review) lifts it off the shelf */

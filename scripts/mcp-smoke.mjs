@@ -115,11 +115,7 @@ const card = await (await fetch(`${url}/server-card`)).json();
 assert.equal(card.remotes[0].type, "streamable-http");
 assert.ok(!("tools" in card), "server card must not list tools");
 const catalog = await (await fetch(`${origin}/.well-known/ai-catalog.json`)).json();
-const shelf = await (await fetch(`${origin}/watching.json?offset=6&limit=6`)).json();
-assert.equal(shelf.entries.length, 6, "watching.json page");
-const tail = await (await fetch(`${origin}/watching.json?offset=48&limit=6`)).json();
-assert.equal(tail.done, true, "watching.json reaches the end");
 assert.equal(catalog.entries[0].type, "application/mcp-server-card+json");
-console.log("\nserver card, ai-catalog, watching.json OK");
+console.log("\nserver card, ai-catalog OK");
 
 console.log("\nSMOKE TEST PASSED");

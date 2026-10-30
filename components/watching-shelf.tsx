@@ -1,59 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import type { WatchedFilm } from "@/lib/letterboxd";
 import { prefersStill } from "@/lib/playback";
 import { EndOfTape, shelfPlan, VhsTape } from "./vhs-tape";
 
-const PAGE_SIZE = 6;
-
 type Props = {
-  initial: WatchedFilm[];
-  done: boolean;
+  films: WatchedFilm[];
   profileUrl: string;
 };
 
 /**
- * Horizontal video-store shelf of recent Letterboxd watches. The first batch is
- * server-rendered; scrolling toward the end of the shelf pulls the next batch from
- * /watching.json until the feed runs out, then a blank tape links to the profile.
+ * Horizontal video-store shelf of the latest Letterboxd watches on the homepage.
+ * It holds a fixed handful; a blank tape at the end hands off to /watched, which
+ * has the whole feed.
  */
-export function WatchingShelf({ initial, done: initialDone, profileUrl }: Props) {
-  const [films, setFilms] = useState(initial);
-  const [done, setDone] = useState(initialDone);
-  const loading = useRef(false);
+export function WatchingShelf({ films, profileUrl }: Props) {
   const shelf = useRef<HTMLDivElement>(null);
-  const sentinel = useRef<HTMLDivElement>(null);
-
-  const loadMore = useCallback(async () => {
-    if (loading.current || done) return;
-    loading.current = true;
-    try {
-      const res = await fetch(`/watching.json?offset=${films.length}&limit=${PAGE_SIZE}`);
-      const page: { entries: WatchedFilm[]; done: boolean } = await res.json();
-      setFilms((current) => [...current, ...page.entries]);
-      setDone(page.done || page.entries.length === 0);
-    } catch {
-      // Network hiccup: stop loading and hand off to Letterboxd
-      setDone(true);
-    } finally {
-      loading.current = false;
-    }
-  }, [done, films.length]);
-
-  useEffect(() => {
-    const target = sentinel.current;
-    if (!target || done) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) void loadMore();
-      },
-      // Start fetching a couple of tapes before the shelf actually runs out
-      { root: shelf.current, rootMargin: "0px 600px 0px 0px" }
-    );
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, [done, loadMore]);
 
   function scrollShelf(direction: 1 | -1) {
     const el = shelf.current;
@@ -99,13 +62,7 @@ export function WatchingShelf({ initial, done: initialDone, profileUrl }: Props)
         {films.map((film, index) => (
           <VhsTape key={film.id} film={film} plan={plan[index]} />
         ))}
-        {done ? (
-          <EndOfTape href={profileUrl} note="End of tape" label="See it all on" />
-        ) : (
-          <div ref={sentinel} className="osd flex w-24 flex-none items-center text-lg text-ink-faint">
-            Rewinding…
-          </div>
-        )}
+        <EndOfTape href="/watched" note="End of tape" label="See the whole shelf" target="/watched →" />
       </div>
     </div>
   );

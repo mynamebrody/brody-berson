@@ -34,16 +34,16 @@ Pages, MCP tools, markdown mirrors (`/index.md`, `/resume.md`), `llms.txt`, the 
 app/
   page.tsx                 Home
   resume/page.tsx          Resume HTML
+  watched/page.tsx         Full Letterboxd video store (wall rack, latest three on the first shelf)
   mcp/route.ts             MCP server (tools, prompts, resources, CORS)
   mcp/server-card/         MCP Server Card (SEP-2127)
-  watching.json/           Paged Letterboxd feed for the homepage shelf
   AGENTS.md/route.ts       Public agent guide (visitors)
   index.md/, resume.md/    Markdown mirrors
   llms.txt/                LLM index
   .well-known/ai-catalog.json/  AI Catalog → server card
   .well-known/mcp.json/    Legacy card location (same body as /mcp/server-card)
   robots.ts, sitemap.ts
-components/                UI (MCP card, tabs, copy button, theme + playback toggles, broadcast effects, CRT portrait, color bars, VHS shelf)
+components/                UI (site footer, MCP card, tabs, copy button, theme + playback toggles, broadcast effects, CRT portrait, color bars, VHS shelf + /watched wall)
 content/                   Single source of truth (see above)
 lib/markdown.ts            Shared markdown / llms / agents text builders
 lib/discovery.ts           Server card + AI catalog builders
