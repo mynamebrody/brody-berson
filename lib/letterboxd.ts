@@ -4,6 +4,8 @@ import { letterboxd } from "@/content/site";
 /** A YouTube trailer, by video key */
 export type Trailer = { key: string; name: string };
 
+export type Clamshell = "disney" | "nickelodeon";
+
 export type WatchedFilm = {
   id: string;
   title: string;
@@ -18,8 +20,8 @@ export type WatchedFilm = {
   poster: string | null;
   /** Plain-text review, or null for a diary entry without one */
   review: string | null;
-  /** Walt Disney / Pixar production (via TMDB); the shelf gives these the white clamshell */
-  disney: boolean;
+  /** Studio behind a clamshell release (via TMDB): white for Disney / Pixar, orange for Nickelodeon; null is a slipcase */
+  clamshell: Clamshell | null;
   /** First TMDB genre ("Horror", "Comedy", …), which colors the shelf's New Release sticker */
   genre: string | null;
   /** Released (or first aired) within the last year, per TMDB */
@@ -29,7 +31,7 @@ export type WatchedFilm = {
 };
 
 type TmdbRef = { kind: "movie" | "tv"; id: string };
-type TmdbFacts = Pick<WatchedFilm, "disney" | "genre" | "newRelease" | "trailers">;
+type TmdbFacts = Pick<WatchedFilm, "clamshell" | "genre" | "newRelease" | "trailers">;
 
 export type RecentlyWatched = {
   entries: WatchedFilm[];
@@ -117,7 +119,16 @@ function tmdbRef(item: FeedItem): TmdbRef | null {
 }
 
 const DISNEY_STUDIO = /^(Walt Disney (Pictures|Productions|Animation Studios|Feature Animation)|Pixar)/;
-const NO_FACTS: TmdbFacts = { disney: false, genre: null, newRelease: false, trailers: [] };
+// "Nickelodeon Movies", "Nickelodeon Animation Studio", … (not the unrelated "Nickel Odeon")
+const NICKELODEON_STUDIO = /^Nickelodeon\b/;
+const NO_FACTS: TmdbFacts = { clamshell: null, genre: null, newRelease: false, trailers: [] };
+
+/** Disney wins a co-production, since its clamshells came first. */
+function clamshellFor(companies: { name: string }[] = []): Clamshell | null {
+  if (companies.some((company) => DISNEY_STUDIO.test(company.name))) return "disney";
+  if (companies.some((company) => NICKELODEON_STUDIO.test(company.name))) return "nickelodeon";
+  return null;
+}
 const MAX_TRAILERS = 12;
 /** Channel order: trailers, then teasers, clips, and the rest */
 const VIDEO_TYPES = ["Trailer", "Teaser", "Clip", "Featurette", "Behind the Scenes", "Bloopers"];
@@ -218,7 +229,7 @@ async function tmdbFacts(ref: TmdbRef | null): Promise<TmdbFacts> {
     const videos = await tmdbVideos(`${base}/videos?api_key=${key}&include_video_language=${languages}`);
     const released = details.release_date || details.first_air_date || "";
     return {
-      disney: (details.production_companies ?? []).some((company) => DISNEY_STUDIO.test(company.name)),
+      clamshell: clamshellFor(details.production_companies),
       genre: details.genres?.[0]?.name ?? null,
       newRelease: released !== "" && released >= oneYearAgo(),
       trailers: youtubeVideos(videos, details.original_language),

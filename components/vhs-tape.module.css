@@ -1,6 +1,6 @@
 /* VHS tapes for the Letterboxd shelf. Most films are a square-cornered cardboard
    slipcase, the Letterboxd poster printed edge to edge; Disney and Pixar get the
-   rounded white clamshell. Everything but the poster is CSS, and the wear stacks
+   rounded white clamshell, Nickelodeon the same clamshell in orange. Everything but the poster is CSS, and the wear stacks
    differently on every tape (the mix comes from shelfPlan in vhs-tape.tsx). */
 
 .slot {
@@ -160,7 +160,7 @@ button.tape {
   pointer-events: none;
 }
 
-/* Disney clamshell: white plastic with rounded corners on the open side, the sleeve
+/* Clamshell (Disney, and Nickelodeon below): white plastic with rounded corners on the open side, the sleeve
    under a clear front. The left side is the hinge, flat, with the art running
    right up to it. */
 .clamshell {
@@ -179,6 +179,12 @@ button.tape {
 
 .clamshell .sleeve {
   border-radius: 0 2px 2px 0;
+}
+
+/* Nickelodeon: the same clamshell molded in orange plastic */
+.nickelodeon .case {
+  border-color: #c45f06;
+  background: linear-gradient(160deg, #ff9c45 0%, #f57d0d 55%, #d96a05 100%);
 }
 
 /* The lip of the clear sleeve pocket, just inside the case edge */
