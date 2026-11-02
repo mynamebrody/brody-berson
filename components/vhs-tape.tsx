@@ -292,7 +292,13 @@ function TrailerScreen({ trailers, title }: { trailers: Trailer[]; title: string
   }
 
   return (
-    <section aria-label="Trailers">
+    // Width comes from the panel (min-w-0), never from the video name under it, so the
+    // set stays the same size on every channel. Phones let it spill into the panel's
+    // padding for a bigger picture; landscape phones cap it by height so it fits on screen.
+    <section
+      aria-label="Trailers"
+      className="mx-auto w-full max-w-[calc(70dvh*16/9)] min-w-0 max-sm:-mx-2 max-sm:w-[calc(100%+1rem)] max-sm:max-w-none"
+    >
       <div className="rounded-[18px] bg-deep p-2 shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_0_50px_-12px_var(--glow)] sm:p-2.5">
         <div className="relative aspect-video overflow-hidden rounded-[12px] bg-black">
           {!trailer ? (
@@ -363,29 +369,36 @@ function TrailerScreen({ trailers, title }: { trailers: Trailer[]; title: string
       </div>
 
       {trailer ? (
-        <div className="mt-3 flex items-center justify-between gap-3">
-          <p aria-live="polite" className="osd min-w-0 truncate text-base text-ink-faint">
+        <div className="mt-3 grid gap-2">
+          {/* Up to two lines, and always two lines' room when there are channels to flip,
+              so the buttons below stay put from one video name to the next */}
+          <p
+            aria-live="polite"
+            title={trailer.name}
+            className={`osd line-clamp-2 text-base leading-snug wrap-anywhere text-ink-faint ${trailers.length > 1 ? "min-h-[2lh]" : ""}`}
+          >
             <span className="sr-only">Now showing: </span>
             {trailer.name}
           </p>
           {trailers.length > 1 ? (
-            <div className="flex shrink-0 items-center gap-2">
+            // A full-width remote on phones, compact and to the right otherwise
+            <div className="flex items-center justify-between gap-2 sm:justify-end">
               <button
                 type="button"
                 onClick={() => changeChannel(-1)}
                 aria-label="Previous trailer"
-                className="osd cursor-pointer rounded-full border border-line px-3 py-1 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow"
+                className="osd cursor-pointer rounded-full border border-line px-3 py-1 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow max-sm:flex-1 pointer-coarse:min-h-11 pointer-coarse:px-4 pointer-coarse:py-0"
               >
                 CH −
               </button>
-              <span className="osd text-base text-ink-faint tabular-nums" aria-hidden="true">
+              <span className="osd w-[5ch] text-center text-base text-ink-faint tabular-nums" aria-hidden="true">
                 {channel + 1}/{trailers.length}
               </span>
               <button
                 type="button"
                 onClick={() => changeChannel(1)}
                 aria-label="Next trailer"
-                className="osd cursor-pointer rounded-full border border-line px-3 py-1 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow"
+                className="osd cursor-pointer rounded-full border border-line px-3 py-1 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow max-sm:flex-1 pointer-coarse:min-h-11 pointer-coarse:px-4 pointer-coarse:py-0"
               >
                 CH +
               </button>
@@ -442,9 +455,9 @@ function FilmDialog({
       className="tv-dialog m-0 h-dvh max-h-none w-full max-w-none place-items-center overflow-hidden border-0 bg-transparent p-0 text-ink open:grid backdrop:bg-deep/60 backdrop:backdrop-blur-sm"
     >
       <div
-        className={`tv-dialog-panel scanlines grid max-h-[85dvh] w-[calc(100%-2rem)] gap-6 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-screen-2 p-6 shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_var(--signal)] sm:p-8 ${film.trailers.length ? "max-w-3xl" : "max-w-2xl"}`}
+        className={`tv-dialog-panel scanlines grid max-h-[85dvh] w-[calc(100%-2rem)] grid-cols-1 gap-6 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-screen-2 p-5 shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_var(--signal)] sm:p-8 ${film.trailers.length ? "max-w-3xl" : "max-w-2xl"}`}
       >
-        <div className="grid gap-6 sm:grid-cols-[9rem_1fr]">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-[9rem_minmax(0,1fr)]">
           {film.poster ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -465,17 +478,17 @@ function FilmDialog({
               {[rating, film.liked ? "♥ Liked" : null, film.rewatch ? "Rewatch" : null].filter(Boolean).join(" · ")}
             </p>
             {film.review ? (
-              <p className="mt-4 leading-relaxed whitespace-pre-line text-ink-soft">{film.review}</p>
+              <p className="mt-4 leading-relaxed wrap-anywhere whitespace-pre-line text-ink-soft">{film.review}</p>
             ) : null}
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <a href={film.url} className="gloss rounded-full px-5 py-2 text-sm font-semibold">
+              <a href={film.url} className="gloss inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold pointer-coarse:min-h-11 pointer-coarse:py-0">
                 Open on Letterboxd →
               </a>
               <button
                 type="button"
                 autoFocus
                 onClick={onClose}
-                className="osd cursor-pointer rounded-full border border-line px-4 py-1.5 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow"
+                className="osd cursor-pointer rounded-full border border-line px-4 py-1.5 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow pointer-coarse:min-h-11 pointer-coarse:py-0"
               >
                 Close ✕
               </button>
