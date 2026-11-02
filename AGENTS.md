@@ -47,7 +47,7 @@ components/                UI (site footer, MCP card, tabs, copy button, theme +
 content/                   Single source of truth (see above)
 lib/markdown.ts            Shared markdown / llms / agents text builders
 lib/discovery.ts           Server card + AI catalog builders
-lib/letterboxd.ts          Letterboxd RSS fetch/parse (hourly cache) + TMDB lookup (Disney/Pixar, genre, YouTube videos), used by the homepage shelf, /watched, and MCP
+lib/letterboxd.ts          Letterboxd RSS fetch/parse (hourly cache) + TMDB lookup (Disney/Pixar/Nickelodeon, genre, YouTube videos), used by the homepage shelf, /watched, and MCP
 lib/playback.ts            Site-wide Play/Pause state (data-playback on <html>)
 public/                    Static assets + brody-berson-resume.pdf
 scripts/
@@ -68,7 +68,7 @@ npm run pdf      # regenerate public/brody-berson-resume.pdf (server must be run
 
 One-time for PDF generation: `npx playwright install chromium`.
 
-Optional env: `TMDB_API_KEY` (in `.env.local` locally, Vercel env in production) lets the VHS shelf give Disney and Pixar films the white clamshell and fills the trailer TV in each film's dialog (its YouTube videos in the original language, English, and spoken languages, trailers first). Without it every tape is a cardboard slipcase and the TV shows NO SIGNAL.
+Optional env: `TMDB_API_KEY` (in `.env.local` locally, Vercel env in production) lets the VHS shelf give Disney and Pixar films the white clamshell (Nickelodeon the orange one) and fills the trailer TV in each film's dialog (its YouTube videos in the original language, English, and spoken languages, trailers first). Without it every tape is a cardboard slipcase and the TV shows NO SIGNAL.
 
 ## Contribution tips
 

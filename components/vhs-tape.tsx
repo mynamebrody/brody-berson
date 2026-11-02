@@ -91,7 +91,7 @@ export type TapePlan = {
 
 /** Two or three kinds of wear, none of them shared with the tape before it. */
 function pickWear(film: WatchedFilm, prev: Wear[]) {
-  const pool = (film.disney ? clamshellWear : slipcaseWear).filter((w) => !prev.includes(w));
+  const pool = (film.clamshell ? clamshellWear : slipcaseWear).filter((w) => !prev.includes(w));
   const ranked = pool
     .map((w) => [w, hash(`${film.id}:${w}`)] as const)
     .sort((a, b) => a[1] - b[1])
@@ -262,7 +262,8 @@ function ReviewExcerpt({ review, onOpen }: { review: string; onOpen: () => void 
   );
 }
 
-const channelNo = (index: number) => `CH ${String(index + 1).padStart(2, "0")}`;
+/** Videos are on the 100s: CH 101, CH 102, … */
+const channelNo = (index: number) => `CH ${101 + index}`;
 
 /**
  * The film's YouTube videos (trailers first) on a little CRT. It waits on the trailer's thumbnail
@@ -433,7 +434,6 @@ function FilmDialog({
   onClosed: () => void;
 }) {
   const titleId = useId();
-  const kind = film.review ? "Review · " : film.trailers.length ? "Trailer · " : "";
 
   return (
     <dialog
@@ -468,7 +468,7 @@ function FilmDialog({
           ) : null}
           <div className="min-w-0">
             <p className="osd text-base text-ink-faint">
-              {kind}Watched {watchedOn(film.watchedDate)}
+              Review · Watched {watchedOn(film.watchedDate)}
             </p>
             <h3 id={titleId} className="mt-1 font-display text-3xl leading-tight font-semibold tracking-wide uppercase">
               {film.title}
@@ -529,7 +529,8 @@ export function VhsTape({
   const name = `${film.title}${film.year ? ` (${film.year})` : ""}`;
   const classes = [
     styles.tape,
-    film.disney ? styles.clamshell : styles.slipcase,
+    film.clamshell ? styles.clamshell : styles.slipcase,
+    film.clamshell === "nickelodeon" ? styles.nickelodeon : "",
     styles[plan.stock],
     ...plan.wear.map((w) => styles[w]),
     plan.wear.includes("dogEared") && v.earLeft ? styles.earLeft : "",
@@ -568,7 +569,7 @@ export function VhsTape({
   const box = (
     <>
       {/* The tape inside a slipcase, which slides out the open bottom on hover */}
-      {film.disney ? null : <span className={styles.cassette} aria-hidden="true" />}
+      {film.clamshell ? null : <span className={styles.cassette} aria-hidden="true" />}
       <span className={styles.case}>
         <span className={styles.sleeve}>
           <span className={styles.art}>
@@ -668,7 +669,7 @@ export function VhsTape({
           {film.review ? <ReviewExcerpt review={film.review} onOpen={openFilm} /> : null}
         </div>
       ) : (
-        // Price-channel strip on the shelf lip: title, stars, date, and the review (or trailer) if there is one
+        // Price-channel strip on the shelf lip: title, date, stars, and the way into the review
         <div className={styles.shelfTag}>
           <h3
             title={film.title}
@@ -677,24 +678,21 @@ export function VhsTape({
             {film.title}
           </h3>
           <p className="osd mt-0.5 text-sm leading-none text-ink-faint">{watchedOn(film.watchedDate)}</p>
-          {rating || film.liked || film.review || film.trailers.length ? (
-            <div className="mt-1 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
-              <span className="osd text-sm leading-none whitespace-nowrap text-ink-soft">
-                {[rating, film.liked ? "♥" : null].filter(Boolean).join(" ")}
-              </span>
-              {film.review || film.trailers.length ? (
-                <button
-                  type="button"
-                  onClick={openFilm}
-                  aria-haspopup="dialog"
-                  aria-label={film.review ? `Read the review of ${name}` : `Watch the trailer for ${name}`}
-                  className="osd cursor-pointer text-sm leading-none whitespace-nowrap text-ink-faint underline decoration-pop decoration-2 underline-offset-2 hover:text-glow"
-                >
-                  {film.review ? "Review →" : "Trailer →"}
-                </button>
-              ) : null}
-            </div>
-          ) : null}
+          {/* Every film's dialog is its review (rating and diary entry, plus the text when there is one) */}
+          <div className="mt-1 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
+            <span className="osd text-sm leading-none whitespace-nowrap text-ink-soft">
+              {[rating, film.liked ? "♥" : null].filter(Boolean).join(" ")}
+            </span>
+            <button
+              type="button"
+              onClick={openFilm}
+              aria-haspopup="dialog"
+              aria-label={`Read the review of ${name}`}
+              className="osd cursor-pointer text-sm leading-none whitespace-nowrap text-ink-faint underline decoration-pop decoration-2 underline-offset-2 hover:text-glow"
+            >
+              Review →
+            </button>
+          </div>
         </div>
       )}
       <FilmDialog
