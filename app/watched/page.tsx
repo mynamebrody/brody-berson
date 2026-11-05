@@ -5,16 +5,27 @@ import { PlaybackToggle } from "@/components/playback-toggle";
 import { SiteFooter } from "@/components/site-footer";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { WatchedWall } from "@/components/watched-wall";
-import { getRecentlyWatched } from "@/lib/letterboxd";
+import { getRecentlyWatched, ogVersion } from "@/lib/letterboxd";
 
 // Restocked from the Letterboxd feed hourly, same as the homepage shelf
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Watched",
-  description:
-    "What Brody Berson has been watching: his recent Letterboxd diary as a wall of worn rental-store VHS boxes, with ratings and reviews.",
-};
+const title = "Watched";
+const description =
+  "What Brody Berson has been watching: his recent Letterboxd diary as a wall of worn rental-store VHS boxes, with ratings and reviews.";
+
+// The share image shows the latest three films. Its URL carries a fingerprint of them,
+// so it is only rendered anew when the feed's top three change.
+export async function generateMetadata(): Promise<Metadata> {
+  const { entries } = await getRecentlyWatched();
+  const image = entries.length ? `/watched/og?v=${ogVersion(entries)}` : "/open-graph.png";
+  return {
+    title,
+    description,
+    openGraph: { type: "website", url: "/watched", title, description, images: [image] },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
+  };
+}
 
 export default async function WatchedPage() {
   const watched = await getRecentlyWatched();

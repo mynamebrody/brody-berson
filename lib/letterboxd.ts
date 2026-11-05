@@ -239,6 +239,28 @@ async function tmdbFacts(ref: TmdbRef | null): Promise<TmdbFacts> {
   }
 }
 
+/** How many of the latest films the /watched share image shows */
+export const OG_FILMS = 3;
+
+/**
+ * A short fingerprint of what the /watched share image draws: the latest three films
+ * and the details that show on their tapes. The image URL carries it as ?v=, so an
+ * unchanged feed keeps the same (cached) image and a changed feed gets a new one.
+ */
+export function ogVersion(entries: WatchedFilm[]) {
+  const source = entries
+    .slice(0, OG_FILMS)
+    .map((f) => [f.id, f.title, f.rating, f.poster, f.clamshell].join("|"))
+    .join("\n");
+  // FNV-1a
+  let h = 0x811c9dc5;
+  for (let i = 0; i < source.length; i++) {
+    h ^= source.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(36);
+}
+
 /**
  * Brody's Letterboxd RSS feed (the latest ~50 diary entries), cached for an hour.
  * Never throws: a failed fetch returns no entries so pages and tools can fall back
