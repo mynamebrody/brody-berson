@@ -5,14 +5,17 @@ import { PlaybackToggle } from "@/components/playback-toggle";
 import { SiteFooter } from "@/components/site-footer";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { WatchedWall } from "@/components/watched-wall";
+import { site } from "@/content/site";
 import { getRecentlyWatched, ogVersion } from "@/lib/letterboxd";
+import { socialMetadata } from "@/lib/metadata";
 
 // Restocked from the Letterboxd feed hourly, same as the homepage shelf
 export const revalidate = 3600;
 
-const title = "Watched";
+// Named in full (no layout template) so the title fills the 50-60 characters search results show
+const title = `Recently Watched · ${site.name}’s Letterboxd Video Store`;
 const description =
-  "What Brody Berson has been watching: his recent Letterboxd diary as a wall of worn rental-store VHS boxes, with ratings and reviews.";
+  `${site.name}’s recent Letterboxd diary as a wall of worn rental-store VHS tapes, with ratings and reviews.`;
 
 // The share image shows the latest three films. Its URL carries a fingerprint of them,
 // so it is only rendered anew when the feed's top three change.
@@ -20,10 +23,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const { entries } = await getRecentlyWatched();
   const image = entries.length ? `/watched/og?v=${ogVersion(entries)}` : "/open-graph.png";
   return {
-    title,
+    title: { absolute: title },
     description,
-    openGraph: { type: "website", url: "/watched", title, description, images: [image] },
-    twitter: { card: "summary_large_image", title, description, images: [image] },
+    ...socialMetadata({ path: "/watched", title, description, image }),
   };
 }
 
