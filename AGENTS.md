@@ -35,6 +35,7 @@ app/
   page.tsx                 Home
   resume/page.tsx          Resume HTML
   watched/page.tsx         Full Letterboxd video store (wall rack, latest three on the first shelf)
+  watched/og/route.tsx     /watched share image (latest three tapes under the sign), fonts in watched/og/fonts/
   mcp/route.ts             MCP server (tools, prompts, resources, CORS)
   mcp/server-card/         MCP Server Card (SEP-2127)
   AGENTS.md/route.ts       Public agent guide (visitors)
@@ -85,6 +86,10 @@ Optional env: `TMDB_API_KEY` (in `.env.local` locally, Vercel env in production)
 - The server card lists identity and transport only, never tools (per SEP-2127). Bump `mcpServer.version` in `site.ts` when the tool surface changes.
 - After MCP changes, run `npm run smoke` against a local server.
 - Rate limiting for the public endpoint lives in the Vercel firewall (dashboard), not in code.
+
+### /watched share image
+
+`/watched/og` renders the latest three films with `next/og`. The page links it as `?v=<ogVersion(entries)>` (`lib/letterboxd.ts`), a hash of the top three films and what their tapes show. The image is cached as immutable per `v`, so it is only rendered again when the feed's top three change; a stale `v` redirects to the current one. If you change how the image looks, the URL won't change by itself: include whatever you add to the image in `ogVersion`, or bump the hash input.
 
 ### UI / design
 
