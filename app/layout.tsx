@@ -51,13 +51,13 @@ export const metadata: Metadata = {
     url: site.url,
     title: site.name,
     siteName: site.domain,
-    description: site.description,
+    description: site.socialDescription,
     images: ["/open-graph.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: site.name,
-    description: site.description,
+    description: site.socialDescription,
     images: ["/open-graph.png"],
   },
 };

@@ -10,6 +10,9 @@ export const site = {
   headline: "Forward Deployed Engineer at Ravenna",
   description:
     "Brody Berson: Forward Deployed Engineer at Ravenna. Previously embedded on Zapier's MCP team, working with AI partners like OpenAI, Anthropic, Google, and Meta. This site ships its own MCP server.",
+  // Social cards show about 125 characters, so the full description above is too long for them
+  socialDescription:
+    "Forward Deployed Engineer at Ravenna. Previously on Zapier’s MCP team, working with OpenAI, Anthropic, Google, and Meta.",
   bio: [
     "I'm a Forward Deployed Engineer at Ravenna (the agentic service desk for IT, HR, and Operations that lives in Slack). My day-to-day is APIs, AI agents, rapid prototyping, and partnerships.",
     "Previously I spent two-plus years at Zapier embedded on the MCP team from its infancy, watching the product grow up and introducing it to AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.",

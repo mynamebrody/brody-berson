@@ -3,11 +3,15 @@ import Link from "next/link";
 import { PlaybackToggle } from "@/components/playback-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { resume } from "@/content/resume";
+import { site } from "@/content/site";
+import { socialMetadata } from "@/lib/metadata";
+
+const description = `${site.name}’s resume: Forward Deployed Engineer at Ravenna, previously Sr. Partner Solution Engineer (AI) at Zapier.`;
 
 export const metadata: Metadata = {
   title: "Resume",
-  description:
-    "Resume of Brody Berson: Forward Deployed Engineer at Ravenna, previously Sr. Partner Solution Engineer (AI) on Zapier's MCP team.",
+  description,
+  ...socialMetadata({ path: "/resume", title: `Resume · ${site.name}`, description }),
 };
 
 function dateRange(start: string, end: string) {

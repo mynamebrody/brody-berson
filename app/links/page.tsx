@@ -4,6 +4,7 @@ import { CrtPortrait } from "@/components/crt-portrait";
 import { PlaybackToggle } from "@/components/playback-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { linkHub, site, socialLinks } from "@/content/site";
+import { socialMetadata } from "@/lib/metadata";
 import styles from "./links.module.css";
 
 type SocialIconName = (typeof linkHub.socialLabels)[number];
@@ -13,9 +14,12 @@ const linkHubSocials = linkHub.socialLabels.flatMap((label) => {
   return socialLink ? [{ ...socialLink, label }] : [];
 });
 
+const description = `Find ${site.name} around the web.`;
+
 export const metadata: Metadata = {
   title: "Links",
-  description: `Find ${site.name} around the web.`,
+  description,
+  ...socialMetadata({ path: "/links", title: `Links · ${site.name}`, description }),
   robots: {
     index: false,
     follow: false,
