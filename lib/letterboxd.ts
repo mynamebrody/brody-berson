@@ -1,5 +1,6 @@
 import { XMLParser } from "fast-xml-parser";
 import { letterboxd } from "@/content/site";
+import { hash } from "@/lib/tape-look";
 
 /** A YouTube trailer, by video key */
 export type Trailer = { key: string; name: string };
@@ -252,13 +253,7 @@ export function ogVersion(entries: WatchedFilm[]) {
     .slice(0, OG_FILMS)
     .map((f) => [f.id, f.title, f.rating, f.poster, f.clamshell].join("|"))
     .join("\n");
-  // FNV-1a
-  let h = 0x811c9dc5;
-  for (let i = 0; i < source.length; i++) {
-    h ^= source.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return (h >>> 0).toString(36);
+  return hash(source).toString(36);
 }
 
 /**

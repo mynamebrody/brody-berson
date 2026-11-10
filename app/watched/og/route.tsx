@@ -3,6 +3,7 @@ import path from "node:path";
 import { ImageResponse } from "next/og";
 import { NextResponse, type NextRequest } from "next/server";
 import { OG_FILMS, getRecentlyWatched, ogVersion, type WatchedFilm } from "@/lib/letterboxd";
+import { hash } from "@/lib/tape-look";
 
 /**
  * The /watched share image: the latest three tapes under the "recently returned" sign.
@@ -36,16 +37,6 @@ async function inlinePoster(url: string | null) {
   } catch {
     return null;
   }
-}
-
-/** Small stable string hash (FNV-1a), so a film always gets the same board color. */
-function hash(value: string) {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < value.length; i++) {
-    h ^= value.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return h >>> 0;
 }
 
 function Star({ size }: { size: number }) {
