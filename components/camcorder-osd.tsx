@@ -19,11 +19,29 @@ function stamp(now: Date) {
 // While the site is paused the timestamp holds on the second it was paused at.
 let frozenAt: number | null = null;
 
+// The clock only ticks while it can be seen: at the width where the OSD shows
+// (Tailwind's xl, matching the xl:flex below) and with the tab in front.
 function subscribe(onTick: () => void) {
-  const id = setInterval(onTick, 1000);
+  const wide = window.matchMedia("(min-width: 1280px)");
+  let id: ReturnType<typeof setInterval> | undefined;
+  const sync = () => {
+    const visible = wide.matches && !document.hidden;
+    if (visible && id === undefined) {
+      id = setInterval(onTick, 1000);
+      onTick();
+    } else if (!visible && id !== undefined) {
+      clearInterval(id);
+      id = undefined;
+    }
+  };
+  if (wide.matches && !document.hidden) id = setInterval(onTick, 1000);
+  wide.addEventListener("change", sync);
+  document.addEventListener("visibilitychange", sync);
   const unsubscribe = subscribePlayback(onTick);
   return () => {
     clearInterval(id);
+    wide.removeEventListener("change", sync);
+    document.removeEventListener("visibilitychange", sync);
     unsubscribe();
   };
 }

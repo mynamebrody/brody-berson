@@ -463,6 +463,8 @@ function FilmDialog({
             <img
               src={film.poster}
               alt=""
+              // Lazy, or every closed dialog on the page fetches its poster up front
+              loading="lazy"
               className="hidden w-36 rounded-md border border-line shadow-lg sm:block"
             />
           ) : null}

@@ -25,9 +25,11 @@ const vt323 = VT323({
   weight: "400",
 });
 
+// Code and meta text only, all of it below the first viewport, so it isn't preloaded
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  preload: false,
 });
 
 export const metadata: Metadata = {
