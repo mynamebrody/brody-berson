@@ -2,9 +2,8 @@ import Link from "next/link";
 import { ColorBars } from "@/components/color-bars";
 import { CrtPortrait } from "@/components/crt-portrait";
 import { McpCard } from "@/components/mcp-card";
-import { PlaybackToggle } from "@/components/playback-toggle";
 import { SiteFooter } from "@/components/site-footer";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { SiteHeader } from "@/components/site-header";
 import { WatchingShelf } from "@/components/watching-shelf";
 import { resume } from "@/content/resume";
 import { site } from "@/content/site";
@@ -35,31 +34,9 @@ export default async function Home() {
 
   return (
     <>
-      <header className="sticky top-0 z-10 border-b border-line/60 bg-screen/50 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3 sm:px-8">
-          <Link
-            href="/"
-            className="font-display text-2xl font-semibold tracking-wide text-glow uppercase"
-          >
-            Brody Berson
-          </Link>
-          <nav className="flex items-center gap-2.5 text-sm sm:gap-4">
-            <a
-              href="#mcp"
-              className="osd hidden rounded-md border border-line bg-screen-2 px-2.5 py-0.5 text-base text-ink-soft transition-colors hover:border-glow hover:text-glow sm:block"
-            >
-              /mcp
-            </a>
-            <Link href="/resume" className="font-medium text-ink-soft transition-colors hover:text-glow">
-              Resume
-            </Link>
-            <ThemeToggle />
-            <PlaybackToggle />
-          </nav>
-        </div>
-      </header>
+      <SiteHeader current="home" sticky />
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-5 sm:px-8">
+      <main id="main" tabIndex={-1} className="mx-auto w-full max-w-5xl flex-1 px-5 outline-none sm:px-8">
         {/* Hero: title card */}
         <section className="grid items-center gap-12 pt-14 pb-20 sm:grid-cols-[1fr_auto] sm:pt-20 sm:pb-24">
           <div>
