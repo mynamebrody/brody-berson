@@ -1,7 +1,7 @@
 import styles from "./broadcast-fx.module.css";
 
 /**
- * The full-viewport texture itself: grain, scanlines, light leaks, and tube corners.
+ * The full-viewport texture itself: grain, scanlines, light leaks, and the tube's glass.
  * Also rendered inside modal dialogs, which sit in the browser's top layer above
  * the page-level copy.
  */
@@ -15,8 +15,7 @@ export function BroadcastTexture() {
       <div className={styles.shafts} />
       <div className={styles.flicker} />
       <div className={styles.lift} />
-      <div className={styles.vignette} />
-      <div className={styles.tube} />
+      <div className={styles.glass} />
     </div>
   );
 }
