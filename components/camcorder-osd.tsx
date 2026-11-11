@@ -2,8 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { getPlayback, subscribePlayback } from "@/lib/playback";
-
-const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+import { months } from "@/lib/tape-look";
 
 // Real date and time, camcorder-style.
 function stamp(now: Date) {
