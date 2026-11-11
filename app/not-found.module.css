@@ -1,0 +1,631 @@
+/* The 404 page: an infomercial end card on a tape's blue screen. The colors are
+   pinned (not the BBTV tokens) so it looks the same in Daytime and Primetime. */
+
+.page {
+  --blue: #2e39c6;
+  --yellow: #ffe81a;
+  --outline: #05061a;
+  position: relative;
+  display: grid;
+  flex: 1;
+  /* The whole screen: this page has no site header or footer */
+  min-height: 100svh;
+  place-items: center;
+  overflow: hidden;
+  padding: 2.5rem 1rem 3.5rem;
+  outline: none;
+  color: #ffffff;
+  background:
+    radial-gradient(120% 90% at 50% 38%, #4450dc 0%, var(--blue) 50%, #1c2296 100%),
+    var(--blue);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+/* The tape is the whole picture: no camcorder REC / timestamp / SP overlay on this page only */
+:global(body):has(.page) :global(.camcorder-osd) {
+  display: none;
+}
+
+.card {
+  position: relative;
+  display: grid;
+  width: min(100%, 62rem);
+  gap: 1.5rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .card {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 1.25rem 2rem;
+  }
+
+  .cta {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Character-generator type ---------- */
+
+/* White (or yellow) caps with a black outline and a hard drop shadow, plus the
+   red/cyan fringe of a tape that has been copied once too often */
+.title,
+.price,
+.fine,
+.label,
+.path,
+.nav,
+.phone {
+  -webkit-text-stroke: 0.14em var(--outline);
+  paint-order: stroke fill;
+  text-shadow:
+    -1px 0 rgba(255, 60, 140, 0.5),
+    1px 0 rgba(40, 210, 255, 0.5),
+    0.07em 0.09em 0 rgba(5, 6, 26, 0.85);
+}
+
+.title {
+  color: var(--yellow);
+  font-size: clamp(1.25rem, 4.2vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+
+.price {
+  font-size: clamp(4.5rem, 19vw, 8.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  -webkit-text-stroke-width: 0.07em;
+}
+
+.dollar {
+  display: inline-block;
+  font-size: 0.5em;
+  vertical-align: 0.62em;
+}
+
+.fine {
+  font-size: clamp(0.8rem, 2.4vw, 1rem);
+  line-height: 1.35;
+}
+
+.label {
+  margin-top: 1.1rem;
+  font-size: clamp(0.8rem, 2.4vw, 1rem);
+}
+
+.path {
+  color: var(--yellow);
+  font-size: clamp(1.1rem, 3.6vw, 1.6rem);
+  line-height: 1.15;
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.15rem 1.25rem;
+  font-size: clamp(1.1rem, 3.6vw, 1.6rem);
+  line-height: 1.3;
+}
+
+.nav a {
+  text-decoration: underline;
+  text-decoration-color: var(--yellow);
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.2em;
+}
+
+.nav a:hover,
+.phone:hover {
+  color: var(--yellow);
+}
+
+.nav a:focus-visible,
+.phone:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* The number: the biggest thing on screen, sized to fill the card on one line */
+.phone {
+  display: inline-block;
+  font-size: clamp(1.65rem, 8.4vw, 5.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  -webkit-text-stroke-width: 0.08em;
+}
+
+/* ---------- Product shot ---------- */
+
+.product {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.tapes {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+
+/* A beat-up rental slipcase seen from its left corner: the front and the spine are
+   two faces of a real 3D box. Everything is sized in em, so the font-size on .stage
+   scales the whole tape. */
+.stage {
+  --w: 11em;
+  --h: 20em;
+  --d: 3.3em;
+  --box: #0e0e12;
+  --c1: #9b4fd0;
+  --c2: #2f7de0;
+  --c3: #23b25a;
+  --c4: #f2c21d;
+  --c5: #f08a1c;
+  --c6: #e3123f;
+  /* The rainbow band, at the same height on both faces so it wraps the corner */
+  --stripes: linear-gradient(
+      to bottom,
+      var(--c1) 0 0.8em,
+      transparent 0.8em 1em,
+      var(--c2) 1em 1.8em,
+      transparent 1.8em 2em,
+      var(--c3) 2em 2.8em,
+      transparent 2.8em 3em,
+      var(--c4) 3em 3.8em,
+      transparent 3.8em 4em,
+      var(--c5) 4em 4.8em,
+      transparent 4.8em 5em,
+      var(--c6) 5em 5.8em,
+      transparent 5.8em
+    )
+    0 4.2em / 100% 5.8em no-repeat;
+  --scuff: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.9 0 0 0 0 0.84 4 0 0 0 -2.75'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  position: relative;
+  display: block;
+  width: var(--w);
+  height: var(--h);
+  margin-left: calc(var(--d) * 0.75);
+  font-size: clamp(0.56rem, 2.5vw, 0.92rem);
+  line-height: 1;
+  perspective: 60em;
+}
+
+.stageTwo {
+  z-index: 1;
+  margin-top: 1.6em;
+  margin-left: -0.9em;
+  --c1: #e3123f;
+  --c2: #f08a1c;
+  --c3: #f2c21d;
+  --c4: #23b25a;
+  --c5: #2f7de0;
+  --c6: #9b4fd0;
+}
+
+/* The shadow it throws on the blue */
+.stage::after {
+  content: "";
+  position: absolute;
+  inset: auto -8% -0.9em -14%;
+  height: 1.6em;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(5, 6, 26, 0.6), transparent);
+}
+
+.box {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform: rotateY(47deg);
+  transform-style: preserve-3d;
+}
+
+.front,
+.spine {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  overflow: hidden;
+  color: #efe9d6;
+  background: var(--stripes), var(--box);
+}
+
+.front {
+  left: 0;
+  width: 100%;
+  border-radius: 0 0.25em 0.25em 0;
+}
+
+/* Hinged on the front's left edge and folded straight back */
+.spine {
+  right: 100%;
+  width: var(--d);
+  border-radius: 0.2em 0 0 0.2em;
+  transform: rotateY(-90deg);
+  transform-origin: right center;
+}
+
+/* The spine is turned away from the light */
+.spine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.22) 70%, rgba(0, 0, 0, 0.38));
+}
+
+.spineLogo {
+  position: absolute;
+  top: 0.9em;
+  left: 50%;
+  display: grid;
+  width: 2.2em;
+  height: 2.2em;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--box);
+  font-size: 0.62em;
+  background: var(--c4);
+  transform: translateX(-50%);
+}
+
+.spineTitle {
+  position: absolute;
+  top: 2.7em;
+  left: 50%;
+  z-index: 1;
+  font-family: var(--font-antonio), "Arial Narrow", Impact, sans-serif;
+  font-size: 1.3em;
+  text-shadow:
+    0.06em 0.06em 0 var(--box),
+    -0.06em -0.06em 0 var(--box);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  transform: translateX(-50%);
+}
+
+.spineSticker {
+  position: absolute;
+  right: 0;
+  bottom: 1.4em;
+  left: 0;
+  z-index: 1;
+  padding: 0.5em 0 0.6em;
+  color: #2a2110;
+  font-family: var(--font-vt323), ui-monospace, monospace;
+  font-size: 1.15em;
+  font-weight: 400;
+  line-height: 0.85;
+  text-align: center;
+  background: linear-gradient(to bottom, #f3b53a, #e79a1e);
+  clip-path: polygon(0 0, 100% 3%, 100% 96%, 62% 100%, 55% 93%, 0 97%);
+}
+
+/* ---------- Front of the box ---------- */
+
+/* Classification box, top left */
+.rating {
+  position: absolute;
+  top: 0.6em;
+  left: 0.7em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  width: 15em;
+  font-size: 0.42em;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+
+.rating b {
+  padding: 0.25em 0.4em;
+  border: 0.15em solid currentColor;
+  font-size: 1.9em;
+  line-height: 1;
+}
+
+/* The picture window, with the stripes running out from behind it on both sides */
+.window {
+  position: absolute;
+  top: 2.5em;
+  right: 1.3em;
+  left: 1.3em;
+  display: grid;
+  height: 10.9em;
+  place-items: center;
+  overflow: hidden;
+  border: 0.12em solid #e3123f;
+  background:
+    radial-gradient(circle at 74% 20%, #f4f1c9 0 0.75em, rgba(244, 241, 201, 0.35) 0.8em, transparent 1.7em),
+    linear-gradient(to top, #07091f 0 14%, transparent 14%),
+    linear-gradient(to top, transparent 14%, rgba(7, 9, 31, 0.9) 14% 17%, transparent 17%),
+    linear-gradient(160deg, #7a3fc4 0%, #b0479f 34%, #1f8f86 68%, #0f4d57 100%);
+}
+
+.stageTwo .window {
+  border-color: #f2c21d;
+  background:
+    radial-gradient(circle at 26% 22%, #ffe9c2 0 0.75em, rgba(255, 233, 194, 0.35) 0.8em, transparent 1.7em),
+    linear-gradient(to top, #07091f 0 14%, transparent 14%),
+    linear-gradient(to top, transparent 14%, rgba(7, 9, 31, 0.9) 14% 17%, transparent 17%),
+    linear-gradient(200deg, #f08a1c 0%, #e3123f 38%, #5b2a86 72%, #1b1f5c 100%);
+}
+
+/* What's on the tape: nothing, lit like a movie poster */
+.still {
+  font-family: var(--font-vt323), ui-monospace, monospace;
+  font-size: 4.6em;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-shadow:
+    -0.04em 0 rgba(255, 60, 140, 0.8),
+    0.04em 0 rgba(40, 210, 255, 0.8),
+    0 0 0.35em rgba(255, 255, 255, 0.75);
+}
+
+.titles {
+  position: absolute;
+  inset: 13.8em 0.7em 0.7em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tapeTitle {
+  font-family: var(--font-antonio), "Arial Narrow", Impact, sans-serif;
+  font-size: 1.62em;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.tapeVolume {
+  margin-top: 0.35em;
+  font-size: 0.5em;
+  letter-spacing: 0.14em;
+}
+
+.credits {
+  margin-top: 0.7em;
+  font-size: 0.34em;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
+
+.badges {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+  padding: 0 0.4em;
+}
+
+.vhs {
+  display: grid;
+  padding: 0.25em 0.45em 0.2em;
+  border-radius: 0.3em;
+  color: var(--box);
+  font-size: 0.82em;
+  background: #f2c21d;
+  transform: rotate(-4deg);
+}
+
+.vhs small {
+  font-size: 0.42em;
+  letter-spacing: 0.08em;
+}
+
+.logo {
+  display: grid;
+  padding: 0.5em 0.6em;
+  border-radius: 0.5em;
+  color: #ffffff;
+  font-size: 0.42em;
+  letter-spacing: 0.06em;
+  background: linear-gradient(to bottom, #2f7de0 0 50%, #9b4fd0 50%);
+}
+
+/* Rental-store stickers: a torn shelf code up top, a taped-on stock number lower down */
+.rental {
+  position: absolute;
+  top: 1.5em;
+  right: 0.5em;
+  z-index: 1;
+  padding: 0.25em 0.5em 1em;
+  color: #2a2110;
+  font-family: var(--font-vt323), ui-monospace, monospace;
+  font-size: 1.5em;
+  font-weight: 400;
+  line-height: 0.85;
+  background: linear-gradient(to bottom, #f6a02a 0 58%, #e9dcc0 58%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 70% 88%, 52% 97%, 30% 84%, 12% 93%, 0 80%);
+  transform: rotate(4deg);
+}
+
+.taped {
+  position: absolute;
+  top: 11.3em;
+  left: -0.2em;
+  z-index: 1;
+  padding: 0.35em 0.7em 0.3em;
+  border-radius: 0.15em;
+  color: #3a3122;
+  font-family: var(--font-vt323), ui-monospace, monospace;
+  font-size: 0.95em;
+  font-weight: 400;
+  text-transform: none;
+  background: linear-gradient(to bottom, #d9cba6, #c2b187);
+  box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 0.5);
+  transform: rotate(-5deg);
+}
+
+.burst {
+  position: absolute;
+  top: 9.6em;
+  right: 0.3em;
+  z-index: 1;
+  display: grid;
+  width: 6.4em;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 0.5em;
+  line-height: 1.05;
+  background: #e3123f;
+  box-shadow: 0 0 0 0.25em #ffffff;
+  transform: rotate(14deg);
+}
+
+/* A few hundred rentals' worth of wear, over everything on the face: rubbed-white
+   edges and corners, scuffs, and a crease or two */
+.wear {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 100% 0, rgba(236, 230, 214, 0.9), transparent 1.3em),
+    radial-gradient(circle at 100% 100%, rgba(236, 230, 214, 0.85), transparent 1.6em),
+    radial-gradient(circle at 0 100%, rgba(236, 230, 214, 0.7), transparent 1.1em),
+    linear-gradient(to right, rgba(236, 230, 214, 0.75), transparent 0.35em),
+    linear-gradient(to left, rgba(236, 230, 214, 0.6), transparent 0.3em),
+    linear-gradient(to bottom, rgba(236, 230, 214, 0.65), transparent 0.3em),
+    linear-gradient(to top, rgba(236, 230, 214, 0.7), transparent 0.35em),
+    linear-gradient(118deg, transparent 61.6%, rgba(255, 255, 255, 0.4) 62%, transparent 62.5%),
+    linear-gradient(64deg, transparent 77.6%, rgba(255, 255, 255, 0.28) 78%, transparent 78.4%),
+    var(--scuff);
+}
+
+.stageTwo .wear {
+  background:
+    radial-gradient(circle at 100% 0, rgba(236, 230, 214, 0.8), transparent 1.7em),
+    radial-gradient(circle at 100% 100%, rgba(236, 230, 214, 0.9), transparent 1.2em),
+    linear-gradient(to right, rgba(236, 230, 214, 0.7), transparent 0.3em),
+    linear-gradient(to left, rgba(236, 230, 214, 0.65), transparent 0.35em),
+    linear-gradient(to bottom, rgba(236, 230, 214, 0.7), transparent 0.35em),
+    linear-gradient(to top, rgba(236, 230, 214, 0.6), transparent 0.3em),
+    linear-gradient(72deg, transparent 33.6%, rgba(255, 255, 255, 0.38) 34%, transparent 34.5%),
+    var(--scuff) 60px 90px;
+}
+
+/* "We accept": three cards that are no real brand */
+.cards {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.cards span {
+  display: grid;
+  width: 3.4rem;
+  height: 2.1rem;
+  place-items: center;
+  border: 1px solid rgba(5, 6, 26, 0.6);
+  border-radius: 3px;
+  color: #1c2296;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  background: linear-gradient(to bottom, #ffffff 0 62%, #d7dbf3 62%);
+}
+
+.cards span:nth-child(2) {
+  color: #ffffff;
+  background: linear-gradient(to right, #e3123f 0 50%, #ffb52e 50%);
+}
+
+.cards span:nth-child(3) {
+  color: var(--yellow);
+  background: #14186b;
+}
+
+/* ---------- Tape texture ---------- */
+
+/* A soft tracking band drifting up the picture. A loop, so site-wide Pause
+   freezes it wherever it is. */
+@keyframes tracking {
+  from {
+    transform: translateY(100svh);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+.band {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 16svh;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 30%,
+    rgba(255, 255, 255, 0.13) 48%,
+    rgba(5, 6, 26, 0.12) 52%,
+    rgba(255, 255, 255, 0.04) 70%,
+    transparent 100%
+  );
+  animation: tracking 7s linear infinite;
+}
+
+/* Head-switching noise along the bottom edge (same technique as the pause screen's band) */
+.noise {
+  position: absolute;
+  inset: auto 0 0;
+  height: max(3svh, 18px);
+  pointer-events: none;
+  opacity: 0.75;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='60' preserveAspectRatio='none'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004 0.55' numOctaves='2' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 3.4 0 0 0 -1.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E")
+      0 0 / 100% 100% no-repeat,
+    linear-gradient(to bottom, rgba(8, 8, 14, 0) 0%, rgba(8, 8, 14, 0.55) 60%, rgba(8, 8, 14, 0.7) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .band {
+    display: none;
+  }
+}
+
+/* Print: the words and links only */
+@media print {
+  .page {
+    min-height: 0;
+    color: #1a2333;
+    background: none;
+  }
+
+  .band,
+  .noise,
+  .product {
+    display: none;
+  }
+
+  .title,
+  .price,
+  .fine,
+  .label,
+  .path,
+  .nav,
+  .phone {
+    color: inherit;
+    -webkit-text-stroke: 0;
+    text-shadow: none;
+  }
+}
