@@ -1,5 +1,15 @@
 import { resume } from "@/content/resume";
-import { letterboxd, mcpPrompts, mcpTools, personal, site, socialLinks } from "@/content/site";
+import {
+  absoluteUrl,
+  letterboxd,
+  mcpPrompts,
+  mcpTools,
+  pages,
+  personal,
+  site,
+  socialLinks,
+  type SitePage,
+} from "@/content/site";
 import { serverCardUrl } from "@/lib/discovery";
 
 function dateRange(start: string, end: string) {
@@ -169,18 +179,31 @@ export function agentsMarkdown(): string {
   ].join("\n");
 }
 
+/** One llms.txt entry: the page, what it holds, and where the same content lives in other formats. */
+function llmsPageLine(page: SitePage): string {
+  const formats = [
+    page.markdown && `Markdown mirror: ${absoluteUrl(page.markdown)}`,
+    page.pdf && `PDF: ${absoluteUrl(page.pdf)}`,
+  ].filter(Boolean);
+  return [
+    `- [${page.label}](${absoluteUrl(page.path)}): ${page.summary}.`,
+    formats.length > 0 && formats.join(" · "),
+    page.tool && `Structured data: the ${page.tool} MCP tool`,
+    !page.sitemap && "Excluded from search indexing.",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
 export function llmsTxt(): string {
   return [
     `# ${site.name}`,
     "",
-    `> ${site.headline}. Previously embedded on Zapier's MCP team from its infancy, working with AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.`,
+    `> ${site.summary}`,
     "",
     "## Site",
     "",
-    `- [Home](${site.url}): who Brody is, current work, projects. Markdown mirror: ${site.url}/index.md`,
-    `- [Resume](${site.url}/resume): full background. Markdown mirror: ${site.url}/resume.md · PDF: ${site.url}/brody-berson-resume.pdf`,
-    `- [Watched](${site.url}/watched): recent films from Brody's Letterboxd diary with ratings and reviews, refreshed hourly. Structured data: the get_recently_watched MCP tool`,
-    `- [Links](${site.url}/links): primary websites and social profiles. Excluded from search indexing.`,
+    ...Object.values<SitePage>(pages).map(llmsPageLine),
     "",
     "## Machine-readable",
     "",

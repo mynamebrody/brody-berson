@@ -1,18 +1,24 @@
+import { resume } from "./resume";
+
+// Name, role, location, email and URL are stated once, in resume.basics
+const { name, label: headline, location, email, url } = resume.basics;
+const mcpPath = "/mcp";
+
 export const site = {
-  name: "Brody Berson",
+  name,
   firstName: "Brody",
   domain: "brodyberson.com",
-  url: "https://brodyberson.com",
-  mcpPath: "/mcp",
-  mcpUrl: "https://brodyberson.com/mcp",
-  email: "hello@brodyberson.com",
-  location: "East Grand Rapids, MI",
-  headline: "Forward Deployed Engineer at Ravenna",
-  description:
-    "Brody Berson: Forward Deployed Engineer at Ravenna. Previously embedded on Zapier's MCP team, working with AI partners like OpenAI, Anthropic, Google, and Meta. This site ships its own MCP server.",
+  url,
+  mcpPath,
+  mcpUrl: `${url}${mcpPath}`,
+  email,
+  location,
+  headline,
+  description: `${name}: ${headline}. Previously embedded on Zapier's MCP team, working with AI partners like OpenAI, Anthropic, Google, and Meta. This site ships its own MCP server.`,
   // Social cards show about 125 characters, so the full description above is too long for them
-  socialDescription:
-    "Forward Deployed Engineer at Ravenna. Previously on Zapier’s MCP team, working with OpenAI, Anthropic, Google, and Meta.",
+  socialDescription: `${headline}. Previously on Zapier’s MCP team, working with OpenAI, Anthropic, Google, and Meta.`,
+  // The one-line summary that opens llms.txt
+  summary: `${headline}. Previously embedded on Zapier's MCP team from its infancy, working with AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.`,
   bio: [
     "I'm a Forward Deployed Engineer at Ravenna (the agentic service desk for IT, HR, and Operations that lives in Slack). My day-to-day is APIs, AI agents, rapid prototyping, and partnerships.",
     "Previously I spent two-plus years at Zapier embedded on the MCP team from its infancy, watching the product grow up and introducing it to AI partners like OpenAI, Anthropic, Google, Microsoft, Meta, and xAI.",
@@ -39,6 +45,82 @@ export const letterboxd = {
   profile: "https://letterboxd.com/mynamebrody/",
   rss: "https://letterboxd.com/mynamebrody/rss/",
 };
+
+/** A run of copy with links in it: plain strings and linked phrases, in order. */
+export type Inline = string | { text: string; url: string };
+
+/** Home page copy that isn't resume data. */
+export const home: { hero: { lead: Inline[]; aside: Inline[] }; career: string } = {
+  hero: {
+    lead: [
+      "Forward Deployed Engineer at ",
+      { text: "Ravenna", url: "https://ravenna.ai" },
+      ". Previously embedded on ",
+      { text: "Zapier’s MCP team", url: "https://zapier.com/mcp" },
+      " from its infancy, introducing it to AI partners like OpenAI, Anthropic, Google, and Meta.",
+    ],
+    aside: [
+      "Off the clock it’s home-server tinkering, ",
+      { text: "Letterboxd", url: letterboxd.profile },
+      " logging, and chasing down a good cocktail recipe.",
+    ],
+  },
+  career:
+    "Three stints at Zapier, a cofounded startup that got acquired, enterprise solutions engineering, and now forward-deployed at Ravenna. The full story (every role, every bullet) lives on the resume.",
+};
+
+export type SitePage = {
+  path: string;
+  label: string;
+  /** What the page holds, as a phrase: llms.txt prints it after the link */
+  summary: string;
+  /** Meta description, where the page doesn't use the site's */
+  description?: string;
+  /** Markdown mirror and PDF, as paths */
+  markdown?: string;
+  pdf?: string;
+  /** MCP tool that returns the same data as JSON */
+  tool?: string;
+  /** Present for pages search engines should index; these are the sitemap */
+  sitemap?: { changeFrequency: "daily" | "monthly"; priority: number };
+};
+
+/** Every page, stated once: llms.txt lists them all and sitemap.xml the indexed ones. */
+export const pages = {
+  home: {
+    path: "/",
+    label: "Home",
+    summary: "who Brody is, current work, projects",
+    markdown: "/index.md",
+    sitemap: { changeFrequency: "monthly", priority: 1 },
+  },
+  resume: {
+    path: "/resume",
+    label: "Resume",
+    summary: "full background",
+    description: `${name}’s resume: ${headline}, previously Sr. Partner Solution Engineer (AI) at Zapier.`,
+    markdown: "/resume.md",
+    pdf: "/brody-berson-resume.pdf",
+    sitemap: { changeFrequency: "monthly", priority: 0.8 },
+  },
+  watched: {
+    path: "/watched",
+    label: "Watched",
+    summary: "recent films from Brody's Letterboxd diary with ratings and reviews, refreshed hourly",
+    tool: "get_recently_watched",
+    sitemap: { changeFrequency: "daily", priority: 0.6 },
+  },
+  links: {
+    path: "/links",
+    label: "Links",
+    summary: "primary websites and social profiles",
+  },
+} satisfies Record<string, SitePage>;
+
+/** A page's (or file's) absolute URL; the home page is the bare origin. */
+export function absoluteUrl(path: string) {
+  return path === "/" ? site.url : `${site.url}${path}`;
+}
 
 /** Personal context for agents (MCP open_to / get_now / get_favorites and the
  * index.md mirror). There is no dedicated page for this; update `updated` when

@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WatchingShelf } from "@/components/watching-shelf";
 import { resume } from "@/content/resume";
-import { site } from "@/content/site";
+import { home, site, type Inline } from "@/content/site";
 import { getRecentlyWatchedForPage } from "@/lib/letterboxd";
 
 // The Letterboxd shelf refreshes hourly; everything else is static content
@@ -24,6 +24,19 @@ const chapterColors = ["var(--pop)", "var(--zest)", "var(--peri)", "var(--tang)"
 
 function slotYear(date: string) {
   return date === "Present" ? "Now" : date.slice(-4);
+}
+
+/** Copy from content/ with its links, each drawn in the paragraph's own link style. */
+function Copy({ parts, linkClassName }: { parts: Inline[]; linkClassName: string }) {
+  return parts.map((part) =>
+    typeof part === "string" ? (
+      part
+    ) : (
+      <a key={part.url} href={part.url} className={linkClassName}>
+        {part.text}
+      </a>
+    ),
+  );
 }
 
 // The homepage shelf holds the latest dozen; /watched has the whole feed
@@ -45,7 +58,7 @@ export default async function Home() {
               className="title-glow fade-up mt-3 font-display text-7xl leading-[0.9] font-semibold tracking-wide uppercase sm:text-8xl"
               style={{ animationDelay: "60ms" }}
             >
-              Hi, I&rsquo;m Brody.
+              Hi, I&rsquo;m {site.firstName}.
             </h1>
             {/* Lower third */}
             <div
@@ -63,29 +76,16 @@ export default async function Home() {
               className="fade-up mt-6 max-w-xl text-lg leading-relaxed text-ink-soft sm:text-xl"
               style={{ animationDelay: "120ms" }}
             >
-              Forward Deployed Engineer at{" "}
-              <a href="https://ravenna.ai" className="marker font-medium text-ink">
-                Ravenna
-              </a>
-              . Previously embedded on{" "}
-              <a href="https://zapier.com/mcp" className="marker font-medium text-ink">
-                Zapier&rsquo;s MCP team
-              </a>{" "}
-              from its infancy, introducing it to AI partners like OpenAI, Anthropic, Google, and
-              Meta.
+              <Copy parts={home.hero.lead} linkClassName="marker font-medium text-ink" />
             </p>
             <p
               className="fade-up mt-4 max-w-xl leading-relaxed text-ink-soft"
               style={{ animationDelay: "180ms" }}
             >
-              Off the clock it&rsquo;s home-server tinkering,{" "}
-              <a
-                href="https://letterboxd.com/mynamebrody/"
-                className="font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow"
-              >
-                Letterboxd
-              </a>{" "}
-              logging, and chasing down a good cocktail recipe.
+              <Copy
+                parts={home.hero.aside}
+                linkClassName="font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow"
+              />
             </p>
             <div className="fade-up mt-8 flex flex-wrap items-center gap-3" style={{ animationDelay: "240ms" }}>
               <Link href="/resume" className="gloss rounded-full px-6 py-2.5 text-sm font-semibold">
@@ -136,9 +136,7 @@ export default async function Home() {
             A decade of <span className="marker">APIs</span>, integrations, and partners.
           </h2>
           <p className="mt-4 max-w-2xl leading-relaxed text-ink-soft">
-            Three stints at Zapier, a cofounded startup that got acquired, enterprise solutions
-            engineering, and now forward-deployed at Ravenna. The full story (every role, every
-            bullet) lives on the resume.
+            {home.career}
           </p>
           <div className="mt-8 overflow-hidden rounded-xl border border-line bg-surface">
             <div className="osd hidden grid-cols-[8rem_12rem_1fr] gap-4 border-b border-line bg-signal px-5 py-1.5 text-lg text-white sm:grid">
