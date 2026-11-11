@@ -1,8 +1,13 @@
 import Image from "next/image";
+import memoji from "@/public/memoji.webp";
 
 /**
  * The memoji shown as a face on a CRT: grayscaled, duotoned through the theme's
  * portrait tint, then viewed through an aperture grille with a little gate weave.
+ *
+ * The picture and the duotone's mask are the same file at the same URL, so it is
+ * downloaded once. That is why the image is `unoptimized`: an /_next/image URL
+ * would be a second download next to the mask's.
  */
 export function CrtPortrait({
   size,
@@ -20,12 +25,12 @@ export function CrtPortrait({
     >
       <div className="weave absolute inset-0">
         <Image
-          src="/memoji.png"
+          src={memoji}
           alt={alt}
           width={size}
           height={size}
           priority={priority}
-          sizes={`${size}px`}
+          unoptimized
           className="relative scale-[0.88] object-contain [filter:grayscale(1)_contrast(1.35)_brightness(1.08)_drop-shadow(0_0_10px_var(--glow))]"
         />
         {/* Duotone, masked to the face so the backdrop keeps its own color */}
@@ -34,7 +39,7 @@ export function CrtPortrait({
           className="absolute inset-0 scale-[0.88] mix-blend-color"
           style={{
             background: "var(--portrait-tint)",
-            maskImage: "url(/memoji.png)",
+            maskImage: `url(${memoji.src})`,
             maskSize: "contain",
             maskRepeat: "no-repeat",
             maskPosition: "center",
