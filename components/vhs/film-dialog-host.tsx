@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { FilmDetailsById, TapeFilm } from "@/lib/letterboxd";
 import { prefersStill } from "@/lib/playback";
-import { stars, watchedOn } from "@/lib/tape-look";
+import { posterSizes, posterSrcSet, stars, watchedOn } from "@/lib/tape-look";
 import { BroadcastTexture } from "../broadcast-fx";
 import { loadFilmDetails } from "./film-details";
 import { TrailerScreen } from "./trailer-screen";
@@ -132,6 +132,10 @@ export function FilmDialogHost({ films, children }: { films: TapeFilm[]; childre
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={film.poster}
+                    srcSet={posterSrcSet(film.poster)}
+                    sizes={posterSizes.dialog}
+                    width={600}
+                    height={900}
                     alt=""
                     className="hidden w-36 rounded-md border border-line shadow-lg sm:block"
                   />

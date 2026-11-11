@@ -217,3 +217,31 @@ export function watchedOn(date: string) {
   const [year, month, day] = date.split("-");
   return year && month && day ? `${months[Number(month) - 1]} ${day} ${year}` : date;
 }
+
+/** The size Letterboxd's feed links: 600 wide, 2:3. */
+const POSTER_SIZE = /-0-600-0-900-crop(?=\.jpg)/;
+/** Other widths its CDN serves for every poster. (400 is refused for about half of them.) */
+const POSTER_WIDTHS = [300, 460, 600];
+
+/**
+ * The same poster at each width Letterboxd serves, for srcset, so a small tape
+ * doesn't download the 600px file. Undefined when the URL isn't the pattern we
+ * know, which leaves the plain src to do the job.
+ */
+export function posterSrcSet(url: string) {
+  if (!POSTER_SIZE.test(url)) return undefined;
+  return POSTER_WIDTHS.map((w) => `${url.replace(POSTER_SIZE, `-0-${w}-0-${w * 1.5}-crop`)} ${w}w`).join(", ");
+}
+
+/**
+ * How wide a tape's poster is drawn, for the sizes attribute. Approximate on
+ * purpose: the wall's columns flex, and the browser only needs the right
+ * neighbourhood to pick a file.
+ */
+export const posterSizes = {
+  shelf: "(min-width: 640px) 192px, 176px",
+  wall: "(min-width: 1024px) 130px, (min-width: 480px) 160px, calc(50vw - 56px)",
+  lead: "(min-width: 1024px) 198px, (min-width: 480px) 160px, calc(50vw - 56px)",
+  /** The poster in the film dialog (hidden on phones) */
+  dialog: "144px",
+} as const;

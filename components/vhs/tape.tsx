@@ -1,7 +1,7 @@
 "use client";
 
 import type { TapeFilm } from "@/lib/letterboxd";
-import { stars, variant, watchedOn, type TapePlan } from "@/lib/tape-look";
+import { posterSizes, posterSrcSet, stars, variant, watchedOn, type TapePlan } from "@/lib/tape-look";
 import styles from "../vhs-tape.module.css";
 import { ReviewExcerpt } from "./review-excerpt";
 
@@ -54,9 +54,20 @@ export function VhsTape({
         <span className={styles.sleeve}>
           <span className={styles.art}>
             {film.poster ? (
-              // Letterboxd's CDN already serves sized posters; skip next/image optimization
+              // Letterboxd's CDN already serves sized posters; skip next/image optimization.
+              // The rack's first shelf is on screen at load, so those three don't wait.
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={film.poster} alt="" loading="lazy" decoding="async" className={styles.poster} />
+              <img
+                src={film.poster}
+                srcSet={posterSrcSet(film.poster)}
+                sizes={posterSizes[size]}
+                width={600}
+                height={900}
+                alt=""
+                loading={size === "lead" ? "eager" : "lazy"}
+                decoding="async"
+                className={styles.poster}
+              />
             ) : (
               <span className={styles.noPoster}>{film.title}</span>
             )}
