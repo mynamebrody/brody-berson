@@ -223,10 +223,24 @@ function videoLanguages(original: string | undefined, spoken: { iso_639_1: strin
   return [...new Set(codes)].slice(0, MAX_VIDEO_LANGUAGES - 1).concat("null").join(",");
 }
 
+/**
+ * A TMDB request, cached for a week. TMDB_API_KEY can be either kind of credential:
+ * a v3 API key goes in the query string, a v4 read access token (a JWT) in a
+ * bearer header.
+ */
+function tmdbFetch(path: string, key: string, query = "") {
+  const bearer = key.startsWith("eyJ");
+  const params = [bearer ? "" : `api_key=${key}`, query].filter(Boolean).join("&");
+  return fetch(`https://api.themoviedb.org/3/${path}${params ? `?${params}` : ""}`, {
+    headers: bearer ? { Authorization: `Bearer ${key}` } : undefined,
+    next: { revalidate: 604800 },
+  });
+}
+
 /** A film's YouTube videos, or none if the lookup fails (the rest of the tape still renders). */
-async function tmdbVideos(url: string): Promise<TmdbVideo[]> {
+async function tmdbVideos(path: string, key: string, languages: string): Promise<TmdbVideo[]> {
   try {
-    const res = await fetch(url, { next: { revalidate: 604800 } });
+    const res = await tmdbFetch(path, key, `include_video_language=${languages}`);
     if (!res.ok) return [];
     const videos: { results?: TmdbVideo[] } = await res.json();
     return videos.results ?? [];
@@ -254,8 +268,8 @@ async function tmdbFacts(ref: TmdbRef | null): Promise<TmdbFacts> {
   const key = process.env.TMDB_API_KEY;
   if (!ref || !key) return NO_FACTS;
   try {
-    const base = `https://api.themoviedb.org/3/${ref.kind}/${ref.id}`;
-    const res = await fetch(`${base}?api_key=${key}`, { next: { revalidate: 604800 } });
+    const base = `${ref.kind}/${ref.id}`;
+    const res = await tmdbFetch(base, key);
     if (!res.ok) return NO_FACTS;
     const details: {
       production_companies?: { name: string }[];
@@ -266,7 +280,7 @@ async function tmdbFacts(ref: TmdbRef | null): Promise<TmdbFacts> {
       spoken_languages?: { iso_639_1: string }[];
     } = await res.json();
     const languages = videoLanguages(details.original_language, details.spoken_languages);
-    const videos = await tmdbVideos(`${base}/videos?api_key=${key}&include_video_language=${languages}`);
+    const videos = await tmdbVideos(`${base}/videos`, key, languages);
     const released = details.release_date || details.first_air_date || "";
     return {
       clamshell: clamshellFor(details.production_companies),
