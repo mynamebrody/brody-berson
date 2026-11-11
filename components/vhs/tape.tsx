@@ -5,6 +5,9 @@ import { posterSizes, posterSrcSet, stars, variant, watchedOn, type TapePlan } f
 import styles from "../vhs-tape.module.css";
 import { ReviewExcerpt } from "./review-excerpt";
 
+/** Stars a film needs for the gold Letterbox Edition band: the best few on the wall, not most of it. */
+const LETTERBOX_EDITION_STARS = 4.5;
+
 /**
  * One film on a shelf. "shelf" is the homepage's scrolling row; "wall" packs into
  * the /watched rack with a shelf-edge label in place of the caption; "lead" is a
@@ -31,6 +34,7 @@ export function VhsTape({
 }) {
   const v = variant(film, plan);
   const rating = stars(film.rating);
+  const goldBand = (film.rating ?? 0) >= LETTERBOX_EDITION_STARS;
   const name = `${film.title}${film.year ? ` (${film.year})` : ""}`;
   const classes = [
     styles.tape,
@@ -71,6 +75,18 @@ export function VhsTape({
             ) : (
               <span className={styles.noPoster}>{film.title}</span>
             )}
+            {/* Printed on the box, so they wear with it: the gold band on the top-rated few,
+                the classification in the corner the New Release sticker would cover */}
+            {goldBand ? (
+              <span className={styles.edition} aria-hidden="true">
+                Letterbox edition
+              </span>
+            ) : null}
+            {film.certification && !film.newRelease ? (
+              <span className={styles.certificate} aria-hidden="true">
+                {film.certification}
+              </span>
+            ) : null}
           </span>
           {plan.wear.map((w) => (
             <span key={w} className={styles.fx} data-fx={w} aria-hidden="true" />
@@ -98,6 +114,11 @@ export function VhsTape({
             Be kind
             <br />
             rewind
+          </span>
+        ) : null}
+        {v.section ? (
+          <span className={`${styles.sticker} ${styles.section}`} aria-hidden="true">
+            {v.section}
           </span>
         ) : null}
         {film.liked ? (
@@ -213,11 +234,16 @@ export function EndOfTape({
             <span className={styles.sleeve}>
               <span className={styles.art}>
                 <span className={styles.blankLabel}>
-                  <span className="osd text-base">{note}</span>
-                  <span className="font-display text-2xl leading-none font-semibold tracking-wide uppercase">
-                    {label}
+                  <span className={styles.blankHead}>
+                    <span className="osd text-base">{note}</span>
+                    <span className="font-display text-2xl leading-none font-semibold tracking-wide uppercase">
+                      {label}
+                    </span>
+                    <span className="osd text-base">{target}</span>
                   </span>
-                  <span className="osd text-base">{target}</span>
+                  <span className={styles.blankGrade} aria-hidden="true">
+                    T-120
+                  </span>
                 </span>
               </span>
               <span className={styles.grain} aria-hidden="true" />

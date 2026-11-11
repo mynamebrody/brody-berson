@@ -23,6 +23,7 @@ const slipcaseWear = [
   "peeling",
   "splitSeam",
   "foxing",
+  "spineCrack",
 ] as const;
 type Wear = (typeof slipcaseWear)[number];
 /** A clamshell protects the paper insert, so only some damage gets through the plastic. */
@@ -31,6 +32,7 @@ const clamshellWear: readonly Wear[] = ["sunFaded", "dogEared", "creased", "resi
 const exclusiveWear: readonly (readonly Wear[])[] = [
   ["torn", "dogEared", "crushedCorner"],
   ["edgeworn", "edgeChipped", "cornersRubbed", "shelfScuffed"],
+  ["splitSeam", "spineCrack"],
 ];
 /** Board the slipcase is printed on: what shows through where the print is worn off. */
 const stocks = ["kraft", "chipboard", "bleached"] as const;
@@ -54,6 +56,14 @@ function genreColor(genre: string | null) {
   const match = genre ? genreColors.find(([pattern]) => pattern.test(genre)) : undefined;
   return match ? [match[1], match[2]] : defaultGenreColor;
 }
+
+/** What the store calls a section when TMDB's name for the genre is too long for the strip. */
+const sectionNames: Record<string, string> = {
+  "Science Fiction": "Sci-Fi",
+  "Sci-Fi & Fantasy": "Sci-Fi",
+  "Action & Adventure": "Action",
+  "War & Politics": "War",
+};
 
 /** Previously Viewed stickers came off whatever roll was at the counter. */
 const pvShapes = ["burst", "round", "scallop", "oval"] as const;
@@ -85,6 +95,8 @@ export type TapePlan = {
   wear: Wear[];
   rewind: boolean;
   label: boolean;
+  /** A strip on the spine edge naming the section of the store the tape is shelved in (its genre) */
+  section: boolean;
 };
 
 /** Two or three kinds of wear, none of them shared with the tape before it. */
@@ -107,21 +119,25 @@ function pickWear(film: Pick<WatchedFilm, "id" | "clamshell">, prev: Wear[]) {
 /**
  * The shelf's look, tape by tape: board stock and wear never repeat between
  * neighbors; "Be kind rewind" stickers and BBTV Video store labels each land on
- * roughly one in three, never two in a row. Depends only on earlier films, so
+ * roughly one in three, never two in a row; section strips on about as many, and
+ * never on a tape with a rewind sticker. Depends only on earlier films, so
  * tapes already on the shelf keep their look as more load in.
  */
-export function shelfPlan(films: Pick<WatchedFilm, "id" | "clamshell">[]) {
+export function shelfPlan(films: Pick<WatchedFilm, "id" | "clamshell" | "genre">[]) {
   const plan: TapePlan[] = [];
   films.forEach((film, i) => {
     const h = hash(film.id);
     const prev = plan[i - 1];
     let stock = stocks[(h >>> 26) % stocks.length];
     if (stock === prev?.stock) stock = stocks[((h >>> 26) + 1) % stocks.length];
+    const rewind = !prev?.rewind && h % 3 === 0;
     plan.push({
       stock,
       wear: pickWear(film, prev?.wear ?? []),
-      rewind: !prev?.rewind && h % 3 === 0,
+      rewind,
       label: !prev?.label && (h >>> 3) % 3 === 1,
+      // Shares the left edge with the rewind sticker, so a tape gets one or the other
+      section: Boolean(film.genre) && !rewind && !prev?.section && (h >>> 7) % 5 < 2,
     });
   });
   return plan;
@@ -131,8 +147,10 @@ export function shelfPlan(films: Pick<WatchedFilm, "id" | "clamshell">[]) {
  * Tilt, the price sticker, and where each sticker and bit of damage lands come
  * from the film's id, so they're stable across renders and reloads. Each sticker
  * stays in its own zone of the box: New Release top left, rating or price top
- * right, rewind in the upper middle, Staff Pick bottom left, the store label and
- * Previously Viewed bottom right (Previously Viewed stacks above the label).
+ * right, rewind in the upper middle, the section strip on the left edge below
+ * it, Staff Pick bottom left, the store label and Previously Viewed bottom right
+ * (Previously Viewed stacks above the label). What is printed on the box rather
+ * than stuck to it (the Letterbox Edition band, the classification) sits square.
  */
 export function variant(film: Pick<WatchedFilm, "id" | "genre">, plan: TapePlan) {
   const h = hash(film.id);
@@ -152,7 +170,11 @@ export function variant(film: Pick<WatchedFilm, "id" | "genre">, plan: TapePlan)
     earLeft: (a >>> 25) % 2 === 1,
     pvShape: pvShapes[(s3 >>> 26) % pvShapes.length],
     stockNo: String((c >>> 3) % 100000).padStart(5, "0"),
+    section: plan.section && film.genre ? (sectionNames[film.genre] ?? film.genre) : null,
     stickersAt: {
+      ...(plan.section
+        ? { "--section-top": `${between(s3 >>> 14, 35, 40)}%`, "--section-turn": turn(s1 >>> 26, 2) }
+        : null),
       "--nr-top": `${between(s1, 2, 10)}%`,
       "--nr-left": `${between(s1 >>> 4, 2, 12)}%`,
       "--nr-turn": turn(s1 >>> 8, 12),
@@ -193,6 +215,7 @@ export function variant(film: Pick<WatchedFilm, "id" | "genre">, plan: TapePlan)
       "--seam-y": `${10 + ((b >>> 25) % 45)}%`,
       "--fox-x": `${20 + ((c >>> 1) % 60)}%`,
       "--fox-y": `${20 + ((c >>> 7) % 60)}%`,
+      "--spine-x": `${5 + ((c >>> 27) % 4)}%`,
       // Creases: a mostly-vertical fold, a mostly-horizontal one, and a stray diagonal,
       // each somewhere different (and some fainter or missing) on every tape
       "--c1-angle": `${80 + (k % 31)}deg`,
