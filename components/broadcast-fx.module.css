@@ -210,8 +210,8 @@
   animation-play-state: running !important;
 }
 
-/* VHS pause screen: PAUSE centered in the header bar and a thin band of static
-   tracking noise along the bottom. The picture itself is left alone (no dimming)
+/* VHS pause screen, on wide screens: PAUSE centered in the header bar and a thin
+   band of static tracking noise along the bottom. The picture itself is left alone (no dimming)
    so the page stays easy to read. Nothing in it moves; only show/hide is
    transitioned. */
 .pause {
@@ -257,31 +257,12 @@
   transform: translate(-50%, -50%);
 }
 
-/* Phones and tablets: the header has no clear middle (name, nav, toggles), so PAUSE
-   drops just under it onto a soft black patch that feathers out into the page,
-   keeping it legible over whatever content scrolls beneath */
+/* Phones and tablets: the header has no clear middle, and anything drawn over the
+   page would cover what you paused to read. The playback toggle wears a PAUSE
+   badge there instead (components/playback-toggle.tsx), with no noise band. */
 @media (max-width: 1023px) {
-  .pauseLabel {
-    top: 104px;
-    padding: 0.55em 1.1em;
-  }
-
-  .pauseLabel::before {
-    content: "";
-    position: absolute;
-    inset: -0.6em -1.4em;
-    z-index: -1;
-    background: radial-gradient(
-      closest-side,
-      rgba(4, 6, 26, 0.88) 0%,
-      rgba(4, 6, 26, 0.7) 45%,
-      rgba(4, 6, 26, 0) 100%
-    );
-  }
-
-  /* Pages without a header bar (/links) have room up top beside the corner toggles */
-  :global(body:not(:has(header))) .pauseLabel {
-    top: 40px;
+  .pause {
+    display: none;
   }
 }
 
