@@ -9,8 +9,8 @@ const pages = [
 ] as const;
 
 type Props = {
-  /** The page this header is on, so its own link can be marked (and dropped where space is short) */
-  current: "home" | (typeof pages)[number]["id"];
+  /** The page this header is on, so its own link can be marked (and dropped where space is short). None on the 404 page. */
+  current?: "home" | (typeof pages)[number]["id"];
   /** Stays at the top of the screen while the page scrolls */
   sticky?: boolean;
   /** The page's own button (Download PDF, Letterboxd), ahead of the toggles */
@@ -18,7 +18,7 @@ type Props = {
 };
 
 /**
- * The one header for /, /resume and /watched: the name (home), the pages, the /mcp
+ * The one header for /, /resume, /watched and the 404 page: the name (home), the pages, the /mcp
  * jump link, then the page's own action and the theme and playback toggles.
  *
  * Everything navigational sits on the left so the middle of the bar stays empty on

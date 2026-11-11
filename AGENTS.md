@@ -33,6 +33,7 @@ Pages, MCP tools, markdown mirrors (`/index.md`, `/resume.md`), `llms.txt`, the 
 ```
 app/
   page.tsx                 Home
+  not-found.tsx            404: infomercial end card on a tape's blue screen ("Call 404-IAM-LOST")
   resume/page.tsx          Resume HTML
   watched/page.tsx         Full Letterboxd video store (wall rack, latest three on the first shelf)
   watched/og/route.tsx     /watched share image (latest three tapes under the sign), fonts in watched/og/fonts/
