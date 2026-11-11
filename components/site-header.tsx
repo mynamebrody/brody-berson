@@ -25,13 +25,16 @@ type Props = {
  * wide screens, where the PAUSE label is drawn (broadcast-fx.module.css). It is one
  * row at every width: below md the link to the page you are already on is left out,
  * and under 380px the name shortens to "Brody".
+ *
+ * A sticky header blurs what scrolls under it, which a phone has to redo on every
+ * scroll frame. On touch devices it is nearly opaque instead, with no blur.
  */
 export function SiteHeader({ current, sticky = false, action }: Props) {
   const [first, ...rest] = site.name.split(" ");
 
   return (
     <header
-      className={`border-b border-line/60 bg-screen/50 print:hidden ${sticky ? "sticky top-0 z-10 backdrop-blur-md" : "relative"}`}
+      className={`border-b border-line/60 bg-screen/50 print:hidden ${sticky ? "sticky top-0 z-10 backdrop-blur-md pointer-coarse:bg-screen/95 pointer-coarse:backdrop-blur-none" : "relative"}`}
     >
       <a
         href="#main"
