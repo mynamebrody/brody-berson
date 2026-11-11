@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "pdf": "node scripts/generate-pdf.mjs",
-    "smoke": "node scripts/mcp-smoke.mjs"
+    "smoke": "node scripts/mcp-smoke.mjs",
+    "perf": "node scripts/perf-baseline.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "^2.3.1",

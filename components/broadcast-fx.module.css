@@ -181,6 +181,8 @@
   display: grid;
   place-items: center;
   background: #04061a;
+  /* Never swallow a click while it plays */
+  pointer-events: none;
   animation: crt-on-screen 0.9s ease-out forwards;
 }
 

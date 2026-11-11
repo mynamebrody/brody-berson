@@ -13,6 +13,9 @@
 # testing
 /coverage
 
+# perf baseline output (npm run perf)
+/.perf/
+
 # next.js
 /.next/
 /out/
