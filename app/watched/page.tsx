@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WatchedWall } from "@/components/watched-wall";
 import { site } from "@/content/site";
-import { getRecentlyWatched, ogVersion } from "@/lib/letterboxd";
+import { getRecentlyWatched, getRecentlyWatchedForPage, ogVersion } from "@/lib/letterboxd";
 import { socialMetadata } from "@/lib/metadata";
 
 // Restocked from the Letterboxd feed hourly, same as the homepage shelf
@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function WatchedPage() {
-  const watched = await getRecentlyWatched();
+  const watched = await getRecentlyWatchedForPage();
 
   return (
     <>

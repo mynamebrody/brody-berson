@@ -1,4 +1,4 @@
-import { getRecentlyWatched, type FilmDetailsById } from "@/lib/letterboxd";
+import { getRecentlyWatchedForPage, type FilmDetailsById } from "@/lib/letterboxd";
 
 // Same hourly restock as the pages whose tapes it fills in
 export const revalidate = 3600;
@@ -9,7 +9,8 @@ export const revalidate = 3600;
  * time someone reaches for a tape, so neither page carries it in its HTML.
  */
 export async function GET() {
-  const { entries } = await getRecentlyWatched();
+  // Throws while refreshing if the feed is down, so the last good details stay cached
+  const { entries } = await getRecentlyWatchedForPage();
   const details: FilmDetailsById = Object.fromEntries(
     entries.map(({ id, review, trailers }) => [id, { review, trailers }])
   );

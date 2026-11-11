@@ -7,7 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { WatchingShelf } from "@/components/watching-shelf";
 import { resume } from "@/content/resume";
 import { site } from "@/content/site";
-import { getRecentlyWatched } from "@/lib/letterboxd";
+import { getRecentlyWatchedForPage } from "@/lib/letterboxd";
 
 // The Letterboxd shelf refreshes hourly; everything else is static content
 export const revalidate = 3600;
@@ -30,7 +30,7 @@ function slotYear(date: string) {
 const SHELF_SIZE = 12;
 
 export default async function Home() {
-  const watched = await getRecentlyWatched();
+  const watched = await getRecentlyWatchedForPage();
 
   return (
     <>

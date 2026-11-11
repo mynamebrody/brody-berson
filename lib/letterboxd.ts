@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { XMLParser } from "fast-xml-parser";
 import { letterboxd } from "@/content/site";
 import { hash } from "@/lib/tape-look";
@@ -76,7 +77,15 @@ type TmdbFacts = Pick<WatchedFilm, "clamshell" | "genre" | "newRelease" | "trail
 export type RecentlyWatched = {
   entries: WatchedFilm[];
   profileUrl: string;
+  /** False when the feed couldn't be read, as opposed to a diary with nothing in it */
+  ok: boolean;
 };
+
+/** A slow upstream shouldn't hold a page render open: give up and fall back instead */
+const FEED_TIMEOUT_MS = 8000;
+const TMDB_TIMEOUT_MS = 5000;
+/** Films looked up on TMDB at once (each is two requests, one after the other) */
+const TMDB_CONCURRENCY = 8;
 
 type FeedItem = Record<string, string | { "#text": string } | undefined>;
 
@@ -224,26 +233,39 @@ function videoLanguages(original: string | undefined, spoken: { iso_639_1: strin
 }
 
 /**
- * A TMDB request, cached for a week. TMDB_API_KEY can be either kind of credential:
- * a v3 API key goes in the query string, a v4 read access token (a JWT) in a
- * bearer header.
+ * Stop waiting on `work` after `ms`. A timer rather than an abort signal, because
+ * Next drops a fetch's signal when it is refreshing a stale cached response, which
+ * is exactly when a hung upstream would otherwise hold the render open. The
+ * request itself is left to finish or fail on its own.
  */
-function tmdbFetch(path: string, key: string, query = "") {
+function within<T>(ms: number, what: string, work: Promise<T>): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${what} didn't answer in ${ms} ms`)), ms);
+  });
+  return Promise.race([work, timeout]).finally(() => clearTimeout(timer));
+}
+
+/**
+ * A TMDB request, cached for a week; null if it fails or is refused.
+ * TMDB_API_KEY can be either kind of credential: a v3 API key goes in the query
+ * string, a v4 read access token (a JWT) in a bearer header.
+ */
+function tmdbJson<T>(path: string, key: string, query = ""): Promise<T | null> {
   const bearer = key.startsWith("eyJ");
   const params = [bearer ? "" : `api_key=${key}`, query].filter(Boolean).join("&");
-  return fetch(`https://api.themoviedb.org/3/${path}${params ? `?${params}` : ""}`, {
+  const request = fetch(`https://api.themoviedb.org/3/${path}${params ? `?${params}` : ""}`, {
     headers: bearer ? { Authorization: `Bearer ${key}` } : undefined,
     next: { revalidate: 604800 },
-  });
+  }).then((res) => (res.ok ? (res.json() as Promise<T>) : null));
+  return within(TMDB_TIMEOUT_MS, "TMDB", request);
 }
 
 /** A film's YouTube videos, or none if the lookup fails (the rest of the tape still renders). */
 async function tmdbVideos(path: string, key: string, languages: string): Promise<TmdbVideo[]> {
   try {
-    const res = await tmdbFetch(path, key, `include_video_language=${languages}`);
-    if (!res.ok) return [];
-    const videos: { results?: TmdbVideo[] } = await res.json();
-    return videos.results ?? [];
+    const videos = await tmdbJson<{ results?: TmdbVideo[] }>(path, key, `include_video_language=${languages}`);
+    return videos?.results ?? [];
   } catch {
     return [];
   }
@@ -269,16 +291,15 @@ async function tmdbFacts(ref: TmdbRef | null): Promise<TmdbFacts> {
   if (!ref || !key) return NO_FACTS;
   try {
     const base = `${ref.kind}/${ref.id}`;
-    const res = await tmdbFetch(base, key);
-    if (!res.ok) return NO_FACTS;
-    const details: {
+    const details = await tmdbJson<{
       production_companies?: { name: string }[];
       genres?: { name: string }[];
       release_date?: string;
       first_air_date?: string;
       original_language?: string;
       spoken_languages?: { iso_639_1: string }[];
-    } = await res.json();
+    }>(base, key);
+    if (!details) return NO_FACTS;
     const languages = videoLanguages(details.original_language, details.spoken_languages);
     const videos = await tmdbVideos(`${base}/videos`, key, languages);
     const released = details.release_date || details.first_air_date || "";
@@ -309,24 +330,60 @@ export function ogVersion(entries: WatchedFilm[]) {
   return hash(source).toString(36);
 }
 
+/** Like Promise.all over items.map(fn), with at most `limit` running at once. Keeps the order. */
+async function mapLimit<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length) {
+      const index = next++;
+      results[index] = await fn(items[index]);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
 /**
  * Brody's Letterboxd RSS feed (the latest ~50 diary entries), cached for an hour.
- * Never throws: a failed fetch returns no entries so pages and tools can fall back
- * to the profile link.
+ * Never throws: a failed fetch returns no entries and ok: false, so tools and the
+ * share image can fall back to the profile link. Wrapped in React's cache() so a
+ * page that asks twice in one render (metadata and body) reads the feed once.
  */
-export async function getRecentlyWatched(): Promise<RecentlyWatched> {
+export const getRecentlyWatched = cache(async (): Promise<RecentlyWatched> => {
   try {
-    const res = await fetch(letterboxd.rss, { next: { revalidate: 3600 } });
-    if (!res.ok) throw new Error(`Letterboxd RSS responded ${res.status}`);
-    const feed = parser.parse(await res.text());
+    const xml = await within(
+      FEED_TIMEOUT_MS,
+      "Letterboxd RSS",
+      fetch(letterboxd.rss, { next: { revalidate: 3600 } }).then((res) => {
+        if (!res.ok) throw new Error(`Letterboxd RSS responded ${res.status}`);
+        return res.text();
+      })
+    );
+    const feed = parser.parse(xml);
     const items: FeedItem[] = feed?.rss?.channel?.item ?? [];
     const parsed = items.map(toFilm).filter((film): film is ParsedFilm => film !== null);
-    const entries = await Promise.all(
-      parsed.map(async ({ tmdb, ...film }) => ({ ...film, ...(await tmdbFacts(tmdb)) }))
-    );
-    return { entries, profileUrl: letterboxd.profile };
+    const entries = await mapLimit(parsed, TMDB_CONCURRENCY, async ({ tmdb, ...film }) => ({
+      ...film,
+      ...(await tmdbFacts(tmdb)),
+    }));
+    return { entries, profileUrl: letterboxd.profile, ok: true };
   } catch (error) {
     console.error("[letterboxd]", error);
-    return { entries: [], profileUrl: letterboxd.profile };
+    return { entries: [], profileUrl: letterboxd.profile, ok: false };
   }
+});
+
+/**
+ * The feed for a cached page or route (/, /watched, /watched/details). Those are
+ * built once and refreshed hourly in the background; if the feed is down during a
+ * refresh, this throws, and Next keeps serving the last good copy instead of
+ * caching "Signal lost" for the next hour. At build time there is no earlier copy
+ * to keep, so the build goes ahead with the fallback (and `next dev` never throws).
+ */
+export async function getRecentlyWatchedForPage(): Promise<RecentlyWatched> {
+  const watched = await getRecentlyWatched();
+  const refreshing = process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== "phase-production-build";
+  if (!watched.ok && refreshing) throw new Error("Letterboxd feed unavailable; keeping the last good copy");
+  return watched;
 }
