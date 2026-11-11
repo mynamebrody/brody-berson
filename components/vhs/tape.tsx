@@ -39,6 +39,7 @@ export function VhsTape({
     styles[plan.stock],
     ...plan.wear.map((w) => styles[w]),
     plan.wear.includes("dogEared") && v.earLeft ? styles.earLeft : "",
+    plan.wear.includes("torn") && v.earLeft ? styles.tornLeft : "",
   ];
   const slot = {
     shelf: styles.slot,
@@ -73,12 +74,13 @@ export function VhsTape({
             )}
           </span>
           {plan.wear.map((w) => (
-            <span key={w} className={styles.fx} data-fx={w} aria-hidden="true" />
+            <span key={w} className={styles.fx} data-fx={w} data-v={v.look(w)} aria-hidden="true" />
           ))}
           <span className={styles.grain} aria-hidden="true" />
         </span>
         {plan.wear.includes("dogEared") ? <span className={styles.ear} aria-hidden="true" /> : null}
-        <span className={styles.plastic} aria-hidden="true" />
+        {/* Only a clamshell has a clear plastic front to catch the light */}
+        {film.clamshell ? <span className={styles.plastic} aria-hidden="true" /> : null}
 
         {film.newRelease ? (
           <span className={`${styles.sticker} ${styles.newRelease}`} aria-hidden="true">
@@ -213,16 +215,20 @@ export function EndOfTape({
             <span className={styles.sleeve}>
               <span className={styles.art}>
                 <span className={styles.blankLabel}>
-                  <span className="osd text-base">{note}</span>
-                  <span className="font-display text-2xl leading-none font-semibold tracking-wide uppercase">
-                    {label}
+                  <span className={styles.blankHead}>
+                    <span className="osd text-base">{note}</span>
+                    <span className="font-display text-2xl leading-none font-semibold tracking-wide uppercase">
+                      {label}
+                    </span>
+                    <span className="osd text-base">{target}</span>
                   </span>
-                  <span className="osd text-base">{target}</span>
+                  <span className={styles.blankGrade} aria-hidden="true">
+                    T-120
+                  </span>
                 </span>
               </span>
               <span className={styles.grain} aria-hidden="true" />
             </span>
-            <span className={styles.plastic} aria-hidden="true" />
           </span>
         </a>
       </div>

@@ -5,33 +5,65 @@
  */
 import type { WatchedFilm } from "@/lib/letterboxd";
 
-/** Everything that can happen to a rental box after a few hundred trips home. */
+/**
+ * Everything that can happen to a cardboard rental box after a few hundred trips
+ * home. All of it is paper damage: rubbed and chipped edges, folds and bends,
+ * damp, age. Nothing here needs a plastic surface.
+ */
 const slipcaseWear = [
   "sunFaded",
+  "tanned",
   "edgeworn",
   "edgeChipped",
   "cornersRubbed",
   "shelfScuffed",
   "dogEared",
+  "cornerBend",
   "torn",
   "crushedCorner",
   "creased",
+  "bowed",
+  "flaked",
   "waterStain",
+  "cockled",
+  "residue",
+  "abraded",
+  "tapeRub",
+  "grimy",
+  "splitSeam",
+  "spineCrack",
+  "foxing",
+  "mottled",
+] as const;
+type Wear = (typeof slipcaseWear)[number] | "scratched" | "peeling";
+/**
+ * A clamshell protects the paper insert, so only some damage gets through, and
+ * the plastic takes its own: hairline scratches and the clear front lifting.
+ * Those two never appear on a slipcase.
+ */
+const clamshellWear: readonly Wear[] = [
+  "sunFaded",
+  "tanned",
+  "dogEared",
+  "creased",
   "residue",
   "scratched",
-  "grimy",
   "peeling",
-  "splitSeam",
+  "grimy",
   "foxing",
-] as const;
-type Wear = (typeof slipcaseWear)[number];
-/** A clamshell protects the paper insert, so only some damage gets through the plastic. */
-const clamshellWear: readonly Wear[] = ["sunFaded", "dogEared", "creased", "residue", "scratched", "grimy", "foxing"];
-/** At most one from each group per tape: the members pile up on the same edges and corners. */
-const exclusiveWear: readonly (readonly Wear[])[] = [
-  ["torn", "dogEared", "crushedCorner"],
-  ["edgeworn", "edgeChipped", "cornersRubbed", "shelfScuffed"],
 ];
+/** At most one from each group per tape: the members pile up on the same spot or tell the same story twice. */
+const exclusiveWear: readonly (readonly Wear[])[] = [
+  ["torn", "dogEared", "crushedCorner", "cornerBend"],
+  ["edgeworn", "edgeChipped", "cornersRubbed", "shelfScuffed"],
+  ["splitSeam", "spineCrack"],
+  ["sunFaded", "tanned"],
+  ["creased", "bowed"],
+  ["waterStain", "cockled"],
+  ["foxing", "mottled"],
+];
+/** How many looks each kind of wear comes in (data-v on its layer), on top of where it lands. */
+const WEAR_LOOKS = 3;
 /** Board the slipcase is printed on: what shows through where the print is worn off. */
 const stocks = ["kraft", "chipboard", "bleached"] as const;
 export const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -87,14 +119,14 @@ export type TapePlan = {
   label: boolean;
 };
 
-/** Two or three kinds of wear, none of them shared with the tape before it. */
+/** Two to four kinds of wear, none of them shared with the tape before it. */
 function pickWear(film: Pick<WatchedFilm, "id" | "clamshell">, prev: Wear[]) {
   const pool = (film.clamshell ? clamshellWear : slipcaseWear).filter((w) => !prev.includes(w));
   const ranked = pool
     .map((w) => [w, hash(`${film.id}:${w}`)] as const)
     .sort((a, b) => a[1] - b[1])
     .map(([w]) => w);
-  const count = 2 + ((hash(film.id) >>> 5) % 2);
+  const count = 2 + ((hash(film.id) >>> 5) % 3);
   const picked: Wear[] = [];
   for (const w of ranked) {
     if (picked.length === count) break;
@@ -133,6 +165,7 @@ export function shelfPlan(films: Pick<WatchedFilm, "id" | "clamshell">[]) {
  * stays in its own zone of the box: New Release top left, rating or price top
  * right, rewind in the upper middle, Staff Pick bottom left, the store label and
  * Previously Viewed bottom right (Previously Viewed stacks above the label).
+ * Wear placement is only worked out for the wear the tape actually has.
  */
 export function variant(film: Pick<WatchedFilm, "id" | "genre">, plan: TapePlan) {
   const h = hash(film.id);
@@ -177,35 +210,88 @@ export function variant(film: Pick<WatchedFilm, "id" | "genre">, plan: TapePlan)
       "--pv-bg": pvBg,
       "--pv-ink": pvInk,
     },
-    // Placement for whichever wear the tape ended up with
-    wearAt: {
-      "--fade-angle": `${[90, 180, 270, 0][a % 4]}deg`,
-      "--ear": `${22 + ((a >>> 2) % 14)}px`,
-      "--crease-flip": (a >>> 6) % 2 ? 1 : -1,
-      "--stain-x": `${15 + ((a >>> 7) % 65)}%`,
-      "--stain-y": `${18 + ((a >>> 13) % 60)}%`,
-      "--stain-r": `${18 + ((a >>> 19) % 18)}px`,
-      "--residue-x": `${8 + (b % 46)}%`,
-      "--residue-y": `${10 + ((b >>> 6) % 70)}%`,
-      "--residue-turn": `${((b >>> 13) % 31) - 15}deg`,
-      "--scratch-angle": `${[35, 58, 122, 145][(b >>> 18) % 4] + ((b >>> 20) % 12)}deg`,
-      "--flip": (b >>> 24) % 2 ? 1 : -1,
-      "--seam-y": `${10 + ((b >>> 25) % 45)}%`,
-      "--fox-x": `${20 + ((c >>> 1) % 60)}%`,
-      "--fox-y": `${20 + ((c >>> 7) % 60)}%`,
-      // Creases: a mostly-vertical fold, a mostly-horizontal one, and a stray diagonal,
-      // each somewhere different (and some fainter or missing) on every tape
-      "--c1-angle": `${80 + (k % 31)}deg`,
-      "--c1-pos": `${18 + ((k >>> 5) % 65)}%`,
-      "--c2-angle": `${-14 + ((k >>> 11) % 29)}deg`,
-      "--c2-pos": `${15 + ((k >>> 16) % 70)}%`,
-      "--c2-alpha": [0, 0.6, 0.85, 1][(k >>> 21) % 4],
-      "--c3-angle": `${20 + ((k >>> 23) % 140)}deg`,
-      "--c3-pos": `${15 + ((c >>> 14) % 70)}%`,
-      "--c3-alpha": [0, 0.5, 0.8, 1][(c >>> 22) % 4],
-    },
+    /** Which of its looks a kind of wear takes on this tape (data-v on the layer) */
+    look: (w: Wear) => hash(`${film.id}:${w}:look`) % WEAR_LOOKS,
+    // Placement for the wear the tape ended up with; the two flips are shared by most of it
+    wearAt: Object.assign(
+      { "--flip": (b >>> 24) % 2 ? 1 : -1, "--crease-flip": (a >>> 6) % 2 ? 1 : -1 },
+      ...plan.wear.map((w) => wearPlacement[w]?.({ a, b, c, k, d: hash(`${film.id}:fx4`) }))
+    ) as Record<string, string | number>,
   };
 }
+
+type Seeds = { a: number; b: number; c: number; k: number; d: number };
+const pct = (h: number, min: number, max: number) => `${between(h, min, max)}%`;
+const px = (h: number, min: number, max: number) => `${between(h, min, max)}px`;
+
+/** Where each kind of wear lands and how hard, as custom properties for its CSS. */
+const wearPlacement: Partial<Record<Wear, (s: Seeds) => Record<string, string | number>>> = {
+  sunFaded: ({ a }) => ({ "--fade-angle": `${[90, 180, 270, 0][a % 4]}deg` }),
+  tanned: ({ d }) => ({ "--tan": [0.26, 0.34, 0.44][(d >>> 2) % 3] }),
+  edgeworn: ({ d }) => ({ "--fray": [0.7, 0.85, 1][(d >>> 4) % 3] }),
+  edgeChipped: ({ d }) => ({
+    "--chip-a": `${between(d >>> 6, 0, 24) - 12}%`,
+    "--chip-b": `${between(d >>> 11, 0, 24) - 12}%`,
+    "--chip-c": `${between(d >>> 16, 0, 20) - 10}%`,
+  }),
+  cornersRubbed: ({ d }) => ({
+    "--rub-a": px(d >>> 1, 9, 34),
+    "--rub-b": px(d >>> 6, 9, 30),
+    "--rub-c": px(d >>> 11, 12, 38),
+    "--rub-d": px(d >>> 16, 8, 28),
+  }),
+  shelfScuffed: ({ d }) => ({ "--scuff-h": pct(d >>> 3, 8, 22), "--scuff-w": pct(d >>> 8, 4, 14) }),
+  dogEared: ({ a }) => ({ "--ear": `${22 + ((a >>> 2) % 14)}px` }),
+  cornerBend: ({ d }) => ({ "--bend": px(d >>> 5, 20, 58), "--bend-lift": [0.06, 0.12, -0.14][(d >>> 12) % 3] }),
+  waterStain: ({ a }) => ({
+    "--stain-x": `${15 + ((a >>> 7) % 65)}%`,
+    "--stain-y": `${18 + ((a >>> 13) % 60)}%`,
+    "--stain-r": `${18 + ((a >>> 19) % 18)}px`,
+  }),
+  cockled: ({ d }) => ({ "--cockle": px(d >>> 7, 18, 34), "--cockle-h": pct(d >>> 13, 22, 46) }),
+  residue: ({ b }) => ({
+    "--residue-x": `${8 + (b % 46)}%`,
+    "--residue-y": `${10 + ((b >>> 6) % 70)}%`,
+    "--residue-turn": `${((b >>> 13) % 31) - 15}deg`,
+  }),
+  scratched: ({ b }) => ({ "--scratch-angle": `${[35, 58, 122, 145][(b >>> 18) % 4] + ((b >>> 20) % 12)}deg` }),
+  abraded: ({ d }) => ({
+    "--abr-x": pct(d >>> 2, 20, 80),
+    "--abr-y": pct(d >>> 9, 20, 80),
+    "--abr-turn": `${between(d >>> 16, 0, 70) - 35}deg`,
+  }),
+  tapeRub: ({ d }) => ({ "--rub-in": pct(d >>> 4, 5, 9), "--rub-ink": [0.35, 0.5, 0.65][(d >>> 9) % 3] }),
+  splitSeam: ({ b }) => ({ "--seam-y": `${10 + ((b >>> 25) % 45)}%` }),
+  spineCrack: ({ c }) => ({ "--spine-x": `${5 + ((c >>> 27) % 4)}%` }),
+  foxing: ({ c, d }) => ({
+    "--fox-x": `${20 + ((c >>> 1) % 60)}%`,
+    "--fox-y": `${20 + ((c >>> 7) % 60)}%`,
+    "--fox-x2": pct(d >>> 10, 10, 90),
+    "--fox-y2": pct(d >>> 17, 10, 90),
+  }),
+  mottled: ({ d }) => ({
+    "--mot-x": pct(d >>> 1, 10, 90),
+    "--mot-y": pct(d >>> 8, 15, 90),
+    "--mot-size": px(d >>> 15, 110, 190),
+  }),
+  bowed: ({ d }) => ({
+    "--bow-angle": `${[178, 184, 92, 86, 172][(d >>> 3) % 5]}deg`,
+    "--bow-pos": pct(d >>> 8, 28, 72),
+  }),
+  flaked: ({ d }) => ({ "--flk-x": pct(d >>> 6, 10, 90), "--flk-y": pct(d >>> 13, 10, 90) }),
+  // Creases: a mostly-vertical fold, a mostly-horizontal one, and a stray diagonal,
+  // each somewhere different (and some fainter or missing) on every tape
+  creased: ({ c, k }) => ({
+    "--c1-angle": `${80 + (k % 31)}deg`,
+    "--c1-pos": `${18 + ((k >>> 5) % 65)}%`,
+    "--c2-angle": `${-14 + ((k >>> 11) % 29)}deg`,
+    "--c2-pos": `${15 + ((k >>> 16) % 70)}%`,
+    "--c2-alpha": [0, 0.6, 0.85, 1][(k >>> 21) % 4],
+    "--c3-angle": `${20 + ((k >>> 23) % 140)}deg`,
+    "--c3-pos": `${15 + ((c >>> 14) % 70)}%`,
+    "--c3-alpha": [0, 0.5, 0.8, 1][(c >>> 22) % 4],
+  }),
+};
 
 export function stars(rating: number | null) {
   if (rating === null) return null;
