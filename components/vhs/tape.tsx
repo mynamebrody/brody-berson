@@ -1,7 +1,7 @@
 "use client";
 
-import type { WatchedFilm } from "@/lib/letterboxd";
-import { stars, variant, watchedOn, type TapePlan } from "@/lib/tape-look";
+import type { TapeFilm } from "@/lib/letterboxd";
+import { posterSizes, posterSrcSet, stars, variant, watchedOn, type TapePlan } from "@/lib/tape-look";
 import styles from "../vhs-tape.module.css";
 import { ReviewExcerpt } from "./review-excerpt";
 
@@ -14,6 +14,7 @@ import { ReviewExcerpt } from "./review-excerpt";
  *
  * No state of its own: everything that opens the dialog is a button carrying
  * data-film, and the one FilmDialogHost around the shelf handles the click.
+ * The film prop is the slim TapeFilm (no review text, no trailers).
  * It's a client component only to keep the page small. Rendered on the server,
  * each tape's markup (dozens of inline custom properties) ships twice, in the
  * HTML and again in the RSC payload, which nearly doubled /watched; as a client
@@ -24,7 +25,7 @@ export function VhsTape({
   plan,
   size = "shelf",
 }: {
-  film: WatchedFilm;
+  film: TapeFilm;
   plan: TapePlan;
   size?: "shelf" | "wall" | "lead";
 }) {
@@ -53,9 +54,20 @@ export function VhsTape({
         <span className={styles.sleeve}>
           <span className={styles.art}>
             {film.poster ? (
-              // Letterboxd's CDN already serves sized posters; skip next/image optimization
+              // Letterboxd's CDN already serves sized posters; skip next/image optimization.
+              // The rack's first shelf is on screen at load, so those three don't wait.
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={film.poster} alt="" loading="lazy" decoding="async" className={styles.poster} />
+              <img
+                src={film.poster}
+                srcSet={posterSrcSet(film.poster)}
+                sizes={posterSizes[size]}
+                width={600}
+                height={900}
+                alt=""
+                loading={size === "lead" ? "eager" : "lazy"}
+                decoding="async"
+                className={styles.poster}
+              />
             ) : (
               <span className={styles.noPoster}>{film.title}</span>
             )}
@@ -122,7 +134,7 @@ export function VhsTape({
           type="button"
           data-film={film.id}
           aria-haspopup="dialog"
-          aria-label={`${name}: ${film.review ? "review and trailers" : "trailers and details"}`}
+          aria-label={`${name}: ${film.hasReview ? "review and trailers" : "trailers and details"}`}
           {...tapeProps}
         >
           {box}
@@ -145,7 +157,7 @@ export function VhsTape({
             {[film.year, rating, film.liked ? "♥" : null].filter(Boolean).join(" · ")}
           </p>
           <p className="osd text-sm text-ink-faint">Watched {watchedOn(film.watchedDate)}</p>
-          {film.review ? <ReviewExcerpt review={film.review} filmId={film.id} /> : null}
+          {film.excerpt ? <ReviewExcerpt excerpt={film.excerpt} filmId={film.id} /> : null}
         </div>
       ) : (
         // Price-channel strip on the shelf lip: title, date, stars, and the way into the review

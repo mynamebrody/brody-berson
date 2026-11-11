@@ -15,7 +15,16 @@ const channelNo = (index: number) => `CH ${101 + index}`;
  * starts on its own. Mounted only while the dialog is open, so closing the
  * dialog stops playback and the next open starts back on channel one.
  */
-export function TrailerScreen({ trailers, title }: { trailers: Trailer[]; title: string }) {
+export function TrailerScreen({
+  trailers,
+  title,
+  pending = false,
+}: {
+  trailers: Trailer[];
+  title: string;
+  /** The film has trailers but they are still on their way from /watched/details */
+  pending?: boolean;
+}) {
   const [channel, setChannel] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [tune, setTune] = useState(0);
@@ -49,7 +58,7 @@ export function TrailerScreen({ trailers, title }: { trailers: Trailer[]; title:
             <div className="absolute inset-0">
               <ColorBars size="fill" />
               <p className="osd absolute inset-0 grid place-items-center text-3xl text-white [text-shadow:0_0_10px_rgba(5,6,26,0.9),0_2px_0_rgba(5,6,26,0.9)]">
-                No signal
+                {pending ? "Stand by" : "No signal"}
               </p>
             </div>
           ) : playing ? (

@@ -88,7 +88,7 @@ export type TapePlan = {
 };
 
 /** Two or three kinds of wear, none of them shared with the tape before it. */
-function pickWear(film: WatchedFilm, prev: Wear[]) {
+function pickWear(film: Pick<WatchedFilm, "id" | "clamshell">, prev: Wear[]) {
   const pool = (film.clamshell ? clamshellWear : slipcaseWear).filter((w) => !prev.includes(w));
   const ranked = pool
     .map((w) => [w, hash(`${film.id}:${w}`)] as const)
@@ -110,7 +110,7 @@ function pickWear(film: WatchedFilm, prev: Wear[]) {
  * roughly one in three, never two in a row. Depends only on earlier films, so
  * tapes already on the shelf keep their look as more load in.
  */
-export function shelfPlan(films: WatchedFilm[]) {
+export function shelfPlan(films: Pick<WatchedFilm, "id" | "clamshell">[]) {
   const plan: TapePlan[] = [];
   films.forEach((film, i) => {
     const h = hash(film.id);
@@ -134,7 +134,7 @@ export function shelfPlan(films: WatchedFilm[]) {
  * right, rewind in the upper middle, Staff Pick bottom left, the store label and
  * Previously Viewed bottom right (Previously Viewed stacks above the label).
  */
-export function variant(film: WatchedFilm, plan: TapePlan) {
+export function variant(film: Pick<WatchedFilm, "id" | "genre">, plan: TapePlan) {
   const h = hash(film.id);
   const a = hash(`${film.id}:fx`);
   const b = hash(`${film.id}:fx2`);
@@ -217,3 +217,31 @@ export function watchedOn(date: string) {
   const [year, month, day] = date.split("-");
   return year && month && day ? `${months[Number(month) - 1]} ${day} ${year}` : date;
 }
+
+/** The size Letterboxd's feed links: 600 wide, 2:3. */
+const POSTER_SIZE = /-0-600-0-900-crop(?=\.jpg)/;
+/** Other widths its CDN serves for every poster. (400 is refused for about half of them.) */
+const POSTER_WIDTHS = [300, 460, 600];
+
+/**
+ * The same poster at each width Letterboxd serves, for srcset, so a small tape
+ * doesn't download the 600px file. Undefined when the URL isn't the pattern we
+ * know, which leaves the plain src to do the job.
+ */
+export function posterSrcSet(url: string) {
+  if (!POSTER_SIZE.test(url)) return undefined;
+  return POSTER_WIDTHS.map((w) => `${url.replace(POSTER_SIZE, `-0-${w}-0-${w * 1.5}-crop`)} ${w}w`).join(", ");
+}
+
+/**
+ * How wide a tape's poster is drawn, for the sizes attribute. Approximate on
+ * purpose: the wall's columns flex, and the browser only needs the right
+ * neighbourhood to pick a file.
+ */
+export const posterSizes = {
+  shelf: "(min-width: 640px) 192px, 176px",
+  wall: "(min-width: 1024px) 130px, (min-width: 480px) 160px, calc(50vw - 56px)",
+  lead: "(min-width: 1024px) 198px, (min-width: 480px) 160px, calc(50vw - 56px)",
+  /** The poster in the film dialog (hidden on phones) */
+  dialog: "144px",
+} as const;
