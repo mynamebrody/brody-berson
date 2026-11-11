@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WatchingShelf } from "@/components/watching-shelf";
 import { resume } from "@/content/resume";
-import { home, site, type Inline } from "@/content/site";
+import { home, letterboxd, personal, site, type Inline } from "@/content/site";
 import { getRecentlyWatchedForPage } from "@/lib/letterboxd";
 
 // The Letterboxd shelf refreshes hourly; everything else is static content
@@ -39,6 +39,32 @@ function Copy({ parts, linkClassName }: { parts: Inline[]; linkClassName: string
   );
 }
 
+const textLink =
+  "font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow";
+
+function StatusCard({ title, color, children }: { title: string; color: string; children: React.ReactNode }) {
+  return (
+    <article className="overflow-hidden rounded-xl border border-line bg-surface">
+      <h3
+        className="scanlines osd relative flex h-12 items-end px-5 pb-1.5 text-xl font-normal text-deep"
+        style={{ backgroundColor: color }}
+      >
+        {title}
+      </h3>
+      <div className="p-6">{children}</div>
+    </article>
+  );
+}
+
+function StatusRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <dt className="osd text-base text-ink-faint">{label}</dt>
+      <dd className="mt-0.5 text-sm leading-relaxed text-ink-soft">{children}</dd>
+    </div>
+  );
+}
+
 // The homepage shelf holds the latest dozen; /watched has the whole feed
 const SHELF_SIZE = 12;
 
@@ -51,15 +77,24 @@ export default async function Home() {
 
       <main id="main" tabIndex={-1} className="mx-auto w-full max-w-5xl flex-1 px-5 outline-none sm:px-8">
         {/* Hero: title card */}
-        <section className="grid items-center gap-12 pt-14 pb-20 sm:grid-cols-[1fr_auto] sm:pt-20 sm:pb-24">
-          <div>
-            <p className="osd fade-up text-xl text-balance text-ink-faint">▶ Now playing · {site.location}</p>
-            <h1
-              className="title-glow fade-up mt-3 font-display text-7xl leading-[0.9] font-semibold tracking-wide uppercase sm:text-8xl"
-              style={{ animationDelay: "60ms" }}
-            >
-              Hi, I&rsquo;m {site.firstName}.
-            </h1>
+        {/* Phones: the portrait sits beside the title. From sm up it is the right-hand column. */}
+        <section className="grid grid-cols-[1fr_auto] items-center gap-x-4 pt-14 pb-20 sm:gap-x-12 sm:pt-20 sm:pb-24">
+          <p className="osd fade-up col-span-2 text-xl text-balance text-ink-faint sm:col-span-1">
+            ▶ Now playing · {site.location}
+          </p>
+          <h1
+            className="title-glow fade-up col-start-1 mt-3 font-display text-7xl leading-[0.9] font-semibold tracking-wide uppercase max-[359px]:text-6xl sm:text-8xl"
+            style={{ animationDelay: "60ms" }}
+          >
+            Hi, I&rsquo;m {site.firstName}.
+          </h1>
+          <div
+            className="fade-up col-start-2 row-start-2 justify-self-center max-sm:mt-3 sm:row-span-3 sm:row-start-1"
+            style={{ animationDelay: "150ms" }}
+          >
+            <CrtPortrait size={240} smallSize={104} alt="Brody's memoji" priority />
+          </div>
+          <div className="col-span-2 sm:col-span-1 sm:col-start-1">
             {/* Lower third */}
             <div
               className="fade-up mt-6 inline-flex max-w-full items-stretch overflow-hidden rounded-md shadow-[0_10px_24px_-14px_var(--signal)]"
@@ -84,7 +119,7 @@ export default async function Home() {
             >
               <Copy
                 parts={home.hero.aside}
-                linkClassName="font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow"
+                linkClassName={textLink}
               />
             </p>
             <div className="fade-up mt-8 flex flex-wrap items-center gap-3" style={{ animationDelay: "240ms" }}>
@@ -98,9 +133,6 @@ export default async function Home() {
                 Connect your agent ↓
               </a>
             </div>
-          </div>
-          <div className="fade-up justify-self-center" style={{ animationDelay: "150ms" }}>
-            <CrtPortrait size={240} alt="Brody's memoji" priority />
           </div>
         </section>
 
@@ -213,7 +245,7 @@ export default async function Home() {
                         <a
                           key={link.url}
                           href={link.url}
-                          className="font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow"
+                          className={textLink}
                         >
                           {link.label}
                         </a>
@@ -223,6 +255,62 @@ export default async function Home() {
                 </div>
               </article>
             ))}
+          </div>
+        </section>
+
+        <ColorBars />
+
+        {/* Now, open to, favorites: the same facts index.md and the MCP tools give agents */}
+        <section id="now" className="scroll-mt-24 pt-16 pb-20">
+          <p className="osd text-xl text-ink-faint">CH 99 · Status report</p>
+          <h2 className="mt-2 font-display text-4xl font-semibold tracking-wide uppercase sm:text-5xl">
+            What I&rsquo;m up to <span className="marker">now</span>.
+          </h2>
+          <p className="osd mt-3 text-lg text-ink-faint">Updated {personal.updated}</p>
+          <div className="mt-8 grid gap-5 lg:grid-cols-3">
+            <StatusCard title="Now" color="var(--zest)">
+              <dl className="space-y-4">
+                <StatusRow label="Focus">{personal.now.focus}</StatusRow>
+                <StatusRow label="Building">{personal.now.building.join("; ")}</StatusRow>
+                <StatusRow label="Reading">{personal.now.reading.join("; ")}</StatusRow>
+                <StatusRow label="Watching">
+                  My{" "}
+                  <a href={letterboxd.profile} className={textLink}>
+                    Letterboxd
+                  </a>{" "}
+                  diary, shelved on{" "}
+                  <Link href="/watched" className={textLink}>
+                    the wall
+                  </Link>
+                </StatusRow>
+              </dl>
+            </StatusCard>
+            <StatusCard title="Open to" color="var(--peri)">
+              <p className="text-sm leading-relaxed text-ink">{personal.openTo.status}</p>
+              <dl className="mt-4 space-y-4">
+                {personal.openTo.items.map((item) => (
+                  <StatusRow key={item.topic} label={item.topic}>
+                    {item.detail}
+                  </StatusRow>
+                ))}
+                <StatusRow label="Best way to reach me">
+                  {personal.openTo.contact.map((contact, index) => (
+                    <span key={contact.url}>
+                      {index > 0 ? " or " : null}
+                      <a href={contact.url} className={textLink}>
+                        {contact.label}
+                      </a>
+                    </span>
+                  ))}
+                </StatusRow>
+              </dl>
+            </StatusCard>
+            <StatusCard title="Favorites" color="var(--tang)">
+              <dl className="space-y-4">
+                <StatusRow label="Films">{personal.favorites.films.join(", ")}</StatusRow>
+                <StatusRow label="Cocktails">{personal.favorites.cocktails.join(", ")}</StatusRow>
+              </dl>
+            </StatusCard>
           </div>
         </section>
 
@@ -238,14 +326,14 @@ export default async function Home() {
             Straight from my{" "}
             <a
               href={watched.profileUrl}
-              className="font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow"
+              className={textLink}
             >
               Letterboxd
             </a>{" "}
             diary, restocked every hour. Here&rsquo;s the latest dozen; the rest are on{" "}
             <Link
               href="/watched"
-              className="font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow"
+              className={textLink}
             >
               the whole wall
             </Link>

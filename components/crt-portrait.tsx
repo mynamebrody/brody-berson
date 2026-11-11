@@ -8,20 +8,30 @@ import memoji from "@/public/memoji.webp";
  * The picture and the duotone's mask are the same file at the same URL, so it is
  * downloaded once. That is why the image is `unoptimized`: an /_next/image URL
  * would be a second download next to the mask's.
+ *
+ * `smallSize` is the size below the `sm` breakpoint, where the CAM label is dropped.
  */
 export function CrtPortrait({
   size,
+  smallSize,
   alt,
   priority = false,
 }: {
   size: number;
+  smallSize?: number;
   alt: string;
   priority?: boolean;
 }) {
   return (
     <div
-      className="relative overflow-hidden rounded-[28%] border border-white/25 shadow-[0_0_0_6px_rgba(5,6,26,0.9),0_0_60px_-6px_var(--halo)]"
-      style={{ width: size, height: size, background: "var(--portrait-bg)" }}
+      className="relative size-(--portrait-sm) overflow-hidden rounded-[28%] border border-white/25 shadow-[0_0_0_6px_rgba(5,6,26,0.9),0_0_60px_-6px_var(--halo)] sm:size-(--portrait)"
+      style={
+        {
+          "--portrait": `${size}px`,
+          "--portrait-sm": `${smallSize ?? size}px`,
+          background: "var(--portrait-bg)",
+        } as React.CSSProperties
+      }
     >
       <div className="weave absolute inset-0">
         <Image
@@ -31,7 +41,7 @@ export function CrtPortrait({
           height={size}
           priority={priority}
           unoptimized
-          className="relative scale-[0.88] object-contain [filter:grayscale(1)_contrast(1.35)_brightness(1.08)_drop-shadow(0_0_10px_var(--glow))]"
+          className="relative h-full w-full scale-[0.88] object-contain [filter:grayscale(1)_contrast(1.35)_brightness(1.08)_drop-shadow(0_0_10px_var(--glow))]"
         />
         {/* Duotone, masked to the face so the backdrop keeps its own color */}
         <div
@@ -62,7 +72,7 @@ export function CrtPortrait({
       />
       <span
         aria-hidden="true"
-        className="osd absolute bottom-[9%] left-[13%] text-sm text-white/85"
+        className={`osd absolute bottom-[9%] left-[13%] text-sm text-white/85 ${smallSize ? "max-sm:hidden" : ""}`}
       >
         CAM 1
       </span>
