@@ -3,10 +3,10 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { resume } from "@/content/resume";
-import { site } from "@/content/site";
+import { pages, site } from "@/content/site";
 import { socialMetadata } from "@/lib/metadata";
 
-const description = `${site.name}’s resume: Forward Deployed Engineer at Ravenna, previously Sr. Partner Solution Engineer (AI) at Zapier.`;
+const { description } = pages.resume;
 
 export const metadata: Metadata = {
   title: "Resume",
@@ -46,7 +46,7 @@ export default function ResumePage() {
             <p className="mt-2 text-lg text-ink-soft print:text-base">{resume.basics.label}</p>
             <p className="mt-3 font-mono text-xs text-ink-faint">
               {resume.basics.location} · <a href={`mailto:${resume.basics.email}`}>{resume.basics.email}</a> ·{" "}
-              <a href={resume.basics.url}>brodyberson.com</a>
+              <a href={resume.basics.url}>{site.domain}</a>
             </p>
           </header>
 

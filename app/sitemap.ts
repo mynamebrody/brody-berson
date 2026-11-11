@@ -1,10 +1,8 @@
 import type { MetadataRoute } from "next";
-import { site } from "@/content/site";
+import { absoluteUrl, pages, type SitePage } from "@/content/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    { url: site.url, changeFrequency: "monthly", priority: 1 },
-    { url: `${site.url}/resume`, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${site.url}/watched`, changeFrequency: "daily", priority: 0.6 },
-  ];
+  return Object.values<SitePage>(pages).flatMap((page) =>
+    page.sitemap ? [{ url: absoluteUrl(page.path), ...page.sitemap }] : [],
+  );
 }
