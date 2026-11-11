@@ -8,8 +8,8 @@
   position: relative;
   display: grid;
   flex: 1;
-  /* Fills the screen under the site header, so the footer starts below the fold */
-  min-height: calc(100svh - 3.75rem);
+  /* The whole screen: this page has no site header or footer */
+  min-height: 100svh;
   place-items: center;
   overflow: hidden;
   padding: 2.5rem 1rem 3.5rem;
