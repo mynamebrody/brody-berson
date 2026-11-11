@@ -10,19 +10,21 @@
   overflow: hidden;
 }
 
+/* Only as much bigger than the screen as the dance below moves it. The tile's
+   starting offset is where it sat when this layer overhung by half the viewport,
+   so the grain lands on the same pixels it always has. */
 .grain {
   position: absolute;
-  inset: -50%;
+  inset: -32px;
+  background-position: calc(32px - 50vw) calc(32px - 50vh);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 240px 240px;
-  mix-blend-mode: overlay;
   opacity: 0.3;
   animation: grain 0.9s steps(1) infinite;
 }
 
 :global(html[data-theme="dark"]) .grain {
   opacity: 0.16;
-  mix-blend-mode: screen;
 }
 
 .scanlines {
@@ -47,24 +49,33 @@
   );
 }
 
-.vignette {
+/* Daytime only: lifted, milky blacks like an overexposed scan. It screens over
+   the leaks and shafts beneath it, so it stays a layer of its own. */
+.lift {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 45%, transparent 50%, rgba(110, 40, 60, 0.28) 100%);
+  background: rgba(255, 226, 210, 0.08);
+  mix-blend-mode: screen;
 }
 
-:global(html[data-theme="dark"]) .vignette {
-  background: radial-gradient(ellipse at 50% 45%, transparent 50%, rgba(2, 3, 14, 0.6) 100%);
+:global(html[data-theme="dark"]) .lift {
+  display: none;
 }
 
-/* Rounded picture-tube corners */
-.tube {
+/* The glass in front of the picture, one layer: a vignette inside rounded
+   picture-tube corners */
+.glass {
   position: absolute;
   inset: 0;
   border-radius: 22px;
+  background: radial-gradient(ellipse at 50% 45%, transparent 50%, rgba(110, 40, 60, 0.28) 100%);
   box-shadow:
     0 0 0 40px #05061a,
     inset 0 0 18px rgba(5, 6, 26, 0.35);
+}
+
+:global(html[data-theme="dark"]) .glass {
+  background: radial-gradient(ellipse at 50% 45%, transparent 50%, rgba(2, 3, 14, 0.6) 100%);
 }
 
 .leak {
@@ -102,14 +113,16 @@
 
 :global(html[data-theme="dark"]) .leak {
   mix-blend-mode: screen;
-  filter: saturate(1.2);
 }
 
+/* Primetime's leaks are these colours pushed 20% more saturated (#ff8fd6 and
+   #ffb36b, #c8ff7a and #8fd3ff), worked out here rather than by a filter over
+   the whole layer */
 :global(html[data-theme="dark"]) .leakWarm {
   background: radial-gradient(
     circle,
-    rgba(255, 143, 214, 0.55) 0%,
-    rgba(255, 179, 107, 0.25) 35%,
+    rgba(255, 137, 222, 0.55) 0%,
+    rgba(255, 177, 90, 0.25) 35%,
     transparent 65%
   );
 }
@@ -117,8 +130,8 @@
 :global(html[data-theme="dark"]) .leakCool {
   background: radial-gradient(
     circle,
-    rgba(200, 255, 122, 0.35) 0%,
-    rgba(143, 211, 255, 0.2) 35%,
+    rgba(193, 255, 100, 0.35) 0%,
+    rgba(132, 213, 255, 0.2) 35%,
     transparent 65%
   );
 }
@@ -146,18 +159,6 @@
 }
 
 :global(html[data-theme="dark"]) .shafts {
-  display: none;
-}
-
-/* Daytime only: lifted, milky blacks like an overexposed scan */
-.lift {
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 226, 210, 0.08);
-  mix-blend-mode: screen;
-}
-
-:global(html[data-theme="dark"]) .lift {
   display: none;
 }
 
@@ -191,6 +192,12 @@
   height: 100%;
   background: radial-gradient(ellipse at center, #ffffff 0%, #bfe4ff 35%, #4a5cff 70%, transparent 100%);
   animation: crt-on-line 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+/* A film on TV covers the page with a blurred backdrop and brings its own copy of
+   this texture, so the page's copy holds still underneath until the dialog closes. */
+:global(html:has(.tv-dialog[open]) body) > .root > * {
+  animation-play-state: paused;
 }
 
 /* ---------- Pause ---------- */
@@ -328,14 +335,14 @@
 /* 16mm grain dances between random offsets a few times a second */
 @keyframes grain {
   0% { transform: translate(0, 0); }
-  12% { transform: translate(-6%, -9%); }
-  25% { transform: translate(-14%, 4%); }
-  37% { transform: translate(7%, -17%); }
-  50% { transform: translate(-4%, 13%); }
-  62% { transform: translate(-13%, 6%); }
-  75% { transform: translate(11%, 0); }
-  87% { transform: translate(1%, 12%); }
-  100% { transform: translate(-8%, -4%); }
+  12% { transform: translate(-11px, -17px); }
+  25% { transform: translate(-27px, 8px); }
+  37% { transform: translate(13px, -32px); }
+  50% { transform: translate(-8px, 25px); }
+  62% { transform: translate(-25px, 11px); }
+  75% { transform: translate(21px, 0); }
+  87% { transform: translate(2px, 23px); }
+  100% { transform: translate(-15px, -8px); }
 }
 
 @keyframes flicker {

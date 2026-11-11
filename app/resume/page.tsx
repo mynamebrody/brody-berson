@@ -21,7 +21,7 @@ function dateRange(start: string, end: string) {
 export default function ResumePage() {
   return (
     <>
-      <header className="border-b border-line/60 bg-screen/50 backdrop-blur-md print:hidden">
+      <header className="border-b border-line/60 bg-screen/50 print:hidden">
         {/* As wide as the home header, so the middle stays clear for the PAUSE label */}
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-4 sm:px-8">
           <Link

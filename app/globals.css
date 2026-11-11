@@ -96,12 +96,25 @@ html {
 }
 
 body {
-  background: var(--sky);
   background-color: var(--screen);
-  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans);
   text-rendering: optimizeLegibility;
+}
+
+/* The sky stays put while the page scrolls. A fixed layer of its own rather than
+   background-attachment: fixed, which repaints on every scroll frame and which iOS
+   ignores. Sized to the tallest the viewport gets, so a phone's collapsing toolbar
+   never uncovers its bottom edge. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: 100vh;
+  height: 100lvh;
+  background: var(--sky);
+  pointer-events: none;
 }
 
 /* Component classes live in a layer so Tailwind utilities can still override them */
@@ -477,6 +490,9 @@ button {
   body {
     background: #ffffff;
     color: #1a2333;
+  }
+  body::before {
+    display: none;
   }
   .font-display {
     font-family: var(--font-inter), ui-sans-serif, sans-serif;

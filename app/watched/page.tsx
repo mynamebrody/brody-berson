@@ -34,7 +34,7 @@ export default async function WatchedPage() {
 
   return (
     <>
-      <header className="border-b border-line/60 bg-screen/50 backdrop-blur-md">
+      <header className="border-b border-line/60 bg-screen/50">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-4 sm:px-8">
           <Link
             href="/"
