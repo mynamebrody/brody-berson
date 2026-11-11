@@ -1,4 +1,4 @@
-import type { WatchedFilm } from "@/lib/letterboxd";
+import { tapeFilm, type WatchedFilm } from "@/lib/letterboxd";
 import { shelfPlan } from "@/lib/tape-look";
 import { FilmDialogHost } from "./vhs/film-dialog-host";
 import { ShelfScroller } from "./vhs/shelf-scroller";
@@ -23,12 +23,15 @@ export function WatchingShelf({ films, profileUrl }: Props) {
     );
   }
 
-  const plan = shelfPlan(films);
+  // The tapes and the dialog host share these slim objects; reviews and trailers
+  // are fetched from /watched/details when a tape is first reached for
+  const tapes = films.map((film) => tapeFilm(film, { excerpt: true }));
+  const plan = shelfPlan(tapes);
 
   return (
-    <FilmDialogHost films={films}>
+    <FilmDialogHost films={tapes}>
       <ShelfScroller>
-        {films.map((film, index) => (
+        {tapes.map((film, index) => (
           <VhsTape key={film.id} film={film} plan={plan[index]} />
         ))}
         <EndOfTape href="/watched" note="End of tape" label="See the whole shelf" target="/watched →" />

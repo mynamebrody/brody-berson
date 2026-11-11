@@ -88,7 +88,7 @@ export type TapePlan = {
 };
 
 /** Two or three kinds of wear, none of them shared with the tape before it. */
-function pickWear(film: WatchedFilm, prev: Wear[]) {
+function pickWear(film: Pick<WatchedFilm, "id" | "clamshell">, prev: Wear[]) {
   const pool = (film.clamshell ? clamshellWear : slipcaseWear).filter((w) => !prev.includes(w));
   const ranked = pool
     .map((w) => [w, hash(`${film.id}:${w}`)] as const)
@@ -110,7 +110,7 @@ function pickWear(film: WatchedFilm, prev: Wear[]) {
  * roughly one in three, never two in a row. Depends only on earlier films, so
  * tapes already on the shelf keep their look as more load in.
  */
-export function shelfPlan(films: WatchedFilm[]) {
+export function shelfPlan(films: Pick<WatchedFilm, "id" | "clamshell">[]) {
   const plan: TapePlan[] = [];
   films.forEach((film, i) => {
     const h = hash(film.id);
@@ -134,7 +134,7 @@ export function shelfPlan(films: WatchedFilm[]) {
  * right, rewind in the upper middle, Staff Pick bottom left, the store label and
  * Previously Viewed bottom right (Previously Viewed stacks above the label).
  */
-export function variant(film: WatchedFilm, plan: TapePlan) {
+export function variant(film: Pick<WatchedFilm, "id" | "genre">, plan: TapePlan) {
   const h = hash(film.id);
   const a = hash(`${film.id}:fx`);
   const b = hash(`${film.id}:fx2`);

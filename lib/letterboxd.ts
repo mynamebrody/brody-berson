@@ -31,6 +31,45 @@ export type WatchedFilm = {
   trailers: Trailer[];
 };
 
+/** The part of a film that only its dialog shows, served by /watched/details */
+export type FilmDetails = Pick<WatchedFilm, "review" | "trailers">;
+export type FilmDetailsById = Record<string, FilmDetails>;
+
+/**
+ * A film as the page ships it: everything on the tape's face and in the dialog's
+ * header. The review and the trailers stay behind and are fetched once, from
+ * /watched/details, when someone reaches for a tape.
+ */
+export type TapeFilm = Omit<WatchedFilm, keyof FilmDetails> & {
+  hasReview: boolean;
+  /** Decides the dialog's width before the trailers themselves arrive */
+  hasTrailers: boolean;
+  /** Opening of the review, for the homepage shelf where it sits under the tape */
+  excerpt: { text: string; cut: boolean } | null;
+};
+
+const SPOILER_WARNING = /^This review may contain spoilers\.?/i;
+/** Several times what the shelf's three-line clamp can show, so the clamp still decides where it ends */
+const EXCERPT_CHARS = 240;
+
+function reviewExcerpt(review: string): NonNullable<TapeFilm["excerpt"]> {
+  // Spoiler reviews show only Letterboxd's warning on the shelf, so that is all that ships
+  if (SPOILER_WARNING.test(review)) return { text: "This review may contain spoilers.", cut: true };
+  if (review.length <= EXCERPT_CHARS) return { text: review, cut: false };
+  const head = review.slice(0, EXCERPT_CHARS);
+  return { text: `${head.slice(0, Math.max(head.lastIndexOf(" "), EXCERPT_CHARS / 2)).trimEnd()}…`, cut: true };
+}
+
+/** Slim a film down to what its tape needs; `excerpt` is for shelves that print review text. */
+export function tapeFilm({ review, trailers, ...film }: WatchedFilm, { excerpt = false } = {}): TapeFilm {
+  return {
+    ...film,
+    hasReview: review !== null,
+    hasTrailers: trailers.length > 0,
+    excerpt: excerpt && review ? reviewExcerpt(review) : null,
+  };
+}
+
 type TmdbRef = { kind: "movie" | "tv"; id: string };
 type TmdbFacts = Pick<WatchedFilm, "clamshell" | "genre" | "newRelease" | "trailers">;
 

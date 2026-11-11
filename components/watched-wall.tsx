@@ -1,4 +1,4 @@
-import type { WatchedFilm } from "@/lib/letterboxd";
+import { tapeFilm, type WatchedFilm } from "@/lib/letterboxd";
 import { shelfPlan } from "@/lib/tape-look";
 import { FilmDialogHost } from "./vhs/film-dialog-host";
 import { EndOfTape, VhsTape } from "./vhs/tape";
@@ -27,10 +27,13 @@ export function WatchedWall({ films, profileUrl }: Props) {
     );
   }
 
-  const plan = shelfPlan(films);
+  // The tapes and the dialog host share these slim objects; reviews and trailers
+  // are fetched from /watched/details when a tape is first reached for
+  const tapes = films.map((film) => tapeFilm(film));
+  const plan = shelfPlan(tapes);
 
   return (
-    <FilmDialogHost films={films}>
+    <FilmDialogHost films={tapes}>
       <section aria-labelledby="wall-title" className="pt-14 pb-24">
         <div className={styles.sign}>
           <div>
@@ -48,11 +51,11 @@ export function WatchedWall({ films, profileUrl }: Props) {
         <div className={styles.rack}>
           <div className={styles.shelves}>
             <div className={styles.firstShelf}>
-              {films.slice(0, FIRST_SHELF).map((film, index) => (
+              {tapes.slice(0, FIRST_SHELF).map((film, index) => (
                 <VhsTape key={film.id} film={film} plan={plan[index]} size="lead" />
               ))}
             </div>
-            {films.slice(FIRST_SHELF).map((film, index) => (
+            {tapes.slice(FIRST_SHELF).map((film, index) => (
               <VhsTape key={film.id} film={film} plan={plan[index + FIRST_SHELF]} size="wall" />
             ))}
             <EndOfTape href={profileUrl} note="End of tape" label="See it all on" wall />

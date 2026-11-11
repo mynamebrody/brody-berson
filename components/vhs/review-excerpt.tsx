@@ -1,21 +1,24 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { TapeFilm } from "@/lib/letterboxd";
 
 const SPOILER_WARNING = /^This review may contain spoilers\.?/i;
 
 /**
  * Three-line excerpt under a tape on the homepage shelf; when it's cut off, "Read
  * full review" opens the dialog (FilmDialogHost picks up the click from data-film).
- * Reviews flagged as spoilers show only the warning.
+ * Reviews flagged as spoilers show only the warning. The text is the opening of
+ * the review, cut on the server (`cut`); the whole of it is in the dialog.
  */
-export function ReviewExcerpt({ review, filmId }: { review: string; filmId: string }) {
+export function ReviewExcerpt({ excerpt, filmId }: { excerpt: NonNullable<TapeFilm["excerpt"]>; filmId: string }) {
+  const review = excerpt.text;
   const spoiler = SPOILER_WARNING.test(review);
   const [clamped, setClamped] = useState(false);
-  const excerpt = useRef<HTMLParagraphElement>(null);
+  const paragraph = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    const el = excerpt.current;
+    const el = paragraph.current;
     if (el) setClamped(el.scrollHeight > el.clientHeight + 1);
   }, [review]);
 
@@ -24,11 +27,11 @@ export function ReviewExcerpt({ review, filmId }: { review: string; filmId: stri
       {spoiler ? (
         <p className="mt-2 text-sm leading-relaxed text-ink-soft italic">This review may contain spoilers.</p>
       ) : (
-        <p ref={excerpt} className="mt-2 line-clamp-3 text-sm leading-relaxed whitespace-pre-line text-ink-soft">
+        <p ref={paragraph} className="mt-2 line-clamp-3 text-sm leading-relaxed whitespace-pre-line text-ink-soft">
           {review}
         </p>
       )}
-      {spoiler || clamped ? (
+      {spoiler || clamped || excerpt.cut ? (
         <button
           type="button"
           data-film={filmId}

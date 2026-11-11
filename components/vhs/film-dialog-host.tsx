@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import type { WatchedFilm } from "@/lib/letterboxd";
+import type { FilmDetailsById, TapeFilm } from "@/lib/letterboxd";
 import { prefersStill } from "@/lib/playback";
 import { stars, watchedOn } from "@/lib/tape-look";
 import { BroadcastTexture } from "../broadcast-fx";
+import { loadFilmDetails } from "./film-details";
 import { TrailerScreen } from "./trailer-screen";
 
 /** Matches the tune-out duration on .tv-dialog[data-closing] in globals.css. */
@@ -19,9 +20,18 @@ const CLOSE_MS = 240;
  * above the shelf) that tunes in like a channel change: the poster, the diary
  * entry, and the review if there is one, with the film's videos on a TV below.
  * Closing hands focus back to whatever opened it.
+ *
+ * The page only carries each film's header (TapeFilm). Reviews and trailers for
+ * the whole shelf come from /watched/details in one request, sent the first time
+ * a pointer or the keyboard lands on a tape, so they are usually here before the
+ * click. If the request fails, or doesn't know the film, the dialog still has its
+ * header and the Letterboxd link, over a TV with no signal.
  */
-export function FilmDialogHost({ films, children }: { films: WatchedFilm[]; children: React.ReactNode }) {
-  const [film, setFilm] = useState<WatchedFilm | null>(null);
+export function FilmDialogHost({ films, children }: { films: TapeFilm[]; children: React.ReactNode }) {
+  const [film, setFilm] = useState<TapeFilm | null>(null);
+  // null until the details arrive
+  const [details, setDetails] = useState<FilmDetailsById | "failed" | null>(null);
+  const asked = useRef(false);
   const dialog = useRef<HTMLDialogElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const opener = useRef<HTMLElement | null>(null);
@@ -36,11 +46,27 @@ export function FilmDialogHost({ films, children }: { films: WatchedFilm[]; chil
     }
   }, [film]);
 
+  function fetchDetails() {
+    if (asked.current) return;
+    asked.current = true;
+    // A retry after a failure goes back to waiting
+    setDetails((current) => (current === "failed" ? null : current));
+    loadFilmDetails().then(setDetails, () => setDetails("failed"));
+  }
+
+  // Hovering, touching or tabbing onto anything that opens a film
+  function reachedFor(event: React.SyntheticEvent) {
+    if ((event.target as Element).closest?.("[data-film]")) fetchDetails();
+  }
+
   function openFromClick(event: React.MouseEvent) {
     const trigger = (event.target as Element).closest<HTMLElement>("[data-film]");
     const next = trigger ? films.find((f) => f.id === trigger.dataset.film) : undefined;
     if (!trigger || !next) return;
     opener.current = trigger;
+    // Opening a film is worth another try after a failure; hovering past one isn't
+    if (details === "failed") asked.current = false;
+    fetchDetails();
     setFilm(next);
   }
 
@@ -69,11 +95,13 @@ export function FilmDialogHost({ films, children }: { films: WatchedFilm[]; chil
   }
 
   const rating = film ? stars(film.rating) : null;
+  const waiting = details === null;
+  const detail = film && details && details !== "failed" ? details[film.id] : undefined;
 
   return (
     <>
       {/* display: contents, so the wrapper adds a click target without a layout box */}
-      <div className="contents" onClick={openFromClick}>
+      <div className="contents" onClick={openFromClick} onPointerOver={reachedFor} onFocus={reachedFor}>
         {children}
       </div>
       <dialog
@@ -97,7 +125,7 @@ export function FilmDialogHost({ films, children }: { films: WatchedFilm[]; chil
         {film ? (
           <>
             <div
-              className={`tv-dialog-panel scanlines grid max-h-[85dvh] w-[calc(100%-2rem)] grid-cols-1 gap-6 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-screen-2 p-5 shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_var(--signal)] sm:p-8 ${film.trailers.length ? "max-w-3xl" : "max-w-2xl"}`}
+              className={`tv-dialog-panel scanlines grid max-h-[85dvh] w-[calc(100%-2rem)] grid-cols-1 gap-6 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-screen-2 p-5 shadow-[0_0_0_6px_rgba(5,6,26,0.85),0_30px_70px_-30px_var(--signal)] sm:p-8 ${film.hasTrailers ? "max-w-3xl" : "max-w-2xl"}`}
             >
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-[9rem_minmax(0,1fr)]">
                 {film.poster ? (
@@ -122,9 +150,13 @@ export function FilmDialogHost({ films, children }: { films: WatchedFilm[]; chil
                       .filter(Boolean)
                       .join(" · ")}
                   </p>
-                  {film.review ? (
+                  {detail?.review ? (
                     <p className="mt-4 leading-relaxed wrap-anywhere whitespace-pre-line text-ink-soft">
-                      {film.review}
+                      {detail.review}
+                    </p>
+                  ) : waiting && film.hasReview ? (
+                    <p role="status" className="osd mt-4 text-base text-ink-faint">
+                      Tuning in…
                     </p>
                   ) : null}
                   <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -145,7 +177,12 @@ export function FilmDialogHost({ films, children }: { films: WatchedFilm[]; chil
                   </div>
                 </div>
               </div>
-              <TrailerScreen key={film.id} trailers={film.trailers} title={film.title} />
+              <TrailerScreen
+                key={film.id}
+                trailers={detail?.trailers ?? []}
+                title={film.title}
+                pending={waiting && film.hasTrailers}
+              />
             </div>
             {/* After the panel so the texture stays on top while the panel's entrance runs */}
             <div className="tv-dialog-fx pointer-events-none fixed inset-0">
