@@ -23,6 +23,11 @@
   text-transform: uppercase;
 }
 
+/* The tape is the whole picture: no camcorder REC / timestamp / SP overlay on this page only */
+:global(body):has(.page) :global(.camcorder-osd) {
+  display: none;
+}
+
 .card {
   position: relative;
   display: grid;

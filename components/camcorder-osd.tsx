@@ -60,6 +60,7 @@ const getServerSecond = () => null;
 /**
  * Camcorder on-screen display pinned to the bottom corners on wide screens.
  * Renders a static placeholder on the server, then ticks once hydrated.
+ * The 404 page hides it (app/not-found.module.css) by the camcorder-osd class.
  */
 export function CamcorderOsd() {
   const second = useSyncExternalStore(subscribe, getSecond, getServerSecond);
@@ -69,7 +70,7 @@ export function CamcorderOsd() {
   return (
     <div
       aria-hidden="true"
-      className="osd pointer-events-none fixed inset-x-0 bottom-0 z-[45] hidden justify-between px-16 pb-6 text-lg leading-tight text-glow xl:flex print:hidden"
+      className="camcorder-osd osd pointer-events-none fixed inset-x-0 bottom-0 z-[45] hidden justify-between px-16 pb-6 text-lg leading-tight text-glow xl:flex print:hidden"
     >
       <div className="self-end">
         <p>SP ▮▮▮▯</p>
