@@ -28,8 +28,6 @@ export type WatchedFilm = {
   genre: string | null;
   /** Released (or first aired) within the last year, per TMDB */
   newRelease: boolean;
-  /** US classification per TMDB ("R", "PG-13", "TV-MA", …), printed in the box's corner; null when unrated or unknown */
-  certification: string | null;
   /** The film's YouTube videos on TMDB (its own language, English, spoken languages), trailers first; empty without TMDB_API_KEY */
   trailers: Trailer[];
 };
@@ -74,7 +72,7 @@ export function tapeFilm({ review, trailers, ...film }: WatchedFilm, { excerpt =
 }
 
 type TmdbRef = { kind: "movie" | "tv"; id: string };
-type TmdbFacts = Pick<WatchedFilm, "clamshell" | "genre" | "newRelease" | "certification" | "trailers">;
+type TmdbFacts = Pick<WatchedFilm, "clamshell" | "genre" | "newRelease" | "trailers">;
 
 export type RecentlyWatched = {
   entries: WatchedFilm[];
@@ -172,27 +170,7 @@ function tmdbRef(item: FeedItem): TmdbRef | null {
 const DISNEY_STUDIO = /^(Walt Disney (Pictures|Productions|Animation Studios|Feature Animation)|Pixar)/;
 // "Nickelodeon Movies", "Nickelodeon Animation Studio", … (not the unrelated "Nickel Odeon")
 const NICKELODEON_STUDIO = /^Nickelodeon\b/;
-const NO_FACTS: TmdbFacts = { clamshell: null, genre: null, newRelease: false, certification: null, trailers: [] };
-
-type TmdbClassifications = {
-  /** Films: every release in every country, each with its own certificate */
-  release_dates?: { results?: { iso_3166_1: string; release_dates?: { certification?: string }[] }[] };
-  /** Shows: one rating per country */
-  content_ratings?: { results?: { iso_3166_1: string; rating?: string }[] };
-};
-
-/** Short enough to print in a corner box: "R", "PG-13", "NC-17", "TV-MA". Anything wordier ("Not Rated") is left off. */
-const PRINTABLE_CERTIFICATION = /^[A-Z0-9-]{1,5}$/;
-
-/** The US classification, from the first American release that carries one. */
-function usCertification({ release_dates, content_ratings }: TmdbClassifications): string | null {
-  const us = <T extends { iso_3166_1: string }>(results: T[] = []) => results.find((r) => r.iso_3166_1 === "US");
-  const found =
-    us(release_dates?.results)?.release_dates?.find((release) => release.certification)?.certification ??
-    us(content_ratings?.results)?.rating ??
-    "";
-  return PRINTABLE_CERTIFICATION.test(found) ? found : null;
-}
+const NO_FACTS: TmdbFacts = { clamshell: null, genre: null, newRelease: false, trailers: [] };
 
 /** Disney wins a co-production, since its clamshells came first. */
 function clamshellFor(companies: { name: string }[] = []): Clamshell | null {
@@ -301,7 +279,7 @@ function oneYearAgo() {
 }
 
 /**
- * Studio, genre, release date, and US classification from TMDB, for how the tape looks on the shelf,
+ * Studio, genre, and release date from TMDB, for how the tape looks on the shelf,
  * then its YouTube videos for the TV in the film dialog (a second request, since
  * which languages to ask for depends on the details). None of it changes much,
  * so lookups cache for a week; "new release" is re-judged
@@ -313,16 +291,14 @@ async function tmdbFacts(ref: TmdbRef | null): Promise<TmdbFacts> {
   if (!ref || !key) return NO_FACTS;
   try {
     const base = `${ref.kind}/${ref.id}`;
-    const details = await tmdbJson<
-      {
-        production_companies?: { name: string }[];
-        genres?: { name: string }[];
-        release_date?: string;
-        first_air_date?: string;
-        original_language?: string;
-        spoken_languages?: { iso_639_1: string }[];
-      } & TmdbClassifications
-    >(base, key, `append_to_response=${ref.kind === "movie" ? "release_dates" : "content_ratings"}`);
+    const details = await tmdbJson<{
+      production_companies?: { name: string }[];
+      genres?: { name: string }[];
+      release_date?: string;
+      first_air_date?: string;
+      original_language?: string;
+      spoken_languages?: { iso_639_1: string }[];
+    }>(base, key);
     if (!details) return NO_FACTS;
     const languages = videoLanguages(details.original_language, details.spoken_languages);
     const videos = await tmdbVideos(`${base}/videos`, key, languages);
@@ -331,7 +307,6 @@ async function tmdbFacts(ref: TmdbRef | null): Promise<TmdbFacts> {
       clamshell: clamshellFor(details.production_companies),
       genre: details.genres?.[0]?.name ?? null,
       newRelease: released !== "" && released >= oneYearAgo(),
-      certification: usCertification(details),
       trailers: youtubeVideos(videos, details.original_language),
     };
   } catch {
