@@ -24,7 +24,7 @@ Almost all user-facing copy and machine-readable payloads render from two module
 | Module | Owns |
 | --- | --- |
 | `content/resume.ts` | Resume: basics, work, education, projects, skills |
-| `content/site.ts` | Site metadata, bio, social links, personal context (`personal`: open to / now / favorites), Letterboxd config, MCP server identity (`mcpServer`), tool and prompt catalogs (`mcpTools`, `mcpPrompts`) |
+| `content/site.ts` | Site metadata, bio, social links, personal context (`personal`: open to / now / favorites, served by the MCP tools only, not shown on the home page or `/index.md`), Letterboxd config, MCP server identity (`mcpServer`), tool and prompt catalogs (`mcpTools`, `mcpPrompts`) |
 
 Pages, MCP tools, markdown mirrors (`/index.md`, `/resume.md`), `llms.txt`, the public `/AGENTS.md` route, and the discovery documents (`/mcp/server-card`, `/.well-known/ai-catalog.json`, `/.well-known/mcp.json`) all derive from those modules (plus `lib/markdown.ts` and `lib/discovery.ts` for assembly). Prefer editing content there over hardcoding strings in components or routes.
 

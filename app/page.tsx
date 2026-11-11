@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WatchingShelf } from "@/components/watching-shelf";
 import { resume } from "@/content/resume";
-import { home, letterboxd, personal, site, type Inline } from "@/content/site";
+import { home, site, type Inline } from "@/content/site";
 import { getRecentlyWatchedForPage } from "@/lib/letterboxd";
 
 // The Letterboxd shelf refreshes hourly; everything else is static content
@@ -41,29 +41,6 @@ function Copy({ parts, linkClassName }: { parts: Inline[]; linkClassName: string
 
 const textLink =
   "font-medium text-ink underline decoration-pop decoration-2 underline-offset-4 hover:text-glow";
-
-function StatusCard({ title, color, children }: { title: string; color: string; children: React.ReactNode }) {
-  return (
-    <article className="overflow-hidden rounded-xl border border-line bg-surface">
-      <h3
-        className="scanlines osd relative flex h-12 items-end px-5 pb-1.5 text-xl font-normal text-deep"
-        style={{ backgroundColor: color }}
-      >
-        {title}
-      </h3>
-      <div className="p-6">{children}</div>
-    </article>
-  );
-}
-
-function StatusRow({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <dt className="osd text-base text-ink-faint">{label}</dt>
-      <dd className="mt-0.5 text-sm leading-relaxed text-ink-soft">{children}</dd>
-    </div>
-  );
-}
 
 // The homepage shelf holds the latest dozen; /watched has the whole feed
 const SHELF_SIZE = 12;
@@ -255,62 +232,6 @@ export default async function Home() {
                 </div>
               </article>
             ))}
-          </div>
-        </section>
-
-        <ColorBars />
-
-        {/* Now, open to, favorites: the same facts index.md and the MCP tools give agents */}
-        <section id="now" className="scroll-mt-24 pt-16 pb-20">
-          <p className="osd text-xl text-ink-faint">CH 99 · Status report</p>
-          <h2 className="mt-2 font-display text-4xl font-semibold tracking-wide uppercase sm:text-5xl">
-            What I&rsquo;m up to <span className="marker">now</span>.
-          </h2>
-          <p className="osd mt-3 text-lg text-ink-faint">Updated {personal.updated}</p>
-          <div className="mt-8 grid gap-5 lg:grid-cols-3">
-            <StatusCard title="Now" color="var(--zest)">
-              <dl className="space-y-4">
-                <StatusRow label="Focus">{personal.now.focus}</StatusRow>
-                <StatusRow label="Building">{personal.now.building.join("; ")}</StatusRow>
-                <StatusRow label="Reading">{personal.now.reading.join("; ")}</StatusRow>
-                <StatusRow label="Watching">
-                  My{" "}
-                  <a href={letterboxd.profile} className={textLink}>
-                    Letterboxd
-                  </a>{" "}
-                  diary, shelved on{" "}
-                  <Link href="/watched" className={textLink}>
-                    the wall
-                  </Link>
-                </StatusRow>
-              </dl>
-            </StatusCard>
-            <StatusCard title="Open to" color="var(--peri)">
-              <p className="text-sm leading-relaxed text-ink">{personal.openTo.status}</p>
-              <dl className="mt-4 space-y-4">
-                {personal.openTo.items.map((item) => (
-                  <StatusRow key={item.topic} label={item.topic}>
-                    {item.detail}
-                  </StatusRow>
-                ))}
-                <StatusRow label="Best way to reach me">
-                  {personal.openTo.contact.map((contact, index) => (
-                    <span key={contact.url}>
-                      {index > 0 ? " or " : null}
-                      <a href={contact.url} className={textLink}>
-                        {contact.label}
-                      </a>
-                    </span>
-                  ))}
-                </StatusRow>
-              </dl>
-            </StatusCard>
-            <StatusCard title="Favorites" color="var(--tang)">
-              <dl className="space-y-4">
-                <StatusRow label="Films">{personal.favorites.films.join(", ")}</StatusRow>
-                <StatusRow label="Cocktails">{personal.favorites.cocktails.join(", ")}</StatusRow>
-              </dl>
-            </StatusCard>
           </div>
         </section>
 
