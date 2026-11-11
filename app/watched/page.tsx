@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ColorBars } from "@/components/color-bars";
-import { PlaybackToggle } from "@/components/playback-toggle";
 import { SiteFooter } from "@/components/site-footer";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { SiteHeader } from "@/components/site-header";
 import { WatchedWall } from "@/components/watched-wall";
 import { site } from "@/content/site";
 import { getRecentlyWatched, ogVersion } from "@/lib/letterboxd";
@@ -34,29 +32,20 @@ export default async function WatchedPage() {
 
   return (
     <>
-      <header className="border-b border-line/60 bg-screen/50">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-4 sm:px-8">
-          <Link
-            href="/"
-            className="osd text-lg whitespace-nowrap text-ink-soft normal-case transition-colors hover:text-glow"
+      <SiteHeader
+        current="watched"
+        action={
+          // Below md the bar has no room for it; the intro's first line links Letterboxd too
+          <a
+            href={watched.profileUrl}
+            className="gloss rounded-full px-5 py-2 text-sm font-semibold whitespace-nowrap max-md:hidden"
           >
-            ◀ <span className="sm:hidden">Home</span>
-            <span className="hidden sm:inline">brodyberson.com</span>
-          </Link>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <a
-              href={watched.profileUrl}
-              className="gloss rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap sm:px-5"
-            >
-              Letterboxd ↗
-            </a>
-            <ThemeToggle />
-            <PlaybackToggle />
-          </div>
-        </div>
-      </header>
+            Letterboxd ↗
+          </a>
+        }
+      />
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-5 sm:px-8">
+      <main id="main" tabIndex={-1} className="mx-auto w-full max-w-5xl flex-1 px-5 outline-none sm:px-8">
         <section className="pt-14 pb-14 sm:pt-20">
           <p className="osd fade-up text-xl text-ink-faint">▶ Now showing · CH 501</p>
           <h1

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PlaybackToggle } from "@/components/playback-toggle";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import { resume } from "@/content/resume";
 import { site } from "@/content/site";
 import { socialMetadata } from "@/lib/metadata";
@@ -21,32 +21,21 @@ function dateRange(start: string, end: string) {
 export default function ResumePage() {
   return (
     <>
-      <header className="border-b border-line/60 bg-screen/50 print:hidden">
-        {/* As wide as the home header, so the middle stays clear for the PAUSE label */}
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-4 sm:px-8">
-          <Link
-            href="/"
-            className="osd text-lg whitespace-nowrap text-ink-soft normal-case transition-colors hover:text-glow"
+      <SiteHeader
+        current="resume"
+        action={
+          <a
+            href="/brody-berson-resume.pdf"
+            download
+            aria-label="Download PDF"
+            className="gloss rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap max-[379px]:px-3 md:px-5"
           >
-            ◀ <span className="sm:hidden">Home</span>
-            <span className="hidden sm:inline">brodyberson.com</span>
-          </Link>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <a
-              href="/brody-berson-resume.pdf"
-              download
-              aria-label="Download PDF"
-              className="gloss rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap sm:px-5"
-            >
-              <span className="hidden sm:inline">Download </span>PDF
-            </a>
-            <ThemeToggle />
-            <PlaybackToggle />
-          </div>
-        </div>
-      </header>
+            <span className="hidden md:inline">Download </span>PDF
+          </a>
+        }
+      />
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-10 sm:px-8 sm:py-14 print:max-w-none print:p-0">
+      <main id="main" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-5 py-10 outline-none sm:px-8 sm:py-14 print:max-w-none print:p-0">
         <article className="rounded-2xl border border-line bg-surface p-7 shadow-[0_30px_70px_-40px_var(--signal)] sm:p-12 print:rounded-none print:border-0 print:bg-white print:p-0 print:shadow-none">
           {/* Header */}
           <header>
@@ -210,6 +199,8 @@ export default function ResumePage() {
           .
         </p>
       </main>
+
+      <SiteFooter />
     </>
   );
 }

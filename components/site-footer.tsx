@@ -1,10 +1,10 @@
 import { ColorBars } from "@/components/color-bars";
 import { site, socialLinks } from "@/content/site";
 
-/** The BBTV sign-off: tall color bars, contact, socials, and the agent links. */
+/** The BBTV sign-off on every page: tall color bars, contact, socials, and the agent links. Never printed. */
 export function SiteFooter() {
   return (
-    <footer className="bg-screen-2">
+    <footer className="bg-screen-2 print:hidden">
       <ColorBars size="tall" />
       <div className="mx-auto max-w-5xl px-5 py-12 sm:px-8">
         <p className="osd text-xl text-ink-faint">BBTV · End of broadcast</p>
