@@ -37,6 +37,7 @@ app/
   resume/page.tsx          Resume HTML
   watched/page.tsx         Full Letterboxd video store (wall rack, latest three on the first shelf)
   watched/og/route.tsx     /watched share image (latest three tapes under the sign), fonts in watched/og/fonts/
+  watched/details/route.ts Film reviews + trailers as JSON for the film dialog (noindex, disallowed in robots.ts)
   mcp/route.ts             MCP server (tools, prompts, resources, CORS)
   mcp/server-card/         MCP Server Card (SEP-2127)
   AGENTS.md/route.ts       Public agent guide (visitors)
